@@ -2,9 +2,9 @@
   "name": "apollo",
   "version": "0.0.1",
   "description": "Apollo Project",
-  "main": "index.js",
+  "main": "lib/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "babel src -d lib"
   },
   "repository": {
     "type": "git",
@@ -20,6 +20,9 @@
     "url": "https://github.com/Synchro-OSS/apollo/issues"
   },
   "homepage": "https://github.com/Synchro-OSS/apollo#readme",
+  "peerDependencies": {
+    "react": "*"
+  },
   "devDependencies": {
     "babel-core": "^6.3.15",
     "babel-eslint": "^5.0.0-beta6",
