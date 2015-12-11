@@ -32,6 +32,8 @@
     "babel-preset-stage-0": "^6.3.13",
     "eslint": "^1.10.3",
     "eslint-plugin-react": "^3.11.3",
+    "react": "^0.14.3",
+    "react-dom": "^0.14.3",
     "webpack": "^1.12.9"
   }
 }

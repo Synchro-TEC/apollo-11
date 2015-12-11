@@ -1,7 +1,7 @@
 import React from 'react';
 
 
-class Hermes extends React.Component {
+class LaunchWindow extends React.Component {
 
   constructor(props) {
     super(props);
@@ -15,14 +15,14 @@ class Hermes extends React.Component {
   render() {
     return (
       <div>
-        <h1>Hermes</h1>
+        <h5>Launch Window Component</h5>
       </div>
     );
   }
 }
 
-Hermes.propTypes = {};
+LaunchWindow.propTypes = {};
 
-Hermes.displayName = 'Hermes';
+LaunchWindow.displayName = 'LaunchWindow';
 
-export default Hermes;
+export default LaunchWindow;

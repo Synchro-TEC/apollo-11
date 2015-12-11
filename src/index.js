@@ -1,5 +1,5 @@
-import Hermes from './hermes/hermes.jsx';
-import LaunchWindow from './launch-window/launch-window.jsx';
+import Hermes from './hermes/hermes';
+import LaunchWindow from './launch-window/launch-window';
 
 export {
   Hermes,
