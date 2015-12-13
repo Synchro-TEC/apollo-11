@@ -4,7 +4,8 @@
   "description": "Apollo Project",
   "main": "lib/index.js",
   "scripts": {
-    "build": "babel src -d lib"
+    "build": "babel src -d lib",
+    "watch": "watch-run -p 'src/**/*.js' npm run build"
   },
   "repository": {
     "type": "git",
