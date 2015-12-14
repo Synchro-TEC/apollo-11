@@ -3,7 +3,6 @@ import uuid from 'uuid';
 import blockerDefaultStyles from './blocker-styles';
 import blockerStack from './blocker-stack';
 
-//const Blocker = React.createClass({
 class Blocker extends React.Component {
 
   constructor(props) {
@@ -62,7 +61,7 @@ class Blocker extends React.Component {
       active
       } = this.state;
 
-    const shouldShowLoader = !!active && !!show;
+    const shouldShowBlocker = !!active && !!show;
 
     const bgStyle = Object.assign({},
       disableDefaultStyles ? {} : blockerDefaultStyles.backgroundDefaultStyle,
@@ -81,7 +80,7 @@ class Blocker extends React.Component {
     const contentStyle = Object.assign({
       position: 'relative',
       opacity: hideContentOnLoad && show ? 0 : 1
-    }, shouldShowLoader && contentBlur ? {
+    }, shouldShowBlocker && contentBlur ? {
       'WebkitFilter': `blur(${contentBlur}px)`,
       'MozFilter': `blur(${contentBlur}px)`,
       'OFilter': `blur(${contentBlur}px)`,
@@ -89,16 +88,16 @@ class Blocker extends React.Component {
       'filter': `blur(${contentBlur}px)`
     } : {});
 
-    return shouldShowLoader ? (
-      <div className="Loader" style={loaderStyle}>
-        <div className="Loader__content" style={contentStyle}>
+    return shouldShowBlocker ? (
+      <div className="sv-blocker" style={loaderStyle}>
+        <div className="sv-blocker__content" style={contentStyle}>
           {children}
         </div>
 
-        <div className="Loader__background" style={bgStyle}>
-          <div className="Loader__foreground" style={fgStyle}>
-            <div className="Loader__message" style={msgStyle}>
-              {message || 'Carregando...'}
+        <div className="sv-blocker__background" style={bgStyle}>
+          <div className="sv-blocker__foreground" style={fgStyle}>
+            <div className="sv-blocker__message" style={msgStyle}>
+              {message || 'loading...'}
             </div>
           </div>
         </div>
@@ -123,5 +122,7 @@ Blocker.propTypes = {
 Blocker.defaultProps ={
   priority: 0
 };
+
+Blocker.displayName = 'Blocker';
 
 export default Blocker;
