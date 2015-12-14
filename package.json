@@ -1,5 +1,5 @@
 {
-  "name": "apollo",
+  "name": "apollo-13",
   "version": "0.0.1",
   "description": "Apollo Project",
   "main": "lib/index.js",
@@ -36,5 +36,9 @@
     "react": "^0.14.3",
     "react-dom": "^0.14.3",
     "webpack": "^1.12.9"
+  },
+  "dependencies": {
+    "lodash.max": "^3.4.0",
+    "uuid": "^2.0.1"
   }
 }

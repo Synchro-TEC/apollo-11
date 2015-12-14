@@ -14,9 +14,7 @@ class Hermes extends React.Component {
 
   componentWillUnmount() {}
 
-  componentWillReceiveProps(nextProps) {
-
-  }
+  componentWillReceiveProps(nextProps) {}
 
   render() {
 
