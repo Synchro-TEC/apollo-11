@@ -6,14 +6,17 @@ class Hermes extends React.Component {
     super(props);
 
     this.state = {
-      visible: false
+      messages: this.props.messages
     }
   }
 
   componentDidMount() {}
 
-
   componentWillUnmount() {}
+
+  componentWillReceiveProps(nextProps) {
+
+  }
 
   render() {
 
@@ -21,8 +24,10 @@ class Hermes extends React.Component {
       return <li key={i}>{message.text}</li>;
     };
 
+    var visible = this.state.messages.length ? 'block' : 'none';
+
     return (
-      <div>
+      <div style={{display: visible}}>
         <h3>{this.props.title}</h3>
         <ul>
           {this.props.messages.map(createMessage)}
