@@ -1,6 +1,5 @@
 import React from 'react';
 
-
 class LaunchWindow extends React.Component {
 
   constructor(props) {

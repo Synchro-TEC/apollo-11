@@ -5,7 +5,7 @@
   "main": "lib/index.js",
   "scripts": {
     "build": "babel src -d lib",
-    "watch": "watch-run -p 'src/**/*.js' npm run build"
+    "watch": "babel src --watch -d lib"
   },
   "repository": {
     "type": "git",
@@ -39,6 +39,7 @@
   },
   "dependencies": {
     "lodash.max": "^3.4.0",
+    "react-addons-update": "^0.14.3",
     "uuid": "^2.0.1"
   }
 }
