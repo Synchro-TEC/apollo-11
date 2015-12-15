@@ -2,6 +2,7 @@ import React from 'react';
 import Update from 'react-addons-update';
 import MessageStack from './message-stack';
 import Message from './message';
+import HermesStyles from './hermes-styles';
 import uuid from 'uuid';
 
 class Hermes extends React.Component {
@@ -18,6 +19,7 @@ class Hermes extends React.Component {
       visible: false
     };
 
+    this.timeOut = undefined;
     this.onStackChange = this.onStackChange.bind(this);
   }
 
@@ -32,15 +34,15 @@ class Hermes extends React.Component {
   onStackChange() {
 
     let newState = Update(this.state, {
-      context: {$set: MessageStack.context},
+      context: {$set: MessageStack.context || this.props.context},
       messages: {$set: MessageStack.stack},
-      title: {$set: MessageStack.title},
+      title: {$set: MessageStack.title || this.props.title},
       visible: {$set: MessageStack.stack.length}
     });
 
     this.setState(newState);
 
-    setTimeout(() => {
+    this.timeOut = setTimeout(() => {
       if(this.state.autoClose && this.state.visible) {
         this.hide();
       }
@@ -65,6 +67,8 @@ class Hermes extends React.Component {
       visible: {$set: false}
     });
     this.setState(newState);
+
+    clearTimeout(this.timeOut);
   }
 
   render() {
@@ -75,8 +79,11 @@ class Hermes extends React.Component {
 
     var visible = this.state.visible ? 'block' : 'none';
 
+    const display = {display: visible};
+    const styles = Object.assign(display, HermesStyles[this.state.context]);
+
     return (
-      <div style={{display: visible}}>
+      <div style={styles}>
         <h3>{this.state.title || 'Messages:'}<button onClick={() => this.hide()}>&times;</button></h3>
 
         <ul>
