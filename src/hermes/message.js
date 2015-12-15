@@ -1,10 +1,10 @@
 import React from 'react';
-import MessageStack from './message-stack';
+import HermesAPI from './hermes-api';
 
 const Message = ({message}) => {
 
   let deleteButton = message.isDeletable ?
-    <button onClick={() => MessageStack.removeMessage(message.id)}>&times;</button> :
+    <button onClick={() => HermesAPI.removeMessage(message.id)}>&times;</button> :
     '';
 
   return (
@@ -13,6 +13,6 @@ const Message = ({message}) => {
       {deleteButton}
     </li>
   );
-}
+};
 
 export default Message;

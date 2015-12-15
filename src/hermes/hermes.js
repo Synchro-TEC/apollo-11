@@ -1,10 +1,11 @@
 import React from 'react';
 import Update from 'react-addons-update';
-import MessageStack from './message-stack';
+import HermesAPI from './hermes-api';
 import Message from './message';
 import HermesStyles from './hermes-styles';
 import uuid from 'uuid';
 
+var _hideTimeOut;
 class Hermes extends React.Component {
 
   constructor(props) {
@@ -19,30 +20,30 @@ class Hermes extends React.Component {
       visible: false
     };
 
-    this.timeOut = undefined;
     this.onStackChange = this.onStackChange.bind(this);
   }
 
   componentDidMount() {
-    MessageStack.addChangeListener(this.onStackChange);
+    HermesAPI.addChangeListener(this.onStackChange);
   }
 
   componentWillUnmount() {
-    MessageStack.removeChangeListener(this.onStackChange);
+    HermesAPI.removeChangeListener(this.onStackChange);
   }
 
   onStackChange() {
-
     let newState = Update(this.state, {
-      context: {$set: MessageStack.context || this.props.context},
-      messages: {$set: MessageStack.stack},
-      title: {$set: MessageStack.title || this.props.title},
-      visible: {$set: MessageStack.stack.length}
+      context: {$set: HermesAPI.context || this.props.context},
+      messages: {$set: HermesAPI.messages},
+      title: {$set: HermesAPI.title || this.props.title},
+      visible: {$set: HermesAPI.messages.length}
     });
-
     this.setState(newState);
+    if(_hideTimeOut) {
+      clearTimeout(_hideTimeOut);
+    }
 
-    this.timeOut = setTimeout(() => {
+    _hideTimeOut = setTimeout(() => {
       if(this.state.autoClose && this.state.visible) {
         this.hide();
       }
@@ -51,24 +52,28 @@ class Hermes extends React.Component {
   }
 
   static addMessage(msg, isDeletable = false) {
-    MessageStack.addMessage(uuid.v1(), msg, isDeletable);
+    HermesAPI.addMessage(uuid.v1(), msg, isDeletable);
   }
 
   static setContext(newContext) {
-    MessageStack.setContext(newContext);
+    HermesAPI.setContext(newContext);
   }
 
   static setTitle(newTitle) {
-    MessageStack.setTitle(newTitle);
+    HermesAPI.setTitle(newTitle);
+  }
+
+  static clearMessages() {
+    HermesAPI.clearMessages();
   }
 
   hide() {
+    clearTimeout(_hideTimeOut);
     let newState = Update(this.state, {
       visible: {$set: false}
     });
+    HermesAPI.clearMessages();
     this.setState(newState);
-
-    clearTimeout(this.timeOut);
   }
 
   render() {
@@ -103,8 +108,9 @@ Hermes.defaultProps = {
 Hermes.propTypes = {
   autoClose: React.PropTypes.bool,
   autoCloseInMiliseconds: React.PropTypes.number,
-  title: React.PropTypes.string,
-  context: React.PropTypes.oneOf(['info', 'error', 'success', 'notice']).isRequired
+  context: React.PropTypes.oneOf(['info', 'error', 'success', 'notice']).isRequired,
+  styles: React.PropTypes.object,
+  title: React.PropTypes.string
 };
 
 Hermes.displayName = 'Hermes';

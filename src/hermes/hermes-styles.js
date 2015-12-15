@@ -1,25 +1,22 @@
 const baseStyle = {
-  padding: '10px',
-  zIndex: 10
+  bottom: '0',
+  left: '15%',
+  padding: '10px 10px 25px 10px',
+  position: 'absolute',
+  right: '15%',
+  width: '70%',
+  zIndex: 40
 };
 
 const HermesStyles = {
 
-  info: Object.assign(baseStyle, {
-    backgroundColor: 'rgba(176,190,197,1)'
-  }),
+  info: Object.assign({}, baseStyle, {backgroundColor: 'rgba(176,190,197,.8)'}),
 
-  error: Object.assign(baseStyle, {
-    backgroundColor: 'rgba(211,47,47,1)'
-  }),
+  error: Object.assign({}, baseStyle, {backgroundColor: 'rgba(211,47,47,.8)'}),
 
-  success: Object.assign(baseStyle, {
-    backgroundColor: 'rgba(76,175,80,1)'
-  }),
+  success: Object.assign({}, baseStyle, {backgroundColor: 'rgba(76,175,80,.8)'}),
 
-  notice: Object.assign(baseStyle, {
-    backgroundColor: 'rgba(41,182,246,1)'
-  })
+  notice: Object.assign({}, baseStyle, {backgroundColor: 'rgba(41,182,246,.8)'})
 
 };
 
