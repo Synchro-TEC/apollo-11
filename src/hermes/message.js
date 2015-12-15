@@ -1,16 +1,17 @@
 import React from 'react';
 import HermesAPI from './hermes-api';
+import HermesStyles from './hermes-styles';
 
 const Message = ({message}) => {
 
   let deleteButton = message.isDeletable ?
-    <button onClick={() => HermesAPI.removeMessage(message.id)}>&times;</button> :
+    <button style={HermesStyles.closeButtonMessage} onClick={() => HermesAPI.removeMessage(message.id)}>&times;</button> :
     '';
 
   return (
     <li>
-      {message.text}
       {deleteButton}
+      {message.text}
     </li>
   );
 };
