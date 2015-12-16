@@ -9,7 +9,7 @@ const Message = ({message}) => {
     '';
 
   return (
-    <li>
+    <li style={HermesStyles.msgStyle}>
       {deleteButton}
       {message.text}
     </li>

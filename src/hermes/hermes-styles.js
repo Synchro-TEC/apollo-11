@@ -36,6 +36,10 @@ const HermesStyles = {
 
   msgListStyle: {
     listStyle: 'none'
+  },
+
+  msgStyle: {
+    margin: '3px'
   }
 
 
