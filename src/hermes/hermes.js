@@ -89,8 +89,7 @@ class Hermes extends React.Component {
 
     return (
       <div style={styles}>
-        <h3>{this.state.title}<button style={HermesStyles.closeButtonHermes} onClick={() => this.hide()}>&times;</button></h3>
-
+        <h3>{this.state.title}<button onClick={() => this.hide()} style={HermesStyles.closeButtonHermes}>&times;</button></h3>
         <ul style={HermesStyles.msgListStyle}>
           {this.state.messages.map(createMessage)}
         </ul>
@@ -98,6 +97,7 @@ class Hermes extends React.Component {
     );
   }
 }
+
 Hermes.defaultProps = {
   autoClose: true,
   autoCloseInMiliseconds: 10000,

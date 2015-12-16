@@ -5,7 +5,7 @@ import HermesStyles from './hermes-styles';
 const Message = ({message}) => {
 
   let deleteButton = message.isDeletable ?
-    <button style={HermesStyles.closeButtonMessage} onClick={() => HermesAPI.removeMessage(message.id)}>&times;</button> :
+    <button onClick={() => HermesAPI.removeMessage(message.id)} style={HermesStyles.closeButtonMessage}>&times;</button> :
     '';
 
   return (
@@ -15,5 +15,7 @@ const Message = ({message}) => {
     </li>
   );
 };
+
+Message.displayName = 'Message';
 
 export default Message;
