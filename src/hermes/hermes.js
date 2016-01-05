@@ -48,7 +48,6 @@ class Hermes extends React.Component {
         this.hide();
       }
     }, this.state.autoCloseInMiliseconds);
-
   }
 
   static addMessage(msg, isDeletable = false) {
@@ -85,7 +84,7 @@ class Hermes extends React.Component {
     var visible = this.state.visible ? 'block' : 'none';
 
     const display = {display: visible};
-    const styles = Object.assign(display, HermesStyles[this.state.context]);
+    const styles = Object.assign({}, display, HermesStyles[this.state.context]);
 
     return (
       <div style={styles}>
