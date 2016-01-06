@@ -4,7 +4,7 @@ const baseStyle = {
   fontFamily: 'inherit',
   maxHeight: '300px',
   padding: '10px 10px 25px 10px',
-  position: 'absolute',
+  position: 'fixed',
   right: '15%',
   width: '70%',
   zIndex: 40
