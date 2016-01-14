@@ -3,6 +3,7 @@ import React from 'react';
 
 const optionSelectorStyles = {
   container: {
+    display: 'inline',
     position: 'relative'
   },
   options: {
@@ -24,9 +25,9 @@ class OptionSelector extends React.Component {
     this.state = {label: this.props.initialValue, isVisible: false};
   }
 
-  onSelect(value) {
-    this.setState({label: value, isVisible: false});
-    this.props.onSelectCallBack(value);
+  onSelect(opt) {
+    this.setState({label: opt[this.props.labelKey], isVisible: false});
+    this.props.onSelectCallBack(opt);
   }
 
   showOptions() {
@@ -35,7 +36,7 @@ class OptionSelector extends React.Component {
 
   render() {
     let options = this.props.options.map((opt, i) => {
-      return <li key={`opt-${i}`} onClick={() => this.onSelect(opt.value)} style={{cursor: 'pointer'}}>{opt.label}</li>;
+      return <li key={`opt-${i}`} onClick={() => this.onSelect(opt)} style={{cursor: 'pointer'}}>{opt[this.props.labelKey]}</li>;
     });
 
     var display = this.state.isVisible ? {display: 'block'} : {display: 'none'};
@@ -56,6 +57,7 @@ OptionSelector.displayName = 'OptionSelector';
 
 OptionSelector.propTypes = {
   initialValue: React.PropTypes.string,
+  labelKey: React.PropTypes.string,
   onSelectCallBack: React.PropTypes.func,
   options: React.PropTypes.array
 };
