@@ -32,7 +32,9 @@ class OptionSelector extends React.Component {
 
   onSelect(opt) {
     this.setState({label: opt[this.props.labelKey], isVisible: false});
-    this.props.onSelectCallBack(opt);
+    if(this.props.onSelectCallBack) {
+      this.props.onSelectCallBack(opt);
+    }
   }
 
   showOptions() {
@@ -45,10 +47,10 @@ class OptionSelector extends React.Component {
     });
     var display = this.state.isVisible ? {display: 'block'} : {display: 'none'};
     var optsStyles = Object.assign({}, optionSelectorStyles.options, display);
-
+    var classes = this.props.classes || 'sv-button link link-info';
     return (
       <div style={optionSelectorStyles.container}>
-        <button className="sv-button link link-info" onClick={()=>this.showOptions()}>{this.state.label}</button>
+        <button className={classes} onClick={()=>this.showOptions()}>{this.state.label}</button>
         <ul style={optsStyles}>
           {options}
         </ul>
@@ -60,10 +62,11 @@ class OptionSelector extends React.Component {
 OptionSelector.displayName = 'OptionSelector';
 
 OptionSelector.propTypes = {
+  classes: React.PropTypes.string,
   initialValue: React.PropTypes.string,
   labelKey: React.PropTypes.string,
   onSelectCallBack: React.PropTypes.func,
-  options: React.PropTypes.array
+  options: React.PropTypes.array.isRequired
 };
 
 OptionSelector.defaultProps = {
