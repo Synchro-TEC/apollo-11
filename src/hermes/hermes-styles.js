@@ -1,5 +1,5 @@
 const baseStyle = {
-  bottom: '0',
+  bottom: '0px',
   left: '15%',
   fontFamily: 'inherit',
   maxHeight: '300px',
@@ -18,7 +18,7 @@ const baseButtonStyle = {
   fontSize: '1.2em',
   height: '1em',
   outline: 'none',
-  padding: '0'
+  padding: '0px'
 };
 
 const HermesStyles = {

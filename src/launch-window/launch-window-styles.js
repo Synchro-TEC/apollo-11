@@ -1,8 +1,8 @@
 const styles = {
   overlayStyles: {
     position: 'fixed',
-    top: 0,
-    left: 0,
+    top: '0px',
+    left: '0px',
     width: '100%',
     height: '100%',
     zIndex: 99,
@@ -26,7 +26,7 @@ const styles = {
     cursor: 'pointer',
     float: 'right',
     fontSize: '1.6em',
-    margin: '-15px 0'
+    margin: '-15px 0px'
   }
 };
 
