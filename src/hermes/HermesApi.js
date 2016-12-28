@@ -1,10 +1,11 @@
 import { EventEmitter } from 'events';
+import HermesConstantes from './HermesConstants';
 
 const hermesAPI = {...EventEmitter.prototype,
   messages: [],
   title: '',
   context: '',
-  allowedContexts: ['info', 'error', 'success', 'notice'],
+  position: '',
 
   addMessage(id, message, isDeletable) {
     if (this.getIndex(id) === -1) {
@@ -26,11 +27,20 @@ const hermesAPI = {...EventEmitter.prototype,
   },
 
   setContext(context) {
-    if(this.allowedContexts.indexOf(context) >= 0) {
+    if(HermesConstantes.allowedContexts.indexOf(context) >= 0) {
       this.context = context;
       this.emitChange();
     } else {
-      throw TypeError(`${context} is not allowed, context should be on of ${this.allowedContexts.toString()}.`);
+      throw TypeError(`${context} is not allowed, context should be on of ${HermesConstantes.allowedContexts.toString()}.`);
+    }
+  },
+
+  setPosition(position) {
+    if(HermesConstantes.allowedPositions.indexOf(position) >= 0) {
+      this.position = position;
+      this.emitChange();
+    } else {
+      throw TypeError(`${position} is not allowed, position should be on of ${HermesConstantes.allowedPositions.toString()}.`);
     }
   },
 

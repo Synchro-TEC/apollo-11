@@ -1,9 +1,11 @@
 import React from 'react';
 import Update from 'react-addons-update';
-import HermesAPI from './hermes-api';
-import Message from './message';
-import HermesStyles from './hermes-styles';
+import HermesAPI from './HermesApi';
+import HermesMessageItem from './HermesMessageItem';
+import HermesStyles from './HermesStyles';
+import HermesConstantes from './HermesConstants';
 import uuid from 'uuid';
+import classNames from 'classnames';
 
 var _hideTimeOut;
 class Hermes extends React.Component {
@@ -16,6 +18,7 @@ class Hermes extends React.Component {
       autoCloseInMiliseconds: this.props.autoCloseInMiliseconds,
       context: this.props.context,
       messages: [],
+      position: this.props.position,
       title: this.props.title,
       visible: false
     };
@@ -35,6 +38,7 @@ class Hermes extends React.Component {
     let newState = Update(this.state, {
       context: {$set: HermesAPI.context || this.props.context},
       messages: {$set: HermesAPI.messages},
+      position: {$set: HermesAPI.position || this.props.position},
       title: {$set: HermesAPI.title || this.props.title},
       visible: {$set: HermesAPI.messages.length}
     });
@@ -58,6 +62,10 @@ class Hermes extends React.Component {
     HermesAPI.setContext(newContext);
   }
 
+  static setPosition(newPosition) {
+    HermesAPI.setPosition(newPosition);
+  }
+
   static setTitle(newTitle) {
     HermesAPI.setTitle(newTitle);
   }
@@ -77,38 +85,46 @@ class Hermes extends React.Component {
 
   render() {
 
-    var createMessage = function(message) {
-      return <Message key={message.id} message={message} />;
+    let createMessage = function(message) {
+      return <HermesMessageItem key={message.id} message={message} />;
     };
 
-    var visible = this.state.visible ? 'block' : 'none';
-
+    let visible = this.state.visible ? 'block' : 'none';
     const display = {display: visible};
-    const styles = Object.assign({}, display, HermesStyles[this.state.context]);
+    let cssClasses = classNames('sv-messagebox sv-no-margins', this.state.context);
+    const styles = Object.assign({}, display, HermesStyles[this.state.position]);
+
 
     return (
-      <div style={styles}>
-        <h3>{this.state.title}<button onClick={() => this.hide()} style={HermesStyles.closeButtonHermes}>&times;</button></h3>
-        <ul style={HermesStyles.msgListStyle}>
-          {this.state.messages.map(createMessage)}
-        </ul>
+      <div className={cssClasses} style={styles}>
+        <button className='sv-messagebox__close' onClick={() => this.hide()}>&times;</button>
+        <header>
+          <h6>{this.state.title}</h6>
+        </header>
+        <main>
+          <ul style={HermesStyles.msgListStyle}>
+            {this.state.messages.map(createMessage)}
+          </ul>
+        </main>
       </div>
     );
   }
 }
 
+
 Hermes.defaultProps = {
   autoClose: true,
   autoCloseInMiliseconds: 10000,
   context: 'info',
+  position: 'bottom',
   title: ''
 };
 
 Hermes.propTypes = {
   autoClose: React.PropTypes.bool,
   autoCloseInMiliseconds: React.PropTypes.number,
-  context: React.PropTypes.oneOf(['info', 'error', 'success', 'notice']).isRequired,
-  styles: React.PropTypes.object,
+  context: React.PropTypes.oneOf(HermesConstantes.allowedContexts).isRequired,
+  position: React.PropTypes.oneOf(HermesConstantes.allowedPositions),
   title: React.PropTypes.string
 };
 
