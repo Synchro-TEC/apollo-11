@@ -57,9 +57,8 @@ Filter.defaultProps = {
 
 Filter.propTypes = {
   placeholder: React.PropTypes.string,
-  onSearchWhenTyping: React.PropTypes.func,
   minimalSearchDelimiter: React.PropTypes.number,
-  onSearchWhenKeyDown: React.PropTypes.func,
+  onSearch: React.PropTypes.func,
   dataToFilter: React.PropTypes.array
 };
 
