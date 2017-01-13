@@ -10,15 +10,10 @@ class Filter extends React.Component {
     super(props);
   }
 
-  _onSearchWhenTyping(e) {
-    if(this.props.onSearchWhenTyping && this.props.minimalSearchDelimiter < e.target.value.length) {
-      this.props.onSearchWhenTyping();
-    }
-  }
-
-  _onSearchWhenKeyDown(e) {
-    if(this.props.onSearchWhenKeyDown && e.keyCode === 13) {
-      this.props.onSearchWhenKeyDown(e.target.value);
+  _onSearch(values) {
+    values.searchValue = document.getElementById('query').value;
+    if(this.props.onSearch) {
+      this.props.onSearch(values);
     }
   }
 
@@ -33,15 +28,11 @@ class Filter extends React.Component {
           <span className='label at-first'>
             <i className='fa fa-search fa-fw'/>
           </span>
-          <input className='on-center'
-                 onChange={(e) => this._onSearchWhenTyping(e)}
-                 onKeyDown={(e) => this._onSearchWhenKeyDown(e)}
-                 placeholder={placeholder}
-                 type='search'/>
+          <input className='on-center' id='query' placeholder={placeholder} type='search'/>
           <span className='label-action at-last' style={overlay}> Filter
             <i className='fa fa-sliders fa-fw'/>
           </span>
-          <FilterOptions>
+          <FilterOptions onSearch={(values) => this._onSearch(values)}>
             {this.props.children}
           </FilterOptions>
         </div>

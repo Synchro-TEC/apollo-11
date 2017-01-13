@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import _isEmpty from 'lodash/isEmpty';
-import _includes from 'lodash/includes';
+import _assign from 'lodash/assign';
 
 class FilterOptions extends React.Component {
 
@@ -44,6 +44,7 @@ class FilterOptions extends React.Component {
         }
       }
     });
+    this.props.onSearch(this.values);
     this.values = {};
   }
 
@@ -87,11 +88,9 @@ class FilterOptions extends React.Component {
         <section className='action-container--content'>
           {this.renderChildrenAndGetFieldNames(this.props.children)}
           <footer>
-            <button className='sv-button link link-danger sv-pull-left'>
-              Clear All
-            </button>
+            <button className='sv-button link link-danger sv-pull-left'> Clear All </button>
             <button className='sv-button link link-info sv-pull-right'
-                    onClick={(e) => { e.preventDefault(); this.onChangeMaster(e)}}>Apply Filter
+                    onClick={(e) => { e.preventDefault(); this.onChangeMaster()}}> Apply Filter
             </button>
             <button className='sv-button link link-cancel sv-pull-right'>Cancel</button>
           </footer>
@@ -100,6 +99,10 @@ class FilterOptions extends React.Component {
     );
   }
 }
+
+FilterOptions.propTypes = {
+  onSearch: React.PropTypes.func,
+};
 
 FilterOptions.displayName = 'FilterOptions';
 
