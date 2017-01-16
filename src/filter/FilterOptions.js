@@ -26,6 +26,16 @@ class FilterOptions extends React.Component {
     }
   }
 
+  clearAll() {
+    for(let i = 0; i<this.fields.length; i++) {
+      if(this.fields[i].type === 'radio' || this.fields[i].type === 'checkbox') {
+        this.fields[i].checked = false;
+      } else {
+        this.fields[i].value = '';
+      }
+    }
+  }
+
   onChangeMaster() {
     this.fields.map((field) => {
       if(field.type === 'select-one' && !_isEmpty(field.value)) {
@@ -88,7 +98,8 @@ class FilterOptions extends React.Component {
         <section className='action-container--content'>
           {this.renderChildrenAndGetFieldNames(this.props.children)}
           <footer>
-            <button className='sv-button link link-danger sv-pull-left'> Clear All </button>
+            <button className='sv-button link link-danger sv-pull-left'
+                    onClick={(e) => { e.preventDefault(); this.clearAll()}}> Clear All </button>
             <button className='sv-button link link-info sv-pull-right'
                     onClick={(e) => { e.preventDefault(); this.onChangeMaster()}}> Apply Filter
             </button>
