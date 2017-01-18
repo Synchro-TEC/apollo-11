@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import _isEmpty from 'lodash/isEmpty';
-import _assign from 'lodash/assign';
+import filterStyles from './filter-styles';
 
 class FilterOptions extends React.Component {
 
@@ -101,36 +101,46 @@ class FilterOptions extends React.Component {
 
   render() {
 
-    let filterOptionsVisibility = { display: this.state.isOpen ? 'block': 'none' };
+    let filterOptionsStyles = Object.assign({width: '100%'}, {display: this.state.isOpen ? 'block': 'none'});
+
+    let filterSpanStyles = Object.assign({},
+      {display: this.props.hasFilterOptions ? 'block': 'none'},
+      {color: this.state.isOpen ? '#2196f3': '#455a64'}
+    );
 
     return (
-      <section className='action-container' style={filterOptionsVisibility}>
-        <div className='sv-triangle on-right'/>
-        <section className='action-container--content'>
-          {this.renderChildrenAndGetFieldNames(this.props.children)}
-          <footer>
-            <button className='sv-button link link-danger sv-pull-left'
-                    onClick={(e) => { e.preventDefault(); this.clearAll()}}>
-              Clear All
-            </button>
-            <button className='sv-button link link-info sv-pull-right'
-                    onClick={(e) => { e.preventDefault(); this.onChangeMaster()}}>
-              Apply Filter
-            </button>
-            <button className='sv-button link link-cancel sv-pull-right'
-                    onClick={(e) => {  e.preventDefault(); this.close()}}>
-              Cancel
-            </button>
-          </footer>
+      <div>
+        <span className='label-action at-last' onClick={() => this.toggleVisibility()} style={filterSpanStyles}> Filter
+          <i className='fa fa-sliders fa-fw'/>
+        </span>
+        <section className='action-container' style={filterOptionsStyles}>
+          <div className='sv-triangle on-right'/>
+          <section className='action-container--content'>
+            {this.renderChildrenAndGetFieldNames(this.props.children)}
+            <footer>
+              <button className='sv-button link link-danger sv-pull-left'
+                      onClick={(e) => { e.preventDefault(); this.clearAll()}}>
+                Clear All
+              </button>
+              <button className='sv-button link link-info sv-pull-right'
+                      onClick={(e) => { e.preventDefault(); this.onChangeMaster()}}>
+                Apply Filter
+              </button>
+              <button className='sv-button link link-cancel sv-pull-right'
+                      onClick={(e) => {  e.preventDefault(); this.close()}}>
+                Cancel
+              </button>
+            </footer>
+          </section>
         </section>
-      </section>
+      </div>
     );
   }
 }
 
 FilterOptions.propTypes = {
   onSearch: React.PropTypes.func,
-  searchFields: React.PropTypes.array
+  hasFilterOptions: React.PropTypes.bool
 };
 
 FilterOptions.displayName = 'FilterOptions';

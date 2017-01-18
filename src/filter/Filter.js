@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import FilterOptions from './FilterOptions';
+import _isUndefined from 'lodash/isUndefined';
 
 class Filter extends React.Component {
 
@@ -23,8 +24,7 @@ class Filter extends React.Component {
 
   render() {
 
-    const { placeholder } = this.props;
-    let overlay = { display: this.props.children ? 'block': 'none'};
+    const { placeholder, children } = this.props;
 
     return (
       <form className='sv-form'>
@@ -33,12 +33,8 @@ class Filter extends React.Component {
             <i className='fa fa-search fa-fw'/>
           </span>
           <input className='on-center' id='query' placeholder={placeholder} type='search'/>
-          <span className='label-action at-last'
-                onClick={() => this.toggleVisibilityOfFilterOptions()}
-                style={overlay}> Filter
-            <i className='fa fa-sliders fa-fw'/>
-          </span>
-          <FilterOptions onSearch={(values) => this._onSearch(values)} ref='filterOptions'>
+          <FilterOptions hasFilterOptions={!_isUndefined(children)}
+                         onSearch={(values) => this._onSearch(values)} ref='filterOptions'>
             {this.props.children}
           </FilterOptions>
         </div>
