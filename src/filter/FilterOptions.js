@@ -9,7 +9,7 @@ class FilterOptions extends React.Component {
 
   constructor(props) {
     super(props);
-
+    this.state = { isOpen: false };
     this.namesOfFields = [];
     this.fields = [];
     this.values = {};
@@ -58,6 +58,14 @@ class FilterOptions extends React.Component {
     this.values = {};
   }
 
+  toggleVisibility() {
+    this.setState({isOpen: !this.state.isOpen});
+  }
+
+  close() {
+    this.setState({isOpen: false});
+  }
+
   renderChildrenAndGetFieldNames(children) {
     return (
       React.Children.map(children, (child) => {
@@ -92,18 +100,27 @@ class FilterOptions extends React.Component {
   }
 
   render() {
+
+    let filterOptionsVisibility = { display: this.state.isOpen ? 'block': 'none' };
+
     return (
-      <section className='action-container'>
+      <section className='action-container' style={filterOptionsVisibility}>
         <div className='sv-triangle on-right'/>
         <section className='action-container--content'>
           {this.renderChildrenAndGetFieldNames(this.props.children)}
           <footer>
             <button className='sv-button link link-danger sv-pull-left'
-                    onClick={(e) => { e.preventDefault(); this.clearAll()}}> Clear All </button>
-            <button className='sv-button link link-info sv-pull-right'
-                    onClick={(e) => { e.preventDefault(); this.onChangeMaster()}}> Apply Filter
+                    onClick={(e) => { e.preventDefault(); this.clearAll()}}>
+              Clear All
             </button>
-            <button className='sv-button link link-cancel sv-pull-right'>Cancel</button>
+            <button className='sv-button link link-info sv-pull-right'
+                    onClick={(e) => { e.preventDefault(); this.onChangeMaster()}}>
+              Apply Filter
+            </button>
+            <button className='sv-button link link-cancel sv-pull-right'
+                    onClick={(e) => {  e.preventDefault(); this.close()}}>
+              Cancel
+            </button>
           </footer>
         </section>
       </section>
@@ -113,6 +130,7 @@ class FilterOptions extends React.Component {
 
 FilterOptions.propTypes = {
   onSearch: React.PropTypes.func,
+  searchFields: React.PropTypes.array
 };
 
 FilterOptions.displayName = 'FilterOptions';

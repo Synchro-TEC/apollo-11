@@ -1,6 +1,6 @@
 {
   "name": "apollo-11",
-  "version": "0.0.1",
+  "version": "0.1.8",
   "description": "Apollo Project",
   "main": "lib/index.js",
   "scripts": {
@@ -40,7 +40,7 @@
   "dependencies": {
     "classnames": "^2.2.5",
     "lodash.max": "^4.0.1",
-    "react-addons-update": "^15.4.1",
+    "react-addons-update": "^15.4.2",
     "uuid": "^3.0.1"
   }
 }
