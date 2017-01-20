@@ -103,7 +103,7 @@ class FilterOptions extends React.Component {
 
     let filterOptionsStyles = _assign({width: '100%'}, {display: this.state.isOpen ? 'block': 'none'});
 
-    let filterSpanStyles = _assign({},
+    let filterSpanStyles = _assign(
       {display: this.props.hasFilterOptions ? 'block': 'none'},
       {color: this.state.isOpen ? '#2196f3': '#455a64'}
     );
