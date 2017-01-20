@@ -3,7 +3,6 @@
  */
 import React from 'react';
 import _isEmpty from 'lodash/isEmpty';
-import filterStyles from './filter-styles';
 
 class FilterOptions extends React.Component {
 
@@ -12,7 +11,7 @@ class FilterOptions extends React.Component {
     this.state = { isOpen: false };
     this.namesOfFields = [];
     this.fields = [];
-    this.values = {};
+    this.filtervalues = {};
   }
 
   componentDidMount() {
@@ -39,23 +38,23 @@ class FilterOptions extends React.Component {
   onApplyFilter() {
     this.fields.map((field) => {
       if(field.type === 'select-one' && field.value !== '') {
-        this.values[field.name] = field.value;
+        this.filtervalues[field.name] = field.value;
       } else {
         if(field.type === 'radio' && field.checked) {
-          this.values[field.name] = field.value;
+          this.filtervalues[field.name] = field.value;
         } else {
           if (field.type === 'checkbox' && field.checked) {
-            if(this.values[field.name]) {
-              this.values[field.name].push(field.value);
+            if(this.filtervalues[field.name]) {
+              this.filtervalues[field.name].push(field.value);
             } else {
-              this.values[field.name] = [field.value];
+              this.filtervalues[field.name] = [field.value];
             }
           }
         }
       }
     });
-    this.props.onSearch(this.values);
-    this.values = {};
+    this.props.onSearch(this.filtervalues);
+    this.filtervalues = {};
   }
 
   toggleVisibility() {
@@ -110,8 +109,10 @@ class FilterOptions extends React.Component {
 
     return (
       <div>
-        <span className='label-action at-last' onClick={() => this.toggleVisibility()} style={filterSpanStyles}> Filter
-          <i className='fa fa-sliders fa-fw'/>
+        <span className='label-action at-last'
+          onClick={() => this.toggleVisibility()}
+          style={filterSpanStyles}> Filter
+            <i className='fa fa-sliders fa-fw'/>
         </span>
         <section className='action-container' style={filterOptionsStyles}>
           <div className='sv-triangle on-right'/>
@@ -119,16 +120,16 @@ class FilterOptions extends React.Component {
             {this.renderChildrenAndGetFieldNames(this.props.children)}
             <footer>
               <button className='sv-button link link-danger sv-pull-left'
-                      onClick={(e) => { e.preventDefault(); this.clearAll()}}>
-                Clear All
+                onClick={(e) => { e.preventDefault(); this.clearAll()}}>
+                  Clear All
               </button>
               <button className='sv-button link link-info sv-pull-right'
-                      onClick={(e) => { e.preventDefault(); this.onApplyFilter()}}>
-                Apply Filter
+                onClick={(e) => { e.preventDefault(); this.onApplyFilter()}}>
+                  Apply Filter
               </button>
               <button className='sv-button link link-cancel sv-pull-right'
-                      onClick={(e) => {  e.preventDefault(); this.close()}}>
-                Cancel
+                onClick={(e) => {  e.preventDefault(); this.close()}}>
+                  Cancel
               </button>
             </footer>
           </section>
