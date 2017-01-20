@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import _isEmpty from 'lodash/isEmpty';
+import _assign from 'lodash/assign';
 
 class FilterOptions extends React.Component {
 
@@ -100,9 +101,9 @@ class FilterOptions extends React.Component {
 
   render() {
 
-    let filterOptionsStyles = Object.assign({width: '100%'}, {display: this.state.isOpen ? 'block': 'none'});
+    let filterOptionsStyles = _assign({width: '100%'}, {display: this.state.isOpen ? 'block': 'none'});
 
-    let filterSpanStyles = Object.assign({},
+    let filterSpanStyles = _assign({},
       {display: this.props.hasFilterOptions ? 'block': 'none'},
       {color: this.state.isOpen ? '#2196f3': '#455a64'}
     );

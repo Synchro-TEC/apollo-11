@@ -6,6 +6,7 @@ import FilterOptions from './FilterOptions';
 import _isUndefined from 'lodash/isUndefined';
 import _isEmpty from 'lodash/isEmpty';
 import _head from 'lodash/head';
+import _assign from 'lodash/assign';
 
 class Filter extends React.Component {
 
@@ -27,7 +28,7 @@ class Filter extends React.Component {
       valueOfSearch[nameOfField] = inputElement.value;
     }
 
-    return Object.assign({}, this.filterOptionValues, valueOfSearch);
+    return _assign({}, this.filterOptionValues, valueOfSearch);
   }
 
   _onSearch(filterOptionValues) {
@@ -39,6 +40,7 @@ class Filter extends React.Component {
 
   _onSearchWhenPressEnter(e) {
     if(this.props.onSearch && e.keyCode === 13) {
+      e.preventDefault();
       this.props.onSearch(this.addSearchValue());
     }
   }
@@ -56,7 +58,7 @@ class Filter extends React.Component {
           <input className='on-center'
             id='query'
             name={name}
-            onKeyDown={(e) => this._onSearchWhenPressEnter(e)}
+            onKeyDown={(e) => { this._onSearchWhenPressEnter(e) }}
             placeholder={placeholder}
             type='search'
           />
