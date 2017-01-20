@@ -11,10 +11,33 @@ class Filter extends React.Component {
     super(props);
   }
 
-  _onSearch(values) {
-    values.searchValue = document.getElementById('query').value;
+  /**
+   * Adiciona o value do campo de busca ao objeto e retorna o objeto modificado
+   * @param filterOptionValues
+   * @returns {*}
+   */
+  addSearchValue(filterOptionValues) {
+    let inputElement = document.getElementById('query');
+    let nameOfField = inputElement.name;
+    if(filterOptionValues === null) {
+      let value = {};
+      value[nameOfField] = inputElement.value;
+      return value;
+    } else {
+      filterOptionValues[nameOfField] = inputElement.value;
+      return filterOptionValues
+    }
+  }
+
+  _onSearch(filterOptionValues) {
     if(this.props.onSearch) {
-      this.props.onSearch(values);
+      this.props.onSearch(this.addSearchValue(filterOptionValues));
+    }
+  }
+
+  _searchWhenKeyDown(e) {
+    if(this.props.onSearch && e.target.keyCode === 13) {
+      this.props.onSearch(this.addSearchValue(null));
     }
   }
 
@@ -24,7 +47,7 @@ class Filter extends React.Component {
 
   render() {
 
-    const { placeholder, children } = this.props;
+    const { placeholder, name, children } = this.props;
 
     return (
       <form className='sv-form'>
@@ -32,9 +55,14 @@ class Filter extends React.Component {
           <span className='label at-first'>
             <i className='fa fa-search fa-fw'/>
           </span>
-          <input className='on-center' id='query' placeholder={placeholder} type='search'/>
+          <input className='on-center'
+                 id='query'
+                 name={name}
+                 onKeyDown={(e) => this._searchWhenKeyDown(e)}
+                 placeholder={placeholder}
+                 type='search' />
           <FilterOptions hasFilterOptions={!_isUndefined(children)}
-                         onSearch={(values) => this._onSearch(values)} ref='filterOptions'>
+                         onSearch={(filterOptionValues) => this._onSearch(filterOptionValues)} ref='filterOptions'>
             {this.props.children}
           </FilterOptions>
         </div>
@@ -45,14 +73,13 @@ class Filter extends React.Component {
 
 Filter.defaultProps = {
   placeholder: 'Type to search!',
-  minimalSearchDelimiter: 0
+  name: 'searchValue'
 };
 
 Filter.propTypes = {
-  placeholder: React.PropTypes.string,
-  minimalSearchDelimiter: React.PropTypes.number,
+  name: React.PropTypes.string,
   onSearch: React.PropTypes.func,
-  dataToFilter: React.PropTypes.array
+  placeholder: React.PropTypes.string
 };
 
 Filter.displayName = 'Filter';

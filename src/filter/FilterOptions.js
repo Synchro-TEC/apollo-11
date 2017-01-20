@@ -36,9 +36,9 @@ class FilterOptions extends React.Component {
     }
   }
 
-  onChangeMaster() {
+  onApplyFilter() {
     this.fields.map((field) => {
-      if(field.type === 'select-one' && !_isEmpty(field.value)) {
+      if(field.type === 'select-one' && field.value !== '') {
         this.values[field.name] = field.value;
       } else {
         if(field.type === 'radio' && field.checked) {
@@ -123,7 +123,7 @@ class FilterOptions extends React.Component {
                 Clear All
               </button>
               <button className='sv-button link link-info sv-pull-right'
-                      onClick={(e) => { e.preventDefault(); this.onChangeMaster()}}>
+                      onClick={(e) => { e.preventDefault(); this.onApplyFilter()}}>
                 Apply Filter
               </button>
               <button className='sv-button link link-cancel sv-pull-right'
