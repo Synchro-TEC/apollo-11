@@ -4,27 +4,50 @@
 import React from 'react';
 import FilterOptions from './FilterOptions';
 import _isUndefined from 'lodash/isUndefined';
+import _isEmpty from 'lodash/isEmpty';
+import _head from 'lodash/head';
+import _assign from 'lodash/assign';
 
 class Filter extends React.Component {
 
   constructor(props) {
     super(props);
+    this.filterOptionValues = {};
   }
 
-  _onSearch(values) {
-    values.searchValue = document.getElementById('query').value;
+  /**
+   * Associa um objeto valueOfSearch ao filterOptions
+   * @returns {*}
+   */
+  addSearchValue() {
+    let inputElement = _head(document.getElementsByName(this.props.name));
+    let nameOfField = inputElement.name;
+    let valueOfSearch = {};
+
+    if(!_isEmpty(inputElement.value)) {
+      valueOfSearch[nameOfField] = inputElement.value;
+    }
+
+    return _assign({}, this.filterOptionValues, valueOfSearch);
+  }
+
+  _onSearch(filterOptionValues) {
+    this.filterOptionValues = filterOptionValues;
     if(this.props.onSearch) {
-      this.props.onSearch(values);
+      this.props.onSearch(this.addSearchValue());
     }
   }
 
-  toggleVisibilityOfFilterOptions() {
-    this.refs.filterOptions.toggleVisibility();
+  _onSearchWhenPressEnter(e) {
+    if(this.props.onSearch && e.keyCode === 13) {
+      e.preventDefault();
+      this.props.onSearch(this.addSearchValue());
+    }
   }
 
   render() {
 
-    const { placeholder, children } = this.props;
+    const { placeholder, name, children } = this.props;
 
     return (
       <form className='sv-form'>
@@ -32,10 +55,17 @@ class Filter extends React.Component {
           <span className='label at-first'>
             <i className='fa fa-search fa-fw'/>
           </span>
-          <input className='on-center' id='query' placeholder={placeholder} type='search'/>
+          <input className='on-center'
+            id='query'
+            name={name}
+            onKeyDown={(e) => { this._onSearchWhenPressEnter(e) }}
+            placeholder={placeholder}
+            type='search'
+          />
           <FilterOptions hasFilterOptions={!_isUndefined(children)}
-                         onSearch={(values) => this._onSearch(values)} ref='filterOptions'>
-            {this.props.children}
+            onSearch={(filterOptionValues) => this._onSearch(filterOptionValues)}
+            ref='filterOptions'>
+              {this.props.children}
           </FilterOptions>
         </div>
       </form>
@@ -44,15 +74,13 @@ class Filter extends React.Component {
 }
 
 Filter.defaultProps = {
-  placeholder: 'Type to search!',
-  minimalSearchDelimiter: 0
+  placeholder: 'Type to search!'
 };
 
 Filter.propTypes = {
-  placeholder: React.PropTypes.string,
-  minimalSearchDelimiter: React.PropTypes.number,
+  name: React.PropTypes.string.isRequired,
   onSearch: React.PropTypes.func,
-  dataToFilter: React.PropTypes.array
+  placeholder: React.PropTypes.string
 };
 
 Filter.displayName = 'Filter';
