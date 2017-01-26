@@ -7,20 +7,26 @@ class Grid extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = {
-      data: this.props.data
-    }
+    this.initialData = this.props.data;
+    this.state = { data: this.initialData }
   }
 
-  onNextPage(dataFilteredByPaginate) {
-    this.setState({
-      data: dataFilteredByPaginate
-    });
+  componentWillMount() {
+    let oldData = this.state.data;
+    let newData = oldData.slice(0, 10);
+    this.setState({ data: newData });
+  }
+
+  paginateAction(paginateInformation) {
+    let startOfSlice = (paginateInformation.currentPage * paginateInformation.numberOfRecordsForPage) - paginateInformation.numberOfRecordsForPage;
+    let endOfSlice = startOfSlice + paginateInformation.numberOfRecordsForPage;
+    let newData = this.initialData.slice(startOfSlice, endOfSlice);
+    this.setState({ data: newData });
   }
 
   render() {
 
-    let {className, titles, data} = this.props;
+    let {className, titles} = this.props;
 
     return (
       <div className='sv-table-responsive-vertical'>
@@ -28,7 +34,12 @@ class Grid extends React.Component {
           <GridTitles gridTitles={titles}/>
           <GridRows gridRows={this.state.data}/>
           <Paginate gridData={this.state.data}
-                    onNextPage={(dataFilteredByPaginate) => this.onNextPage(dataFilteredByPaginate)}/>
+            onFirstPage={(paginateInformation) => this.paginateAction(paginateInformation)}
+            onLastPage={(paginateInformation) => this.paginateAction(paginateInformation)}
+            onNextPage={(paginateInformation) => this.paginateAction(paginateInformation)}
+            onPreviousPage={(paginateInformation) => this.paginateAction(paginateInformation)}
+            totalSizeOfData={this.props.data.length}
+          />
         </table>
       </div>
     );
