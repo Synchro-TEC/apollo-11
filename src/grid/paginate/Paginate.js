@@ -1,6 +1,6 @@
 import React from 'react';
 import PaginateStyles from './PaginateStyles';
-import _uniqueId from 'lodash/uniqueId';
+import _includes from 'lodash/includes';
 
 class Paginate extends React.Component {
 
@@ -60,7 +60,7 @@ class Paginate extends React.Component {
     let option = {};
     if(this.currentPage === i) {
       option = (
-        <li key={_uniqueId()} style={PaginateStyles.options}>
+        <li key={i} style={PaginateStyles.options}>
           <button className='sv-button link link-info'
                   onClick={(e) => this.specifPage(e)}
                   style={{fontWeight: 'bold', color: '#455a64'}}> {i} </button>
@@ -68,7 +68,7 @@ class Paginate extends React.Component {
       );
     } else {
       option = (
-        <li key={_uniqueId()} style={PaginateStyles.options}>
+        <li key={i} style={PaginateStyles.options}>
           <button
             className='sv-button link link-info'
             onClick={(e) => this.specifPage(e)}> {i} </button>
@@ -80,60 +80,24 @@ class Paginate extends React.Component {
 
   render() {
     let paginationOptions = [];
-    // let trocouNVezes = 1;
-    // for(let i = 1; i<=this.totalOfPieces; i++) {
-    //   if(i<=5) {
-    //     if(this.currentPage > 5 && paginationOptions.length === 5) {
-    //       paginationOptions.shift();
-    //       paginationOptions.push(this.colorPaginationOptionIfNeeded(i));
-    //     } else {
-    //       paginationOptions.push(this.colorPaginationOptionIfNeeded(i))
-    //     }
-    //   } else {
-    //     if(trocouNVezes<=5) {
-    //       if(this.currentPage > 5 && paginationOptions.length === 5) {
-    //         paginationOptions.shift();
-    //         paginationOptions.push(this.colorPaginationOptionIfNeeded(i));
-    //         trocouNVezes++;
-    //       }
-    //     }
-    //   }
-    // }
+    let cp = this.currentPage;
 
-    if(this.currentPage === 1) {
-      for(let i = this.currentPage; i<=this.currentPage+4; i++) {
-        paginationOptions.push(this.colorPaginationOptionIfNeeded(i));
+    if (this.currentPage === 1) cp += 4;
+    if (cp % 5 === 0) {
+      for(let i = cp; i>=cp-4; i--) {
+        paginationOptions.unshift(this.colorPaginationOptionIfNeeded(i));
       }
     } else {
-      if(this.currentPage % 5 === 0) {
-        for(let i = this.currentPage; i>=this.currentPage-4; i--) {
-          paginationOptions.unshift(this.colorPaginationOptionIfNeeded(i));
-        }
-      } else {
-        for (let i = this.currentPage - 1; i > 0; i--) {
-          debugger;
-          if (i === 1) {
-            paginationOptions.unshift(this.colorPaginationOptionIfNeeded(i));
-            break
-          }
-          if (i % 5 === 0) {
-            break
-          }
-          paginationOptions.unshift(this.colorPaginationOptionIfNeeded(i));
-        }
-        for(let i = this.currentPage; i >= this.currentPage; i++) {
-          if (i % 5 === 0 ) {
-            paginationOptions.push(this.colorPaginationOptionIfNeeded(i));
-            break
-          }
-          paginationOptions.push(this.colorPaginationOptionIfNeeded(i));
-        }
+      let i = this.currentPage, j = this.currentPage;
+      while(i % 5 !== 0) {
+        paginationOptions.unshift(this.colorPaginationOptionIfNeeded(i));
+        i--;
+      }
+      while(j % 5 !== 0) {
+        paginationOptions.push(this.colorPaginationOptionIfNeeded(j+1));
+        j++;
       }
     }
-
-    // for(let i = this.currentPage; i<=this.currentPage; i++) {
-    //   paginationOptions.push(this.colorPaginationOptionIfNeeded(i));
-    // }
 
     return (
       <ul style={PaginateStyles.list}>
