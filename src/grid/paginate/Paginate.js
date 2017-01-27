@@ -114,15 +114,16 @@ class Paginate extends React.Component {
     let paginationOptions = [];
 
     if(this.totalOfPieces <= 10) {
-      for(let i = this.totalOfPieces; i>=1; i--) {
+      for(let i = this.totalOfPieces - 2; i>=1; i--) {
         paginationOptions.unshift(this.colorPaginationOptionAndPutGapIfNeeded(i));
       }
     } else if((this.totalOfPieces - this.currentPage) <= 2) {
+      debugger;
       for(let i = 1; i<=2; i++) {
         paginationOptions.push(this.colorPaginationOptionAndPutGapIfNeeded(i));
       }
       paginationOptions.push(this.colorPaginationOptionAndPutGapIfNeeded('...'));
-      for(let i = this.totalOfPieces - 4; i<= this.totalOfPieces; i++) {
+      for(let i = this.totalOfPieces - 4; i<= this.totalOfPieces - 2; i++) {
         paginationOptions.push(this.colorPaginationOptionAndPutGapIfNeeded(i));
       }
     } else if((this.totalOfPieces - this.currentPage) <= 5) {
@@ -130,7 +131,7 @@ class Paginate extends React.Component {
         paginationOptions.push(this.colorPaginationOptionAndPutGapIfNeeded(i));
       }
       paginationOptions.push(this.colorPaginationOptionAndPutGapIfNeeded('...'));
-      for(let i = this.currentPage - 2; i<= this.totalOfPieces; i++) {
+      for(let i = this.currentPage - 2; i<= this.totalOfPieces - 2; i++) {
         paginationOptions.push(this.colorPaginationOptionAndPutGapIfNeeded(i));
       }
     } else if(this.currentPage - 1 >= 6) {
@@ -154,6 +155,7 @@ class Paginate extends React.Component {
       paginationOptions.push(this.colorPaginationOptionAndPutGapIfNeeded('...'));
     }
 
+    //Sempre coloca as duas ultimas paginas no array de opções
     for(let i = 1; i>=0; i--) {
       paginationOptions.push(this.colorPaginationOptionAndPutGapIfNeeded(this.totalOfPieces-i));
     }
