@@ -113,7 +113,11 @@ class Paginate extends React.Component {
   render() {
     let paginationOptions = [];
 
-    if((this.totalOfPieces - this.currentPage) <= 2) {
+    if(this.totalOfPieces <= 10) {
+      for(let i = this.totalOfPieces; i>=1; i--) {
+        paginationOptions.unshift(this.colorPaginationOptionAndPutGapIfNeeded(i));
+      }
+    } else if((this.totalOfPieces - this.currentPage) <= 2) {
       for(let i = 1; i<=2; i++) {
         paginationOptions.push(this.colorPaginationOptionAndPutGapIfNeeded(i));
       }
