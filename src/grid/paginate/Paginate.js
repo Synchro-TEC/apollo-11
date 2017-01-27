@@ -1,6 +1,6 @@
 import React from 'react';
 import PaginateStyles from './PaginateStyles';
-import _includes from 'lodash/includes';
+import _uniqueId from 'lodash/uniqueId';
 
 class Paginate extends React.Component {
 
@@ -78,25 +78,80 @@ class Paginate extends React.Component {
     return option;
   }
 
+  colorPaginationOptionAndPutGapIfNeeded(i) {
+    let option = {};
+
+    if(i === '...') {
+      option = (
+        <li key={_uniqueId()} style={PaginateStyles.gapOption}>
+          <span style={PaginateStyles.gap}>{i}</span>
+        </li>
+      );
+    } else {
+      if(this.currentPage === i) {
+        option = (
+          <li key={i} style={PaginateStyles.options}>
+            <button className='sv-button link link-info'
+                    onClick={(e) => this.specifPage(e)}
+                    style={{fontWeight: 'bold', color: '#455a64'}}> {i} </button>
+          </li>
+        );
+      } else {
+        option = (
+          <li key={i} style={PaginateStyles.options}>
+            <button
+              className='sv-button link link-info'
+              onClick={(e) => this.specifPage(e)}> {i} </button>
+          </li>
+        );
+      }
+    }
+
+    return option;
+  }
+
   render() {
     let paginationOptions = [];
-    let cp = this.currentPage;
 
-    if (this.currentPage === 1) cp += 4;
-    if (cp % 5 === 0) {
-      for(let i = cp; i>=cp-4; i--) {
-        paginationOptions.unshift(this.colorPaginationOptionIfNeeded(i));
+    if((this.totalOfPieces - this.currentPage) <= 2) {
+      for(let i = 1; i<=2; i++) {
+        paginationOptions.push(this.colorPaginationOptionAndPutGapIfNeeded(i));
       }
-    } else {
-      let i = this.currentPage, j = this.currentPage;
-      while(i % 5 !== 0) {
-        paginationOptions.unshift(this.colorPaginationOptionIfNeeded(i));
-        i--;
+      paginationOptions.push(this.colorPaginationOptionAndPutGapIfNeeded('...'));
+      for(let i = this.totalOfPieces - 4; i<= this.totalOfPieces; i++) {
+        paginationOptions.push(this.colorPaginationOptionAndPutGapIfNeeded(i));
       }
-      while(j % 5 !== 0) {
-        paginationOptions.push(this.colorPaginationOptionIfNeeded(j+1));
-        j++;
+    } else if((this.totalOfPieces - this.currentPage) <= 5) {
+      for(let i = 1; i<=2; i++) {
+        paginationOptions.push(this.colorPaginationOptionAndPutGapIfNeeded(i));
       }
+      paginationOptions.push(this.colorPaginationOptionAndPutGapIfNeeded('...'));
+      for(let i = this.currentPage - 2; i<= this.totalOfPieces; i++) {
+        paginationOptions.push(this.colorPaginationOptionAndPutGapIfNeeded(i));
+      }
+    } else if(this.currentPage - 1 >= 6) {
+      for(let i = 1; i<=2; i++) {
+        paginationOptions.push(this.colorPaginationOptionAndPutGapIfNeeded(i));
+      }
+      paginationOptions.push(this.colorPaginationOptionAndPutGapIfNeeded('...'));
+      for(let i = 2; i>=-2; i--) {
+        paginationOptions.push(this.colorPaginationOptionAndPutGapIfNeeded(this.currentPage -i));
+      }
+      paginationOptions.push(this.colorPaginationOptionAndPutGapIfNeeded('...'));
+    } else if(this.currentPage <= 6 && this.currentPage >= 3) {
+      for(let i = this.currentPage + 2; i>=1; i--) {
+        paginationOptions.unshift(this.colorPaginationOptionAndPutGapIfNeeded(i));
+      }
+      paginationOptions.push(this.colorPaginationOptionAndPutGapIfNeeded('...'));
+    } else if (this.currentPage <= 2){
+      for(let i = 1; i<=5; i++) {
+        paginationOptions.push(this.colorPaginationOptionAndPutGapIfNeeded(i));
+      }
+      paginationOptions.push(this.colorPaginationOptionAndPutGapIfNeeded('...'));
+    }
+
+    for(let i = 1; i>=0; i--) {
+      paginationOptions.push(this.colorPaginationOptionAndPutGapIfNeeded(this.totalOfPieces-i));
     }
 
     return (
