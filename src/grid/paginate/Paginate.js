@@ -12,7 +12,7 @@ class Paginate extends React.Component {
   }
 
   /**
-   * Monta um objeto com informações do paginate que são importantes para quem o usa
+   * Monta um objeto com informações do paginate que são importantes para quem usa
    * @returns {{}}
    */
   mountPaginateInformation() {
@@ -56,28 +56,6 @@ class Paginate extends React.Component {
     this.props.onChooseASpecifPage(this.mountPaginateInformation());
   }
 
-  colorPaginationOptionIfNeeded(i) {
-    let option = {};
-    if(this.currentPage === i) {
-      option = (
-        <li key={i} style={PaginateStyles.options}>
-          <button className='sv-button link link-info'
-                  onClick={(e) => this.specifPage(e)}
-                  style={{fontWeight: 'bold', color: '#455a64'}}> {i} </button>
-        </li>
-      );
-    } else {
-      option = (
-        <li key={i} style={PaginateStyles.options}>
-          <button
-            className='sv-button link link-info'
-            onClick={(e) => this.specifPage(e)}> {i} </button>
-        </li>
-      );
-    }
-    return option;
-  }
-
   colorPaginationOptionAndPutGapIfNeeded(i) {
     let option = {};
 
@@ -90,15 +68,15 @@ class Paginate extends React.Component {
     } else {
       if(this.currentPage === i) {
         option = (
-          <li key={i} style={PaginateStyles.options}>
+          <li key={_uniqueId()} style={PaginateStyles.options}>
             <button className='sv-button link link-info'
                     onClick={(e) => this.specifPage(e)}
-                    style={{fontWeight: 'bold', color: '#455a64'}}> {i} </button>
+                    style={PaginateStyles.optionSelected}> {i} </button>
           </li>
         );
       } else {
         option = (
-          <li key={i} style={PaginateStyles.options}>
+          <li key={_uniqueId()} style={PaginateStyles.options}>
             <button
               className='sv-button link link-info'
               onClick={(e) => this.specifPage(e)}> {i} </button>
@@ -110,55 +88,88 @@ class Paginate extends React.Component {
     return option;
   }
 
-  render() {
-    let paginationOptions = [];
+  getGap() {
+    return this.colorPaginationOptionAndPutGapIfNeeded('...')
+  }
+
+  createInitialOptionPages() {
+    let initialPages = [];
+
+    if(this.totalOfPieces >= 2) {
+      for(let i = 1; i<=2; i++) {
+        initialPages.push(
+          this.colorPaginationOptionAndPutGapIfNeeded(i)
+        );
+      }
+    } else {
+      initialPages.push(this.colorPaginationOptionAndPutGapIfNeeded(this.totalOfPieces));
+    }
+
+    return initialPages;
+  }
+
+  createMiddleOptionPages() {
+    let middlePages = [];
 
     if(this.totalOfPieces <= 10) {
-      for(let i = this.totalOfPieces - 2; i>=1; i--) {
-        paginationOptions.unshift(this.colorPaginationOptionAndPutGapIfNeeded(i));
-      }
+  	  for(let i = this.totalOfPieces - 2; i>=3; i--) {
+  	    middlePages.unshift(this.colorPaginationOptionAndPutGapIfNeeded(i));
+  	  }
     } else if((this.totalOfPieces - this.currentPage) <= 2) {
-      debugger;
-      for(let i = 1; i<=2; i++) {
-        paginationOptions.push(this.colorPaginationOptionAndPutGapIfNeeded(i));
-      }
-      paginationOptions.push(this.colorPaginationOptionAndPutGapIfNeeded('...'));
+      // Se faltam apenas 2 a frente, é preciso manter o terceiro numero atrás
+      // (let i = this.totalOfPieces - 4)
+      middlePages.push(this.getGap());
       for(let i = this.totalOfPieces - 4; i<= this.totalOfPieces - 2; i++) {
-        paginationOptions.push(this.colorPaginationOptionAndPutGapIfNeeded(i));
+         middlePages.push(this.colorPaginationOptionAndPutGapIfNeeded(i));
       }
-    } else if((this.totalOfPieces - this.currentPage) <= 5) {
-      for(let i = 1; i<=2; i++) {
-        paginationOptions.push(this.colorPaginationOptionAndPutGapIfNeeded(i));
+	  } else if((this.totalOfPieces-this.currentPage) <= 5) {
+	   // Se ainda faltam mais de dois numeros a frente nao e
+     // preciso manter 3 numeros atras (let i = this.currentPage - 2)
+	   for(let i = this.currentPage - 2; i<=this.totalOfPieces-2; i++) {
+	     middlePages.push(this.colorPaginationOptionAndPutGapIfNeeded(i));
+	   }
+	   middlePages.unshift(this.getGap());
+	 } else if (this.currentPage <= 2) {
+	   // Sempre entra aqui ao carregar a pagina, ou quando o usuario volta
+	   // para a primeira pagina, gera as 4 opcoes a frente
+	   for(let i = 3; i<=5; i++) {
+	     middlePages.push(this.colorPaginationOptionAndPutGapIfNeeded(i));
+	   }
+     middlePages.push(this.getGap());
+	  } else if(this.currentPage <= 6 && this.currentPage >= 3) {
+	    //Mantem as opcoes de paginacao, sempre duas a frente da selecionada
+	    for(let i = this.currentPage + 2; i>=3; i--) {
+        middlePages.unshift(this.colorPaginationOptionAndPutGapIfNeeded(i));
+	    }
+	    middlePages.push(this.colorPaginationOptionAndPutGapIfNeeded('...'));
+	  } else if(this.currentPage - 1 >= 6) {
+	      // Parte do meio, que mantem as retissencias dos dois lados
+	    middlePages.push(this.getGap());
+	    for(let i = 2; i>=-2; i--) {
+		  middlePages.push(this.colorPaginationOptionAndPutGapIfNeeded(this.currentPage -i));
+	    }
+      middlePages.push(this.getGap());
+	  }
+
+    return middlePages;
+  }
+
+  createLastOptionPages() {
+    let lastPages = [];
+
+    if(this.totalOfPieces >= 4) {
+      for(let i = this.totalOfPieces; i>this.totalOfPieces-2; i--) {
+        lastPages.unshift(this.colorPaginationOptionAndPutGapIfNeeded(i));
       }
-      paginationOptions.push(this.colorPaginationOptionAndPutGapIfNeeded('...'));
-      for(let i = this.currentPage - 2; i<= this.totalOfPieces - 2; i++) {
-        paginationOptions.push(this.colorPaginationOptionAndPutGapIfNeeded(i));
-      }
-    } else if(this.currentPage - 1 >= 6) {
-      for(let i = 1; i<=2; i++) {
-        paginationOptions.push(this.colorPaginationOptionAndPutGapIfNeeded(i));
-      }
-      paginationOptions.push(this.colorPaginationOptionAndPutGapIfNeeded('...'));
-      for(let i = 2; i>=-2; i--) {
-        paginationOptions.push(this.colorPaginationOptionAndPutGapIfNeeded(this.currentPage -i));
-      }
-      paginationOptions.push(this.colorPaginationOptionAndPutGapIfNeeded('...'));
-    } else if(this.currentPage <= 6 && this.currentPage >= 3) {
-      for(let i = this.currentPage + 2; i>=1; i--) {
-        paginationOptions.unshift(this.colorPaginationOptionAndPutGapIfNeeded(i));
-      }
-      paginationOptions.push(this.colorPaginationOptionAndPutGapIfNeeded('...'));
-    } else if (this.currentPage <= 2){
-      for(let i = 1; i<=5; i++) {
-        paginationOptions.push(this.colorPaginationOptionAndPutGapIfNeeded(i));
-      }
-      paginationOptions.push(this.colorPaginationOptionAndPutGapIfNeeded('...'));
+    } else if(this.totalOfPieces === 3) {
+      lastPages.push(this.colorPaginationOptionAndPutGapIfNeeded(this.totalOfPieces));
     }
 
-    //Sempre coloca as duas ultimas paginas no array de opções
-    for(let i = 1; i>=0; i--) {
-      paginationOptions.push(this.colorPaginationOptionAndPutGapIfNeeded(this.totalOfPieces-i));
-    }
+    return lastPages;
+  }
+
+  render() {
+    let paginationOptions = [];
 
     return (
       <ul style={PaginateStyles.list}>
@@ -173,7 +184,9 @@ class Paginate extends React.Component {
             Anterior
           </button>
         </li>
-        {paginationOptions}
+        {this.createInitialOptionPages()}
+        {this.createMiddleOptionPages()}
+        {this.createLastOptionPages()}
         <li style={PaginateStyles.options}>
           <button className='sv-button link link-info' onClick={() => this.nextPage()}>
             Próximo

@@ -9,6 +9,7 @@ const optionsBaseStyle = {
 const PaginateStyles = {
   list: {display: 'inline-flex'},
   options: optionsBaseStyle,
+  optionSelected: {fontWeight: 'bold', color: '#455a64'},
   gapOption: _assign({}, optionsBaseStyle, {paddingLeft: '10px', paddingRight: '10px', fontSize: '1.2rem'}),
   gap: {color: '#d3d3d3', backgroundColor: '#fafafa'}
 };
