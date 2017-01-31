@@ -35,13 +35,11 @@ class Grid extends React.Component {
           <GridRows gridRows={this.state.data}/>
         </table>
         <div className='sv-text-center'>
-          <Paginate gridData={this.state.data}
+          <Paginate
             onChooseASpecifPage={(paginateInformation) => this.paginateAction(paginateInformation)}
-            onFirstPage={(paginateInformation) => this.paginateAction(paginateInformation)}
-            onLastPage={(paginateInformation) => this.paginateAction(paginateInformation)}
             onNextPage={(paginateInformation) => this.paginateAction(paginateInformation)}
             onPreviousPage={(paginateInformation) => this.paginateAction(paginateInformation)}
-            totalSizeOfData={this.props.data.length}
+            totalSizeOfData={this.initialData.length}
           />
         </div>
       </div>

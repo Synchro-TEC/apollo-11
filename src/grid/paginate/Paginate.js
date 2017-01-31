@@ -1,5 +1,4 @@
 import React from 'react';
-import PaginateStyles from './PaginateStyles';
 import _uniqueId from 'lodash/uniqueId';
 
 class Paginate extends React.Component {
@@ -37,20 +36,6 @@ class Paginate extends React.Component {
     this.props.onPreviousPage(this.mountPaginateInformation());
   }
 
-  lastPage() {
-    if(this.currentPage < this.totalOfPieces) {
-      this.currentPage = this.totalOfPieces;
-    }
-    this.props.onLastPage(this.mountPaginateInformation());
-  }
-
-  firstPage() {
-    if(this.currentPage > 1) {
-      this.currentPage = 1;
-    }
-    this.props.onFirstPage(this.mountPaginateInformation());
-  }
-
   specifPage(e) {
     this.currentPage = parseInt(e.target.textContent);
     this.props.onChooseASpecifPage(this.mountPaginateInformation());
@@ -60,28 +45,12 @@ class Paginate extends React.Component {
     let option = {};
 
     if(i === '...') {
-      option = (
-        <li key={_uniqueId()} style={PaginateStyles.gapOption}>
-          <span style={PaginateStyles.gap}>{i}</span>
-        </li>
-      );
+      option = <span key={_uniqueId()}>{i}</span>;
     } else {
       if(this.currentPage === i) {
-        option = (
-          <li key={_uniqueId()} style={PaginateStyles.options}>
-            <button className='sv-button link link-info'
-                    onClick={(e) => this.specifPage(e)}
-                    style={PaginateStyles.optionSelected}> {i} </button>
-          </li>
-        );
+        option = <em key={i}> {i} </em>;
       } else {
-        option = (
-          <li key={_uniqueId()} style={PaginateStyles.options}>
-            <button
-              className='sv-button link link-info'
-              onClick={(e) => this.specifPage(e)}> {i} </button>
-          </li>
-        );
+        option = <a onClick={(e) => this.specifPage(e)} key={i}> {i} </a>;
       }
     }
 
@@ -169,45 +138,32 @@ class Paginate extends React.Component {
   }
 
   render() {
-    let paginationOptions = [];
-
     return (
-      <ul style={PaginateStyles.list}>
-        <li style={PaginateStyles.options}>
-          <button className='sv-button link link-info' onClick={() => this.firstPage()}>
-            <i className='fa fa-angle-double-left fa-fw' />
-            Primeiro
-          </button>
-        </li>
-        <li style={PaginateStyles.options}>
-          <button className='sv-button link link-info' onClick={() => this.previousPage()}>
-            Anterior
-          </button>
-        </li>
+      <div className='sv-paginate'>
+        <button
+          className='sv-button link link-info'
+          disabled={this.currentPage === 1}
+          onClick={() => this.previousPage()}>
+          <i className='fa fa-chevron-left'/>
+          Anterior
+        </button>
         {this.createInitialOptionPages()}
         {this.createMiddleOptionPages()}
         {this.createLastOptionPages()}
-        <li style={PaginateStyles.options}>
-          <button className='sv-button link link-info' onClick={() => this.nextPage()}>
-            Próximo
-          </button>
-        </li>
-        <li style={PaginateStyles.options}>
-          <button className='sv-button link link-info' onClick={() => this.lastPage()}>
-            Último
-            <i className='fa fa-angle-double-right fa-fw' />
-          </button>
-        </li>
-      </ul>
+        <button
+          className='sv-button link link-info'
+          disabled={this.currentPage === this.totalOfPieces}
+          onClick={() => this.nextPage()}>
+          Próximo
+          <i className='fa fa-chevron-right'/>
+        </button>
+      </div>
     );
   }
 }
 
 Paginate.propTypes = {
-  gridData: React.PropTypes.array.isRequired,
   onChooseASpecifPage:React.PropTypes.func,
-  onFirstPage: React.PropTypes.func,
-  onLastPage: React.PropTypes.func,
   onNextPage: React.PropTypes.func,
   onPreviousPage: React.PropTypes.func,
   totalSizeOfData: React.PropTypes.number
