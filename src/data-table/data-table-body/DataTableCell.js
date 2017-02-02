@@ -3,7 +3,7 @@ import _uniqueId from 'lodash/uniqueId';
 
 class DataTableCell extends React.Component {
   render() {
-    let { valueOfCell } = this.props;
+    let {valueOfCell} = this.props;
 
     return (
       <td>

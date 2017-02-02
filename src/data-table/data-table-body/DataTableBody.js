@@ -5,13 +5,13 @@ import _uniqueId from 'lodash/uniqueId';
 class DataTableBody extends React.Component {
   render() {
 
-    let rows = this.props.dataTableRows.map((dataTableRow, i) => {
-      let cells = this.props.dataTableHeader.map((dataTableHeaderKey, j) => {
+    let rows = this.props.dataTableRows.map((dataTableRow) => {
+      let cells = this.props.dataTableHeader.map((dataTableHeaderKey) => {
         return (
           <DataTableCell key={_uniqueId('cell_')} valueOfCell={dataTableRow[dataTableHeaderKey]}/>
         );
       });
-      return (<tr key={_uniqueId('row_')}>{cells}</tr>);
+      return(<tr key={_uniqueId('row_')}>{cells}</tr>);
     });
 
     return (

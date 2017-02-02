@@ -18,7 +18,7 @@ class DataTable extends React.Component {
     return (
       <div className='sv-table-responsive-vertical'>
         <table className={className}>
-          <DataTableHeader>{this.props.children}</DataTableHeader>
+          <DataTableHeader onSort={this.props.onSort}>{this.props.children}</DataTableHeader>
           <DataTableBody dataTableRows={this.props.rows} dataTableHeader={this.keys} />
         </table>
       </div>
@@ -32,7 +32,8 @@ DataTable.defaultProps = {
 
 DataTable.propTypes = {
   className: React.PropTypes.string,
-  rows: React.PropTypes.array.isRequired
+  rows: React.PropTypes.array.isRequired,
+  onSort: React.PropTypes.func,
 };
 
 export default DataTable;
