@@ -5,20 +5,20 @@ class Paginate extends React.Component {
 
   constructor(props) {
     super(props);
-    this.numberOfRecordsForPage = 10;
     this.currentPage = 1;
-    this.totalOfPieces = Math.ceil(this.props.totalSizeOfData/this.numberOfRecordsForPage);
+    this.totalOfPieces = Math.ceil(this.props.totalSizeOfData/this.props.recordsForPage);
   }
 
   /**
-   * Monta um objeto com informações do paginate que são importantes para quem usa
+   * Monta um objeto com informações do paginate
    * @returns {{}}
    */
   mountPaginateInformation() {
+    let {recordsForPage} = this.props;
     let paginateInformation = {};
+    paginateInformation.limit = recordsForPage;
+    paginateInformation.offset = (recordsForPage*this.currentPage)-recordsForPage;
     paginateInformation.currentPage = this.currentPage;
-    paginateInformation.totalOfPieces = this.totalOfPieces;
-    paginateInformation.numberOfRecordsForPage = this.numberOfRecordsForPage;
     return paginateInformation;
   }
 
@@ -38,7 +38,7 @@ class Paginate extends React.Component {
 
   specifPage(e) {
     this.currentPage = parseInt(e.target.textContent);
-    this.props.onChooseASpecifPage(this.mountPaginateInformation());
+    this.props.onSelectASpecifPage(this.mountPaginateInformation());
   }
 
   colorPaginationOptionAndPutGapIfNeeded(i) {
@@ -112,7 +112,7 @@ class Paginate extends React.Component {
 	    }
 	    middlePages.push(this.colorPaginationOptionAndPutGapIfNeeded('...'));
 	  } else if(this.currentPage - 1 >= 6) {
-	      // Parte do meio, que mantem as retissencias dos dois lados
+	    // Parte do meio, que mantem as retissencias dos dois lados
 	    middlePages.push(this.getGap());
 	    for(let i = 2; i>=-2; i--) {
 		  middlePages.push(this.colorPaginationOptionAndPutGapIfNeeded(this.currentPage -i));
@@ -162,11 +162,16 @@ class Paginate extends React.Component {
   }
 }
 
+Paginate.defaultProps = {
+  recordsForPage: 10
+}
+
 Paginate.propTypes = {
-  onChooseASpecifPage:React.PropTypes.func,
+  recordsForPage: React.PropTypes.number,
+  onSelectASpecifPage: React.PropTypes.func,
   onNextPage: React.PropTypes.func,
   onPreviousPage: React.PropTypes.func,
-  totalSizeOfData: React.PropTypes.number
+  totalSizeOfData: React.PropTypes.number,
 };
 
 export default Paginate;

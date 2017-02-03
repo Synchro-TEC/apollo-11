@@ -57,7 +57,8 @@ class DataTableColumn extends React.Component {
 }
 
 DataTableColumn.propTypes = {
-  dataKey: React.PropTypes.string.isRequired
+  dataKey: React.PropTypes.string.isRequired,
+  sortable: React.PropTypes.bool,
 };
 
 export default DataTableColumn;

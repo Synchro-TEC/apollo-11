@@ -1,4 +1,5 @@
 import React from 'react';
+import _uniqueId from 'lodash/uniqueId';
 
 class DataTableHeader extends React.Component {
 
@@ -15,12 +16,18 @@ class DataTableHeader extends React.Component {
    * @return {object}
    */
   renderWithProps() {
-    return this.props.children.map((child, i) => {
-      let clone = React.cloneElement(
-        child, {onSort: this.props.onSort, key: `headerCell-${i}`}
+    if(Array.isArray(this.props.children)) {
+      return this.props.children.map((child, i) => {
+        let clone = React.cloneElement(
+          child, {onSort: this.props.onSort, key: `headerCell-${i}`}
+        );
+        return clone;
+      });
+    } else {
+      return React.cloneElement(
+        this.props.children, {onSort: this.props.onSort, key: _uniqueId('headerCell-')}
       );
-      return clone;
-    });
+    }
   }
 
   render() {

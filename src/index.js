@@ -5,6 +5,7 @@ import OptionSelector from './opition-selector/option-selector';
 import Filter from './filter/Filter';
 import DataTable from './data-table/DataTable';
 import DataTableColumn from './data-table/data-table-header/DataTableColumn.js';
+import Paginate from './paginate/Paginate.js';
 
 export {
   Hermes,
@@ -13,5 +14,6 @@ export {
   OptionSelector,
   Filter,
   DataTable,
-  DataTableColumn
+  DataTableColumn,
+  Paginate
 };
