@@ -11,9 +11,17 @@ class DataTableColumn extends React.Component {
   }
 
   onSort() {
-    let executeSort = () => {
-      this.props.onSort(this.props.dataKey, this.state.direction);
+    let executeSort;
+    
+    if(this.props.onSort) {
+      executeSort = () => {
+        let sortInfo = {};
+        sortInfo.columnKey = this.props.dataKey;
+        sortInfo.direction = this.state.direction;
+        this.props.onSort(sortInfo);
+      }
     }
+
     if(this.state.direction === 'desc' || this.state.direction === '') {
       this.setState({direction: 'asc'}, executeSort);
     } else {
