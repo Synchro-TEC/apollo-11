@@ -31,8 +31,13 @@ DataTable.defaultProps = {
 };
 
 DataTable.propTypes = {
+  //String, class to add in DataTable
   className: React.PropTypes.string,
+
+  //Array, the data to DataTable
   rows: React.PropTypes.array.isRequired,
+
+  //Callback function to exec when user makes sort in a column
   onSort: React.PropTypes.func,
 };
 

@@ -12,7 +12,7 @@ class DataTableColumn extends React.Component {
 
   onSort() {
     let executeSort;
-    
+
     if(this.props.onSort) {
       executeSort = () => {
         let sortInfo = {};

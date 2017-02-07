@@ -13,32 +13,33 @@ class Paginate extends React.Component {
    * Monta um objeto com informações do paginate
    * @returns {{}}
    */
-  mountPaginateInformation() {
+  mountPaginateInfo() {
     let {recordsForPage} = this.props;
-    let paginateInformation = {};
-    paginateInformation.limit = recordsForPage;
-    paginateInformation.offset = (recordsForPage*this.currentPage)-recordsForPage;
-    paginateInformation.currentPage = this.currentPage;
-    return paginateInformation;
+    let paginateInfo = {};
+    paginateInfo.limit = recordsForPage;
+    paginateInfo.offset = (recordsForPage*this.currentPage)-recordsForPage;
+    paginateInfo.currentPage = this.currentPage;
+
+    return paginateInfo;
   }
 
   nextPage() {
-    if(this.currentPage < this.totalOfPieces) {
+    if(this.props.onNextPage && this.currentPage < this.totalOfPieces) {
       this.currentPage += 1;
+      this.props.onNextPage(this.mountPaginateInfo());
     }
-    this.props.onNextPage(this.mountPaginateInformation());
   }
 
   previousPage() {
     if(this.currentPage > 1) {
       this.currentPage -= 1;
     }
-    this.props.onPreviousPage(this.mountPaginateInformation());
+    this.props.onPreviousPage(this.mountPaginateInfo());
   }
 
   specifPage(e) {
     this.currentPage = parseInt(e.target.textContent);
-    this.props.onSelectASpecifPage(this.mountPaginateInformation());
+    this.props.onSelectASpecifPage(this.mountPaginateInfo());
   }
 
   colorPaginationOptionAndPutGapIfNeeded(i) {
@@ -48,9 +49,9 @@ class Paginate extends React.Component {
       option = <span key={_uniqueId()}>{i}</span>;
     } else {
       if(this.currentPage === i) {
-        option = <em key={i}> {i} </em>;
+        option = <em key={_uniqueId()}> {i} </em>;
       } else {
-        option = <a onClick={(e) => this.specifPage(e)} key={i}> {i} </a>;
+        option = <a onClick={(e) => this.specifPage(e)} key={_uniqueId()}> {i} </a>;
       }
     }
 
@@ -138,6 +139,14 @@ class Paginate extends React.Component {
   }
 
   render() {
+    let paginateOptions = [];
+
+    if(this.props.onSelectASpecifPage) {
+      paginateOptions.push(this.createInitialOptionPages());
+      paginateOptions.push(this.createMiddleOptionPages());
+      paginateOptions.push(this.createLastOptionPages());
+    }
+
     return (
       <div className='sv-paginate'>
         <button
@@ -147,9 +156,7 @@ class Paginate extends React.Component {
           <i className='fa fa-chevron-left'/>
           Anterior
         </button>
-        {this.createInitialOptionPages()}
-        {this.createMiddleOptionPages()}
-        {this.createLastOptionPages()}
+          {paginateOptions}
         <button
           className='sv-button link link-info'
           disabled={this.currentPage === this.totalOfPieces}
@@ -167,10 +174,19 @@ Paginate.defaultProps = {
 }
 
 Paginate.propTypes = {
+  //Integer with number of records for page
   recordsForPage: React.PropTypes.number,
+
+  //Callback function to exec when user selects a page in option pages
   onSelectASpecifPage: React.PropTypes.func,
+
+  //Callback function to exec when user go to nextPage
   onNextPage: React.PropTypes.func,
+
+  //Callback function to exec when user go to previousPage
   onPreviousPage: React.PropTypes.func,
+
+  //Integer with length of an array
   totalSizeOfData: React.PropTypes.number,
 };
 

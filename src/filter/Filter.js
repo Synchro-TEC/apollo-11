@@ -78,8 +78,13 @@ Filter.defaultProps = {
 };
 
 Filter.propTypes = {
+  //String with the name of the search field
   name: React.PropTypes.string.isRequired,
+
+  //Callback function to exec when the user makes a search
   onSearch: React.PropTypes.func,
+
+  //String with the placeholder of search field
   placeholder: React.PropTypes.string
 };
 
