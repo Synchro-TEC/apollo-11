@@ -1,6 +1,6 @@
 {
   "name": "apollo-11",
-  "version": "0.3.3",
+  "version": "0.3.4",
   "description": "Apollo Project",
   "main": "lib/index.js",
   "scripts": {
