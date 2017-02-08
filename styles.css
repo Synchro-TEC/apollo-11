@@ -274,8 +274,6 @@ pre {
   text-align: center;
 }
 
-
-
 @media screen and (min-width: 641px) and (max-width: 960px) {
   .dm-sidebar {
     width: 180px;
