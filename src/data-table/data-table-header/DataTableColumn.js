@@ -1,46 +1,37 @@
 import React from 'react';
+import ReactDOM from 'react-dom';
 import _isObject from 'lodash/isObject';
 import _isUndefined from 'lodash/isUndefined';
-import classNames from 'classnames';
+import _uniqueId from 'lodash/uniqueId';
+import _eq from 'lodash/eq';
 
 class DataTableColumn extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = {direction: ''};
   }
 
   onSort() {
-    let executeSort;
-
-    if(this.props.onSort) {
-      executeSort = () => {
-        let sortInfo = {};
-        sortInfo.columnKey = this.props.dataKey;
-        sortInfo.direction = this.state.direction;
-        this.props.onSort(sortInfo);
-      }
-    }
-
-    if(this.state.direction === 'desc' || this.state.direction === '') {
-      this.setState({direction: 'asc'}, executeSort);
-    } else {
-      this.setState({direction: 'desc'}, executeSort);
-    }
+    this.props.setSortColumn(this.props.dataKey);
   }
 
   render() {
-    let {children, sortable} = this.props;
+    let {children, sortable, direction} = this.props;
     let dataColumnLabel = '';
     let directionOfSortClassName;
     let sortIcon = '';
 
-    if(this.state.direction === 'asc') {
-      directionOfSortClassName = 'fa fa-sort-asc sv-sort is--active';
-    } else if (this.state.direction === 'desc'){
-      directionOfSortClassName = 'fa fa-sort-desc sv-sort is--active';
-    } else {
-      directionOfSortClassName = 'fa fa-sort sv-sort';
+    switch (direction) {
+      case 'asc':
+        directionOfSortClassName = 'fa fa-sort-asc sv-sort is--active';
+        break;
+
+      case 'desc':
+        directionOfSortClassName = 'fa fa-sort-desc sv-sort is--active';
+        break;
+
+      default:
+        directionOfSortClassName = 'fa fa-sort sv-sort';
     }
 
     if(!_isUndefined(children)) {
@@ -52,11 +43,11 @@ class DataTableColumn extends React.Component {
     }
 
     if(sortable) {
-      sortIcon = <i onClick={() => this.onSort()} className={directionOfSortClassName}/>
+      sortIcon = <i className={directionOfSortClassName}/>
     }
 
     return (
-      <th>
+      <th onClick={(e) => this.onSort(e)}>
         {sortIcon}
         {dataColumnLabel}
       </th>

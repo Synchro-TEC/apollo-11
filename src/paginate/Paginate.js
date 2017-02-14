@@ -6,7 +6,7 @@ class Paginate extends React.Component {
   constructor(props) {
     super(props);
     this.currentPage = 1;
-    this.totalOfPieces = Math.ceil(this.props.totalSizeOfData/this.props.recordsForPage);
+    this.totalOfPieces = Math.ceil(this.props.totalSizeOfData/this.props.recordsByPage);
   }
 
   /**
@@ -14,10 +14,10 @@ class Paginate extends React.Component {
    * @returns {{}}
    */
   mountPaginateInfo() {
-    let {recordsForPage} = this.props;
+    let {recordsByPage} = this.props;
     let paginateInfo = {};
-    paginateInfo.limit = recordsForPage;
-    paginateInfo.offset = (recordsForPage*this.currentPage)-recordsForPage;
+    paginateInfo.limit = recordsByPage;
+    paginateInfo.offset = (recordsByPage*this.currentPage)-recordsByPage;
     paginateInfo.currentPage = this.currentPage;
 
     return paginateInfo;
@@ -170,12 +170,12 @@ class Paginate extends React.Component {
 }
 
 Paginate.defaultProps = {
-  recordsForPage: 10
+  recordsByPage: 10
 }
 
 Paginate.propTypes = {
-  //Integer with number of records for page
-  recordsForPage: React.PropTypes.number,
+  //Integer with number of records by page
+  recordsByPage: React.PropTypes.number,
 
   //Callback function to exec when user selects a page in option pages
   onSelectASpecifPage: React.PropTypes.func,
