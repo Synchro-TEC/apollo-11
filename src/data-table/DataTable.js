@@ -1,6 +1,5 @@
 import React from 'react';
 import DataTableBody from './data-table-body/DataTableBody';
-import Paginate from './paginate/Paginate';
 import DataTableHeader from './data-table-header/DataTableHeader';
 
 class DataTable extends React.Component {
@@ -13,13 +12,13 @@ class DataTable extends React.Component {
   }
 
   render() {
-    let {className, children} = this.props;
+    let {children, className, data, onSort} = this.props;
 
     return (
       <div className='sv-table-responsive-vertical'>
         <table className={className}>
-          <DataTableHeader onSort={this.props.onSort}>{this.props.children}</DataTableHeader>
-          <DataTableBody dataTableRows={this.props.data} dataTableHeader={this.keys} />
+          <DataTableHeader onSort={onSort}>{children}</DataTableHeader>
+          <DataTableBody dataTableHeader={this.keys} dataTableRows={data} />
         </table>
       </div>
     );
@@ -31,13 +30,8 @@ DataTable.defaultProps = {
 };
 
 DataTable.propTypes = {
-  //String, class to add in DataTable
   className: React.PropTypes.string,
-
-  //Array, the data to DataTable
   data: React.PropTypes.array.isRequired,
-
-  //Callback function to exec when user makes sort in a column
   onSort: React.PropTypes.func,
 };
 
