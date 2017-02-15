@@ -5,7 +5,7 @@ class DataTableHeader extends React.Component {
 
   constructor(props){
     super(props);
-    this.state = {beingSorted: {columnKey: '', direction: ''}}
+    this.state = {beingSorted: {columnKey: '', direction: ''}};
     this.setSortColumn = this.setSortColumn.bind(this);
     this.renderWithProps = this.renderWithProps.bind(this);
   }
