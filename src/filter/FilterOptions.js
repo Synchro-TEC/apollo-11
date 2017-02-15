@@ -124,16 +124,19 @@ class FilterOptions extends React.Component {
           <section className='action-container--content'>
             {this.renderChildrenAndGetFieldNames(this.props.children)}
             <footer>
-              <button className='sv-button link link-danger sv-pull-left'
-                onClick={(e) => { e.preventDefault(); this.clearAll()}}>
+              <button
+                className='sv-button link link-danger sv-pull-left'
+                onClick={(e) => { e.preventDefault(); this.clearAll();}}>
                   Clear All
               </button>
-              <button className='sv-button link link-info sv-pull-right'
-                onClick={(e) => { e.preventDefault(); this.onApplyFilter()}}>
+              <button
+                className='sv-button link link-info sv-pull-right'
+                onClick={(e) => { e.preventDefault(); this.onApplyFilter();}}>
                   Apply Filter
               </button>
-              <button className='sv-button link link-cancel sv-pull-right'
-                onClick={(e) => {  e.preventDefault(); this.close()}}>
+              <button
+                className='sv-button link link-cancel sv-pull-right'
+                onClick={(e) => {  e.preventDefault(); this.close();}}>
                   Cancel
               </button>
             </footer>
@@ -145,9 +148,9 @@ class FilterOptions extends React.Component {
 }
 
 FilterOptions.propTypes = {
+  hasFilterOptions: React.PropTypes.bool,
   onClearAll: React.PropTypes.func,
   onSearch: React.PropTypes.func,
-  hasFilterOptions: React.PropTypes.bool,
 };
 
 FilterOptions.displayName = 'FilterOptions';
