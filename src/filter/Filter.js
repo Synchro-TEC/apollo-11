@@ -62,8 +62,10 @@ class Filter extends React.Component {
             placeholder={placeholder}
             type='search'
           />
-          <FilterOptions hasFilterOptions={!_isUndefined(children)}
+          <FilterOptions
+            hasFilterOptions={!_isUndefined(children)}
             onSearch={(filterOptionValues) => this._onSearch(filterOptionValues)}
+            onClearAll={this.props.onClearAll}
             ref='filterOptions'>
               {this.props.children}
           </FilterOptions>
@@ -84,8 +86,11 @@ Filter.propTypes = {
   //Callback function to exec when the user makes a search
   onSearch: React.PropTypes.func,
 
+  //Callback function to exec when user clear all fields
+  onClearAll: React.PropTypes.func,
+
   //String with the placeholder of search field
-  placeholder: React.PropTypes.string
+  placeholder: React.PropTypes.string,
 };
 
 Filter.displayName = 'Filter';

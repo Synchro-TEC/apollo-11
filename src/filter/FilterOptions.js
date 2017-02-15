@@ -27,11 +27,15 @@ class FilterOptions extends React.Component {
   }
 
   clearAll() {
-    for(let i = 0; i<this.fields.length; i++) {
-      if(this.fields[i].type === 'radio' || this.fields[i].type === 'checkbox') {
-        this.fields[i].checked = false;
-      } else {
-        this.fields[i].value = '';
+    if(this.props.onClearAll) {
+      this.props.onClearAll();
+    } else {
+      for(let i = 0; i<this.fields.length; i++) {
+        if(this.fields[i].type === 'radio' || this.fields[i].type === 'checkbox') {
+          this.fields[i].checked = false;
+        } else {
+          this.fields[i].value = '';
+        }
       }
     }
   }
@@ -141,8 +145,9 @@ class FilterOptions extends React.Component {
 }
 
 FilterOptions.propTypes = {
+  onClearAll: React.PropTypes.func,
   onSearch: React.PropTypes.func,
-  hasFilterOptions: React.PropTypes.bool
+  hasFilterOptions: React.PropTypes.bool,
 };
 
 FilterOptions.displayName = 'FilterOptions';
