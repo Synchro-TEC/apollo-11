@@ -1,11 +1,7 @@
-/**
- * Created by gnf on 11/01/17.
- */
 import React from 'react';
 import FilterOptions from './FilterOptions';
 import _isUndefined from 'lodash/isUndefined';
 import _isEmpty from 'lodash/isEmpty';
-import _head from 'lodash/head';
 import _assign from 'lodash/assign';
 
 class Filter extends React.Component {
@@ -20,7 +16,8 @@ class Filter extends React.Component {
    * @returns {*}
    */
   addSearchValue() {
-    let inputElement = _head(document.getElementsByName(this.props.name));
+
+    let inputElement = document.getElementsByName(this.props.name)[0];
     let nameOfField = inputElement.name;
     let valueOfSearch = {};
 
@@ -47,7 +44,7 @@ class Filter extends React.Component {
 
   render() {
 
-    const { placeholder, name, children } = this.props;
+    const { placeholder, name, children, onClearAll } = this.props;
 
     return (
       <form className='sv-form'>
@@ -58,14 +55,14 @@ class Filter extends React.Component {
           <input className='on-center'
             id='query'
             name={name}
-            onKeyDown={(e) => { this._onSearchWhenPressEnter(e) }}
+            onKeyDown={(e) => { this._onSearchWhenPressEnter(e); }}
             placeholder={placeholder}
             type='search'
           />
           <FilterOptions
             hasFilterOptions={!_isUndefined(children)}
+            onClearAll={onClearAll}
             onSearch={(filterOptionValues) => this._onSearch(filterOptionValues)}
-            onClearAll={this.props.onClearAll}
             ref='filterOptions'>
               {this.props.children}
           </FilterOptions>
@@ -80,16 +77,9 @@ Filter.defaultProps = {
 };
 
 Filter.propTypes = {
-  //String with the name of the search field
   name: React.PropTypes.string.isRequired,
-
-  //Callback function to exec when the user makes a search
-  onSearch: React.PropTypes.func,
-
-  //Callback function to exec when user clear all fields
   onClearAll: React.PropTypes.func,
-
-  //String with the placeholder of search field
+  onSearch: React.PropTypes.func,
   placeholder: React.PropTypes.string,
 };
 
