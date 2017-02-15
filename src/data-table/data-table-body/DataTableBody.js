@@ -23,8 +23,8 @@ class DataTableBody extends React.Component {
 }
 
 DataTableBody.propTypes = {
+  dataTableHeader: React.PropTypes.array.isRequired,
   dataTableRows: React.PropTypes.array.isRequired,
-  dataTableHeader: React.PropTypes.array.isRequired
 };
 
 export default DataTableBody;

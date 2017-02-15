@@ -5,7 +5,7 @@ class DataTableHeader extends React.Component {
 
   constructor(props){
     super(props);
-    this.state = {beingSorted: {columnKey: '', direction: ''}}
+    this.state = {beingSorted: {columnKey: '', direction: ''}};
     this.setSortColumn = this.setSortColumn.bind(this);
     this.renderWithProps = this.renderWithProps.bind(this);
   }
@@ -25,7 +25,7 @@ class DataTableHeader extends React.Component {
 
     this.setState({beingSorted: newState}, () => {
       if(this.props.onSort) {
-        this.props.onSort(this.state.beingSorted)
+        this.props.onSort(this.state.beingSorted);
       } else {
         console.warn('When a column is sortable you need to pass a callback function to DataTable component.');
       }
@@ -44,27 +44,27 @@ class DataTableHeader extends React.Component {
     if(Array.isArray(this.props.children)) {
       return this.props.children.map((child, i) => {
         if(child.props.dataKey === this.state.beingSorted.columnKey) {
-          return React.cloneElement(child,
-            {onSort: this.props.onSort,
-             key: `headerCell-${i}`,
-             setSortColumn: this.setSortColumn,
-             direction: this.state.beingSorted.direction}
-          );
+          return React.cloneElement(child, {
+            onSort: this.props.onSort,
+            key: `headerCell-${i}`,
+            setSortColumn: this.setSortColumn,
+            direction: this.state.beingSorted.direction
+          });
         } else {
-          return React.cloneElement(child,
-            {onSort: this.props.onSort,
-             key: `headerCell-${i}`,
-             setSortColumn: this.setSortColumn}
-          );
+          return React.cloneElement(child, {
+            onSort: this.props.onSort,
+            key: `headerCell-${i}`,
+            setSortColumn: this.setSortColumn
+          });
         }
       });
     } else {
-      return React.cloneElement(this.props.children,
-        {onSort: this.props.onSort,
-         key: _uniqueId('headerCell-'),
-         setSortColumn: this.setSortColumn,
-         direction: this.state.beingSorted.direction}
-      );
+      return React.cloneElement(this.props.children, {
+        onSort: this.props.onSort,
+        key: _uniqueId('headerCell-'),
+        setSortColumn: this.setSortColumn,
+        direction: this.state.beingSorted.direction
+      });
     }
   }
 
@@ -76,5 +76,9 @@ class DataTableHeader extends React.Component {
     );
   }
 }
+
+DataTableHeader.propTypes = {
+  onSort: React.PropTypes.func,
+};
 
 export default DataTableHeader;

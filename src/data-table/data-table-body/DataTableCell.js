@@ -1,5 +1,4 @@
 import React from 'react';
-import _uniqueId from 'lodash/uniqueId';
 
 class DataTableCell extends React.Component {
   render() {

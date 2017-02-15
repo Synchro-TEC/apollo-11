@@ -51,7 +51,7 @@ class Paginate extends React.Component {
       if(this.currentPage === i) {
         option = <em key={_uniqueId()}> {i} </em>;
       } else {
-        option = <a onClick={(e) => this.specifPage(e)} key={_uniqueId()}> {i} </a>;
+        option = <a key={_uniqueId()} onClick={(e) => this.specifPage(e)}> {i} </a>;
       }
     }
 
@@ -59,7 +59,7 @@ class Paginate extends React.Component {
   }
 
   getGap() {
-    return this.colorPaginationOptionAndPutGapIfNeeded('...')
+    return this.colorPaginationOptionAndPutGapIfNeeded('...');
   }
 
   createInitialOptionPages() {
@@ -82,45 +82,44 @@ class Paginate extends React.Component {
     let middlePages = [];
 
     if(this.totalOfPieces <= 10) {
-  	  for(let i = this.totalOfPieces - 2; i>=3; i--) {
-  	    middlePages.unshift(this.colorPaginationOptionAndPutGapIfNeeded(i));
-  	  }
+      for(let i = this.totalOfPieces - 2; i>=3; i--) {
+        middlePages.unshift(this.colorPaginationOptionAndPutGapIfNeeded(i));
+      }
     } else if((this.totalOfPieces - this.currentPage) <= 2) {
       // Se faltam apenas 2 a frente, é preciso manter o terceiro numero atrás
       // (let i = this.totalOfPieces - 4)
       middlePages.push(this.getGap());
       for(let i = this.totalOfPieces - 4; i<= this.totalOfPieces - 2; i++) {
-         middlePages.push(this.colorPaginationOptionAndPutGapIfNeeded(i));
+        middlePages.push(this.colorPaginationOptionAndPutGapIfNeeded(i));
       }
-	  } else if((this.totalOfPieces-this.currentPage) <= 5) {
-	   // Se ainda faltam mais de dois numeros a frente nao e
-     // preciso manter 3 numeros atras (let i = this.currentPage - 2)
-	   for(let i = this.currentPage - 2; i<=this.totalOfPieces-2; i++) {
-	     middlePages.push(this.colorPaginationOptionAndPutGapIfNeeded(i));
-	   }
-	   middlePages.unshift(this.getGap());
-	 } else if (this.currentPage <= 2) {
-	   // Sempre entra aqui ao carregar a pagina, ou quando o usuario volta
-	   // para a primeira pagina, gera as 4 opcoes a frente
-	   for(let i = 3; i<=5; i++) {
-	     middlePages.push(this.colorPaginationOptionAndPutGapIfNeeded(i));
-	   }
-     middlePages.push(this.getGap());
-	  } else if(this.currentPage <= 6 && this.currentPage >= 3) {
-	    //Mantem as opcoes de paginacao, sempre duas a frente da selecionada
-	    for(let i = this.currentPage + 2; i>=3; i--) {
-        middlePages.unshift(this.colorPaginationOptionAndPutGapIfNeeded(i));
-	    }
-	    middlePages.push(this.colorPaginationOptionAndPutGapIfNeeded('...'));
-	  } else if(this.currentPage - 1 >= 6) {
-	    // Parte do meio, que mantem as retissencias dos dois lados
-	    middlePages.push(this.getGap());
-	    for(let i = 2; i>=-2; i--) {
-		  middlePages.push(this.colorPaginationOptionAndPutGapIfNeeded(this.currentPage -i));
-	    }
+    } else if((this.totalOfPieces-this.currentPage) <= 5) {
+      // Se ainda faltam mais de dois numeros a frente nao e
+      // preciso manter 3 numeros atras (let i = this.currentPage - 2)
+      for(let i = this.currentPage - 2; i<=this.totalOfPieces-2; i++) {
+        middlePages.push(this.colorPaginationOptionAndPutGapIfNeeded(i));
+      }
+      middlePages.unshift(this.getGap());
+    } else if (this.currentPage <= 2) {
+      // Sempre entra aqui ao carregar a pagina, ou quando o usuario volta
+      // para a primeira pagina, gera as 4 opcoes a frente
+      for(let i = 3; i<=5; i++) {
+        middlePages.push(this.colorPaginationOptionAndPutGapIfNeeded(i));
+      }
       middlePages.push(this.getGap());
-	  }
-
+    } else if(this.currentPage <= 6 && this.currentPage >= 3) {
+      //Mantem as opcoes de paginacao, sempre duas a frente da selecionada
+      for(let i = this.currentPage + 2; i>=3; i--) {
+        middlePages.unshift(this.colorPaginationOptionAndPutGapIfNeeded(i));
+      }
+      middlePages.push(this.colorPaginationOptionAndPutGapIfNeeded('...'));
+    } else if(this.currentPage - 1 >= 6) {
+      // Parte do meio, que mantem as retissencias dos dois lados
+      middlePages.push(this.getGap());
+      for(let i = 2; i>=-2; i--) {
+        middlePages.push(this.colorPaginationOptionAndPutGapIfNeeded(this.currentPage -i));
+      }
+      middlePages.push(this.getGap());
+    }
     return middlePages;
   }
 
@@ -171,22 +170,13 @@ class Paginate extends React.Component {
 
 Paginate.defaultProps = {
   recordsByPage: 10
-}
+};
 
 Paginate.propTypes = {
-  //Integer with number of records by page
-  recordsByPage: React.PropTypes.number,
-
-  //Callback function to exec when user selects a page in option pages
-  onSelectASpecifPage: React.PropTypes.func,
-
-  //Callback function to exec when user go to nextPage
   onNextPage: React.PropTypes.func,
-
-  //Callback function to exec when user go to previousPage
   onPreviousPage: React.PropTypes.func,
-
-  //Integer with length of an array
+  onSelectASpecifPage: React.PropTypes.func,
+  recordsByPage: React.PropTypes.number,
   totalSizeOfData: React.PropTypes.number,
 };
 

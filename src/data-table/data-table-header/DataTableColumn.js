@@ -1,9 +1,6 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
 import _isObject from 'lodash/isObject';
 import _isUndefined from 'lodash/isUndefined';
-import _uniqueId from 'lodash/uniqueId';
-import _eq from 'lodash/eq';
 
 class DataTableColumn extends React.Component {
 
@@ -16,7 +13,7 @@ class DataTableColumn extends React.Component {
   }
 
   render() {
-    let {children, sortable, direction} = this.props;
+    let {children, direction, sortable} = this.props;
     let dataColumnLabel = '';
     let directionOfSortClassName;
     let sortIcon = '';
@@ -43,7 +40,7 @@ class DataTableColumn extends React.Component {
     }
 
     if(sortable) {
-      sortIcon = <i className={directionOfSortClassName}/>
+      sortIcon = <i className={directionOfSortClassName}/>;
     }
 
     return (
@@ -57,6 +54,8 @@ class DataTableColumn extends React.Component {
 
 DataTableColumn.propTypes = {
   dataKey: React.PropTypes.string.isRequired,
+  direction: React.PropTypes.string,
+  setSortColumn: React.PropTypes.func,
   sortable: React.PropTypes.bool,
 };
 
