@@ -2,3 +2,10 @@ engines:
   eslint:
     enabled: true
     channel: "eslint-3"
+ratings:
+  paths:
+  - "**.js"
+  - "**.jsx"
+#exclude_paths:
+# use this to exclude folders from Code Climate analysis
+#- path here
