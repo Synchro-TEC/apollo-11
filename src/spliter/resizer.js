@@ -6,10 +6,10 @@ const Resizer = ({onMouseDown}) => {
   return (<span className={classes.join(' ')} onMouseDown={(e) => onMouseDown(e)} />);
 };
 
-Resizer.displayName = 'Resizer';
-
 Resizer.propTypes = {
   onMouseDown: React.PropTypes.func,
 };
+
+Resizer.displayName = 'Resizer';
 
 export default Resizer;
