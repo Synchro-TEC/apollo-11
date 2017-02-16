@@ -10,6 +10,26 @@ import classNames from 'classnames';
 var _hideTimeOut;
 class Hermes extends React.Component {
 
+  static addMessage(msg, isDeletable = false) {
+    HermesAPI.addMessage(uuid.v1(), msg, isDeletable);
+  }
+
+  static setContext(newContext) {
+    HermesAPI.setContext(newContext);
+  }
+
+  static setPosition(newPosition) {
+    HermesAPI.setPosition(newPosition);
+  }
+
+  static setTitle(newTitle) {
+    HermesAPI.setTitle(newTitle);
+  }
+
+  static clearMessages() {
+    HermesAPI.clearMessages();
+  }
+
   constructor(props) {
     super(props);
 
@@ -52,26 +72,6 @@ class Hermes extends React.Component {
         this.hide();
       }
     }, this.state.autoCloseInMiliseconds);
-  }
-
-  static addMessage(msg, isDeletable = false) {
-    HermesAPI.addMessage(uuid.v1(), msg, isDeletable);
-  }
-
-  static setContext(newContext) {
-    HermesAPI.setContext(newContext);
-  }
-
-  static setPosition(newPosition) {
-    HermesAPI.setPosition(newPosition);
-  }
-
-  static setTitle(newTitle) {
-    HermesAPI.setTitle(newTitle);
-  }
-
-  static clearMessages() {
-    HermesAPI.clearMessages();
   }
 
   hide() {

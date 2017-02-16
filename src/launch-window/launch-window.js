@@ -9,31 +9,31 @@ class LaunchWindow extends React.Component {
   }
 
   componentWillUpdate(nextProps, nextState) {
-      if (nextState.isVisible && !this.state.isVisible && this.props.beforeOpen) {
-          this.props.beforeOpen();
-      }
+    if(nextState.isVisible && !this.state.isVisible && this.props.beforeOpen) {
+      this.props.beforeOpen();
+    }
 
-      if (!nextState.isVisible && this.state.isVisible && this.props.beforeClose) {
-          this.props.beforeClose();
-      }
+    if (!nextState.isVisible && this.state.isVisible && this.props.beforeClose) {
+      this.props.beforeClose();
+    }
   }
 
   componentDidUpdate(prevProps, prevState) {
-      if (!prevState.isVisible && this.state.isVisible && this.props.afterOpen) {
-          this.props.afterOpen();
-      }
+    if(!prevState.isVisible && this.state.isVisible && this.props.afterOpen) {
+      this.props.afterOpen();
+    }
 
-      if (prevState.isVisible && !this.state.isVisible && this.props.afterClose) {
-          this.props.afterClose();
-      }
+    if(prevState.isVisible && !this.state.isVisible && this.props.afterClose) {
+      this.props.afterClose();
+    }
   }
 
   show() {
-      this.setState({isVisible: true});
+    this.setState({isVisible: true});
   }
 
   hide() {
-      this.setState({isVisible: false});
+    this.setState({isVisible: false});
   }
 
   onOverlayClicked() {
@@ -44,7 +44,7 @@ class LaunchWindow extends React.Component {
     if(this.props.onOverlayClicked) {
       this.props.onOverlayClicked();
     }
- }
+  }
 
   render() {
     var overlay;
@@ -54,27 +54,27 @@ class LaunchWindow extends React.Component {
     var closeButtonStyle = Object.assign(styles.closeButtonStyle, this.props.closeButtonStyle);
 
     if (this.state.isVisible) {
-        overlayStyles.display = 'block';
-        dialogStyles.display = 'block';
+      overlayStyles.display = 'block';
+      dialogStyles.display = 'block';
     } else {
-        overlayStyles.display = 'none';
-        dialogStyles.display = 'none';
+      overlayStyles.display = 'none';
+      dialogStyles.display = 'none';
     }
 
     if (this.props.showOverlay) {
-        overlay = (<div onClick={() => this.onOverlayClicked()} style={overlayStyles}></div>);
+      overlay = (<div onClick={() => this.onOverlayClicked()} style={overlayStyles}/>);
     }
 
     return (
-        <section className="launchWindow-wrapper">
-            {overlay}
-            <div style={dialogStyles}>
-                <a onClick={() => this.hide()} role="button" style={closeButtonStyle} >&times;</a>
-                <h2>{this.props.title}</h2>
-                {this.props.children}
-            </div>
-        </section>
-    )
+      <section className='launchWindow-wrapper'>
+        {overlay}
+        <div style={dialogStyles}>
+          <a onClick={() => this.hide()} role='button' style={closeButtonStyle} >&times;</a>
+          <h2>{this.props.title}</h2>
+          {this.props.children}
+        </div>
+      </section>
+    );
   }
 }
 

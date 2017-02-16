@@ -1,44 +1,28 @@
 import React from 'react';
 import FilterOptions from './FilterOptions';
 import _isUndefined from 'lodash/isUndefined';
-import _isEmpty from 'lodash/isEmpty';
-import _assign from 'lodash/assign';
 
 class Filter extends React.Component {
 
   constructor(props) {
     super(props);
-    this.filterOptionValues = {};
   }
 
-  /**
-   * Associa um objeto valueOfSearch ao filterOptions
-   * @returns {*}
-   */
-  addSearchValue() {
-
-    let inputElement = document.getElementsByName(this.props.name)[0];
-    let nameOfField = inputElement.name;
-    let valueOfSearch = {};
-
-    if(!_isEmpty(inputElement.value)) {
-      valueOfSearch[nameOfField] = inputElement.value;
+  applyFilter(filterOptionValues) {
+    //Recupera o valor do campo de busca a partir do nome
+    let searchFieldValue = document.getElementsByName(this.props.name)[0].value;
+    if(searchFieldValue !== '') {
+      filterOptionValues[this.props.name] = searchFieldValue;
     }
-
-    return _assign({}, this.filterOptionValues, valueOfSearch);
-  }
-
-  _onSearch(filterOptionValues) {
-    this.filterOptionValues = filterOptionValues;
-    if(this.props.onSearch) {
-      this.props.onSearch(this.addSearchValue());
+    if(this.props.onApplyFilter) {
+      this.props.onApplyFilter(filterOptionValues);
     }
   }
 
-  _onSearchWhenPressEnter(e) {
-    if(this.props.onSearch && e.keyCode === 13) {
+  searchByEnter(e) {
+    if(this.props.onSearchByEnter && e.keyCode === 13) {
       e.preventDefault();
-      this.props.onSearch(this.addSearchValue());
+      this.props.onSearchByEnter(e.target.value);
     }
   }
 
@@ -53,18 +37,17 @@ class Filter extends React.Component {
             <i className='fa fa-search fa-fw'/>
           </span>
           <input className='on-center'
-            id='query'
             name={name}
-            onKeyDown={(e) => { this._onSearchWhenPressEnter(e); }}
+            onKeyDown={(e) => {this.searchByEnter(e);}}
             placeholder={placeholder}
             type='search'
           />
           <FilterOptions
             hasFilterOptions={!_isUndefined(children)}
+            onApplyFilter={(filterOptionValues) => this.applyFilter(filterOptionValues)}
             onClearAll={onClearAll}
-            onSearch={(filterOptionValues) => this._onSearch(filterOptionValues)}
             ref='filterOptions'>
-              {this.props.children}
+            {this.props.children}
           </FilterOptions>
         </div>
       </form>
@@ -78,8 +61,9 @@ Filter.defaultProps = {
 
 Filter.propTypes = {
   name: React.PropTypes.string.isRequired,
+  onApplyFilter: React.PropTypes.func,
   onClearAll: React.PropTypes.func,
-  onSearch: React.PropTypes.func,
+  onSearchByEnter: React.PropTypes.func,
   placeholder: React.PropTypes.string,
 };
 

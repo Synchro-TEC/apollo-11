@@ -28,4 +28,8 @@ const HermesMessageItem = ({message}) => {
 
 HermesMessageItem.displayName = 'HermesMessageItem';
 
+HermesMessageItem.propTypes = {
+  message: React.PropTypes.object,
+};
+
 export default HermesMessageItem;

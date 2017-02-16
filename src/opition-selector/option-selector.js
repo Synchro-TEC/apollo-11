@@ -20,7 +20,7 @@ const optionSelectorStyles = {
     margin: '10px 0',
     lineHeight: '1.5',
   }
-}
+};
 
 class OptionSelector extends React.Component {
 
@@ -55,7 +55,7 @@ class OptionSelector extends React.Component {
           {options}
         </ul>
       </div>
-    )
+    );
   }
 }
 
@@ -71,6 +71,6 @@ OptionSelector.propTypes = {
 
 OptionSelector.defaultProps = {
   initialValue: '?'
-}
+};
 
 export default OptionSelector;

@@ -89,14 +89,14 @@ class Blocker extends React.Component {
     } : {});
 
     return shouldShowBlocker ? (
-      <div className="sv-blocker" style={loaderStyle}>
-        <div className="sv-blocker__content" style={contentStyle}>
+      <div className='sv-blocker' style={loaderStyle}>
+        <div className='sv-blocker__content' style={contentStyle}>
           {children}
         </div>
 
-        <div className="sv-blocker__background" style={bgStyle}>
-          <div className="sv-blocker__foreground" style={fgStyle}>
-            <div className="sv-blocker__message" style={msgStyle}>
+        <div className='sv-blocker__background' style={bgStyle}>
+          <div className='sv-blocker__foreground' style={fgStyle}>
+            <div className='sv-blocker__message' style={msgStyle}>
               {message || 'loading...'}
             </div>
           </div>

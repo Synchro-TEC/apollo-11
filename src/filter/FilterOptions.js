@@ -40,7 +40,7 @@ class FilterOptions extends React.Component {
     }
   }
 
-  onApplyFilter() {
+  applyFilter() {
     this.fields.map((field) => {
       if(field.type === 'select-one' && field.value !== '') {
         this.filtervalues[field.name] = field.value;
@@ -58,7 +58,7 @@ class FilterOptions extends React.Component {
         }
       }
     });
-    this.props.onSearch(this.filtervalues);
+    this.props.onApplyFilter(this.filtervalues);
     this.filtervalues = {};
   }
 
@@ -89,9 +89,6 @@ class FilterOptions extends React.Component {
           return child;
         } else {
           if(!_isEmpty(children.props)) {
-            if(children.props.type === 'checkbox') {
-              console.log(children.props.name);
-            }
             if(children.props.type === 'radio') {
               this.namesOfFields(children.props.name);
             }
@@ -131,7 +128,7 @@ class FilterOptions extends React.Component {
               </button>
               <button
                 className='sv-button link link-info sv-pull-right'
-                onClick={(e) => { e.preventDefault(); this.onApplyFilter();}}>
+                onClick={(e) => { e.preventDefault(); this.applyFilter();}}>
                   Apply Filter
               </button>
               <button
@@ -149,8 +146,8 @@ class FilterOptions extends React.Component {
 
 FilterOptions.propTypes = {
   hasFilterOptions: React.PropTypes.bool,
+  onApplyFilter: React.PropTypes.func,
   onClearAll: React.PropTypes.func,
-  onSearch: React.PropTypes.func,
 };
 
 FilterOptions.displayName = 'FilterOptions';
