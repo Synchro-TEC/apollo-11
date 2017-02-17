@@ -17,6 +17,7 @@ class Filter extends React.Component {
    * @return {void}
    */
   addSearchValueToFilterValues(filterValues) {
+    debugger;
     let searchFieldValue = document.getElementsByName(this.props.name)[0].value;
     if(searchFieldValue !== '') {
       filterValues[this.props.name] = searchFieldValue;
@@ -36,8 +37,8 @@ class Filter extends React.Component {
    * @return {void}
    */
   doFilterBySearchField(e) {
-    let isFilterWithOptions = this.refs.filterOptions.props.children;
     if(e.keyCode === 13) {
+      let isFilterWithOptions = this.refs.filterOptions.props.children;
       e.preventDefault();
       if(isFilterWithOptions) {
         this.refs.filterOptions.applyFilter();
@@ -75,10 +76,10 @@ class Filter extends React.Component {
             type='search'
           />
           <FilterOptions
+            addSearchValueToFilterValues={this.addSearchValueToFilterValues}
             applyFilterButtonLabel={applyFilterButtonLabel}
             cancelButtonLabel={cancelButtonLabel}
             clearAllButtonLabel={clearAllButtonLabel}
-            doFilterByApplyFilter={this.doFilterByApplyFilter}
             filterButtonLabel={filterButtonLabel}
             hasFilterOptions={!_isUndefined(children)}
             onClearAll={onClearAll}

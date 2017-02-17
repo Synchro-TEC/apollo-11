@@ -13,6 +13,7 @@ class FilterOptions extends React.Component {
     this.namesOfFields = [];
     this.fields = [];
     this.filterValues = {};
+    this.applyFilter = this.applyFilter.bind(this);
   }
 
   componentDidMount() {
@@ -40,7 +41,7 @@ class FilterOptions extends React.Component {
     }
   }
 
-  applyFilter() {
+  applyFilter() {    
     this.fields.map((field) => {
       if(field.type === 'select-one' && field.value !== '') {
         this.filterValues[field.name] = field.value;
@@ -168,7 +169,6 @@ FilterOptions.propTypes = {
   applyFilterButtonLabel: React.PropTypes.string,
   cancelButtonLabel: React.PropTypes.string,
   clearAllButtonLabel: React.PropTypes.string,
-  doFilterByApplyFilter: React.PropTypes.func,
   filterButtonLabel: React.PropTypes.string,
   hasFilterOptions: React.PropTypes.bool,
   onClearAll: React.PropTypes.func,
