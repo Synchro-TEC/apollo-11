@@ -6,7 +6,7 @@ class Filter extends React.Component {
 
   constructor(props) {
     super(props);
-    this.doFilterByApplyFilter = this.doFilterByApplyFilter.bind(this);
+    this.addSearchValueToFilterValues = this.addSearchValueToFilterValues.bind(this);
   }
 
   /**
