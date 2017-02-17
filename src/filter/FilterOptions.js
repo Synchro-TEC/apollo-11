@@ -142,7 +142,7 @@ class FilterOptions extends React.Component {
               <button
                 className='sv-button link link-info sv-pull-right'
                 onClick={(e) => { e.preventDefault(); this.applyFilter(); }}>
-                {applyFilterButtonLabel}
+                {applyFilterButtonLabel} {filterButtonLabel}
               </button>
               <button
                 className='sv-button link link-cancel sv-pull-right'

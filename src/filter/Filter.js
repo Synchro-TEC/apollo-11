@@ -107,7 +107,7 @@ class Filter extends React.Component {
 }
 
 Filter.defaultProps = {
-  applyFilterButtonLabel: 'Aplicar filtro',
+  applyFilterButtonLabel: 'Aplicar',
   cancelButtonLabel: 'Cancelar',
   clearFilterOptionsButtonLabel: 'Limpar',
   filterButtonLabel: 'Filtro',
