@@ -41,7 +41,7 @@ class FilterOptions extends React.Component {
     }
   }
 
-  applyFilter() {    
+  applyFilter() {
     this.fields.map((field) => {
       if(field.type === 'select-one' && field.value !== '') {
         this.filterValues[field.name] = field.value;
@@ -106,7 +106,7 @@ class FilterOptions extends React.Component {
     let {
       applyFilterButtonLabel,
       cancelButtonLabel,
-      clearAllButtonLabel,
+      clearFilterOptionsButtonLabel,
       filterButtonLabel,
     } = this.props;
 
@@ -137,7 +137,7 @@ class FilterOptions extends React.Component {
               <button
                 className='sv-button link link-danger sv-pull-left'
                 onClick={(e) => { e.preventDefault(); this.clearAll(); }}>
-                {clearAllButtonLabel}
+                {clearFilterOptionsButtonLabel} {filterButtonLabel}
               </button>
               <button
                 className='sv-button link link-info sv-pull-right'
@@ -157,18 +157,11 @@ class FilterOptions extends React.Component {
   }
 }
 
-FilterOptions.defaultProps = {
-  applyFilterButtonLabel: 'Aplicar filtro',
-  cancelButtonLabel: 'Cancelar',
-  clearAllButtonLabel: 'Limpar',
-  filterButtonLabel: 'Filtro',
-};
-
 FilterOptions.propTypes = {
   addSearchValueToFilterValues: React.PropTypes.func,
   applyFilterButtonLabel: React.PropTypes.string,
   cancelButtonLabel: React.PropTypes.string,
-  clearAllButtonLabel: React.PropTypes.string,
+  clearFilterOptionsButtonLabel: React.PropTypes.string,
   filterButtonLabel: React.PropTypes.string,
   hasFilterOptions: React.PropTypes.bool,
   onClearAll: React.PropTypes.func,

@@ -17,7 +17,6 @@ class Filter extends React.Component {
    * @return {void}
    */
   addSearchValueToFilterValues(filterValues) {
-    debugger;
     let searchFieldValue = document.getElementsByName(this.props.name)[0].value;
     if(searchFieldValue !== '') {
       filterValues[this.props.name] = searchFieldValue;
@@ -48,12 +47,18 @@ class Filter extends React.Component {
     }
   }
 
+  clearSearchField() {
+    if(this.props.onClearSearchField) {
+      this.props.onClearSearchField();
+    }
+  }
+
   render() {
 
     const {
       applyFilterButtonLabel,
       cancelButtonLabel,
-      clearAllButtonLabel,
+      clearFilterOptionsButtonLabel,
       filterButtonLabel,
       placeholder,
       name,
@@ -73,13 +78,21 @@ class Filter extends React.Component {
             name={name}
             onKeyDown={(e) => {this.doFilterBySearchField(e);}}
             placeholder={placeholder}
-            type='search'
-          />
+            ref='searchField'
+            type='search'/>
+            <span>
+              <i className='fa fa-times'
+                onClick={() => this.clearSearchField()}
+                style={{'lineHeight': '34px',
+                  'position': 'absolute',
+                  'marginLeft': '-25px',
+                  'cursor': 'pointer'}}/>
+            </span>
           <FilterOptions
             addSearchValueToFilterValues={this.addSearchValueToFilterValues}
             applyFilterButtonLabel={applyFilterButtonLabel}
             cancelButtonLabel={cancelButtonLabel}
-            clearAllButtonLabel={clearAllButtonLabel}
+            clearFilterOptionsButtonLabel={clearFilterOptionsButtonLabel}
             filterButtonLabel={filterButtonLabel}
             hasFilterOptions={!_isUndefined(children)}
             onClearAll={onClearAll}
@@ -94,16 +107,21 @@ class Filter extends React.Component {
 }
 
 Filter.defaultProps = {
-  placeholder: 'Buscar'
+  applyFilterButtonLabel: 'Aplicar filtro',
+  cancelButtonLabel: 'Cancelar',
+  clearFilterOptionsButtonLabel: 'Limpar',
+  filterButtonLabel: 'Filtro',
+  placeholder: 'Buscar',
 };
 
 Filter.propTypes = {
   applyFilterButtonLabel: React.PropTypes.string,
   cancelButtonLabel: React.PropTypes.string,
-  clearAllButtonLabel: React.PropTypes.string,
+  clearFilterOptionsButtonLabel: React.PropTypes.string,
   filterButtonLabel: React.PropTypes.string,
   name: React.PropTypes.string.isRequired,
   onClearAll: React.PropTypes.func,
+  onClearSearchField: React.PropTypes.func,
   onFilter: React.PropTypes.func,
   placeholder: React.PropTypes.string,
 };
