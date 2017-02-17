@@ -12,7 +12,7 @@ class FilterOptions extends React.Component {
     this.state = { isOpen: false };
     this.namesOfFields = [];
     this.fields = [];
-    this.filtervalues = {};
+    this.filterValues = {};
   }
 
   componentDidMount() {
@@ -43,23 +43,23 @@ class FilterOptions extends React.Component {
   applyFilter() {
     this.fields.map((field) => {
       if(field.type === 'select-one' && field.value !== '') {
-        this.filtervalues[field.name] = field.value;
+        this.filterValues[field.name] = field.value;
       } else {
         if(field.type === 'radio' && field.checked) {
-          this.filtervalues[field.name] = field.value;
+          this.filterValues[field.name] = field.value;
         } else {
           if (field.type === 'checkbox' && field.checked) {
-            if(this.filtervalues[field.name]) {
-              this.filtervalues[field.name].push(field.value);
+            if(this.filterValues[field.name]) {
+              this.filterValues[field.name].push(field.value);
             } else {
-              this.filtervalues[field.name] = [field.value];
+              this.filterValues[field.name] = [field.value];
             }
           }
         }
       }
     });
-    this.props.onApplyFilter(this.filtervalues);
-    this.filtervalues = {};
+    this.props.addSearchValueToFilterValues(this.filterValues);
+    this.filterValues = {};
   }
 
   toggleVisibility() {
@@ -102,7 +102,17 @@ class FilterOptions extends React.Component {
 
   render() {
 
-    let filterOptionsStyles = _assign({width: '100%'}, {display: this.state.isOpen ? 'block': 'none'});
+    let {
+      applyFilterButtonLabel,
+      cancelButtonLabel,
+      clearAllButtonLabel,
+      filterButtonLabel,
+    } = this.props;
+
+    let filterOptionsStyles = _assign(
+      {width: '100%'},
+      {display: this.state.isOpen ? 'block': 'none'}
+    );
 
     let filterSpanStyles = _assign(
       {display: this.props.hasFilterOptions ? 'block': 'none'},
@@ -111,10 +121,12 @@ class FilterOptions extends React.Component {
 
     return (
       <div>
-        <span className='label-action at-last'
+        <span
+          className='label-action at-last'
           onClick={() => this.toggleVisibility()}
-          style={filterSpanStyles}> Filter
-            <i className='fa fa-sliders fa-fw'/>
+          style={filterSpanStyles}>
+          {filterButtonLabel}
+          <i className='fa fa-sliders fa-fw'/>
         </span>
         <section className='action-container' style={filterOptionsStyles}>
           <div className='sv-triangle on-right'/>
@@ -123,18 +135,18 @@ class FilterOptions extends React.Component {
             <footer>
               <button
                 className='sv-button link link-danger sv-pull-left'
-                onClick={(e) => { e.preventDefault(); this.clearAll();}}>
-                  Clear All
+                onClick={(e) => { e.preventDefault(); this.clearAll(); }}>
+                {clearAllButtonLabel}
               </button>
               <button
                 className='sv-button link link-info sv-pull-right'
-                onClick={(e) => { e.preventDefault(); this.applyFilter();}}>
-                  Apply Filter
+                onClick={(e) => { e.preventDefault(); this.applyFilter(); }}>
+                {applyFilterButtonLabel}
               </button>
               <button
                 className='sv-button link link-cancel sv-pull-right'
-                onClick={(e) => {  e.preventDefault(); this.close();}}>
-                  Cancel
+                onClick={(e) => { e.preventDefault(); this.close(); }}>
+                {cancelButtonLabel}
               </button>
             </footer>
           </section>
@@ -144,10 +156,23 @@ class FilterOptions extends React.Component {
   }
 }
 
+FilterOptions.defaultProps = {
+  applyFilterButtonLabel: 'Aplicar filtro',
+  cancelButtonLabel: 'Cancelar',
+  clearAllButtonLabel: 'Limpar',
+  filterButtonLabel: 'Filtro',
+};
+
 FilterOptions.propTypes = {
+  addSearchValueToFilterValues: React.PropTypes.func,
+  applyFilterButtonLabel: React.PropTypes.string,
+  cancelButtonLabel: React.PropTypes.string,
+  clearAllButtonLabel: React.PropTypes.string,
+  doFilterByApplyFilter: React.PropTypes.func,
+  filterButtonLabel: React.PropTypes.string,
   hasFilterOptions: React.PropTypes.bool,
-  onApplyFilter: React.PropTypes.func,
   onClearAll: React.PropTypes.func,
+  onFilter: React.PropTypes.func,
 };
 
 FilterOptions.displayName = 'FilterOptions';

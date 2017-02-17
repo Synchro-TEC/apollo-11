@@ -6,29 +6,60 @@ class Filter extends React.Component {
 
   constructor(props) {
     super(props);
+    this.doFilterByApplyFilter = this.doFilterByApplyFilter.bind(this);
   }
 
-  applyFilter(filterOptionValues) {
-    //Recupera o valor do campo de busca a partir do nome
+  /**
+   * addSearchValueToFilterValues - description
+   * Função executada pelo filho FilterOptions. Recebe o objeto com os valores do
+   * filtro e adiciona o valor do campo de busca a este objeto.
+   * @param  {type} filterValues description
+   * @return {void}
+   */
+  addSearchValueToFilterValues(filterValues) {
     let searchFieldValue = document.getElementsByName(this.props.name)[0].value;
     if(searchFieldValue !== '') {
-      filterOptionValues[this.props.name] = searchFieldValue;
+      filterValues[this.props.name] = searchFieldValue;
     }
-    if(this.props.onApplyFilter) {
-      this.props.onApplyFilter(filterOptionValues);
-    }
+    this.props.onFilter(filterValues);
   }
 
-  searchByEnter(e) {
-    if(this.props.onSearchByEnter && e.keyCode === 13) {
+
+  /**
+   * doFilterBySearchField - description
+   * Função executada quando o usuario usa o enter para realizar o filtro.
+   * Se o filtro é um filtro com opções, uma função do filho FilterOptions é
+   * chamada para recuperar os valores das opções, em seguida é chamada
+   * a função doFilterByApplyFilter do pai para acrescentar a este objeto o valor
+   * do campo de busca
+   * @param  {type} e description
+   * @return {void}
+   */
+  doFilterBySearchField(e) {
+    let isFilterWithOptions = this.refs.filterOptions.props.children;
+    if(e.keyCode === 13) {
       e.preventDefault();
-      this.props.onSearchByEnter(e.target.value);
+      if(isFilterWithOptions) {
+        this.refs.filterOptions.applyFilter();
+      } else {
+        this.props.onFilter(e.target.value);
+      }
     }
   }
 
   render() {
 
-    const { placeholder, name, children, onClearAll } = this.props;
+    const {
+      applyFilterButtonLabel,
+      cancelButtonLabel,
+      clearAllButtonLabel,
+      filterButtonLabel,
+      placeholder,
+      name,
+      children,
+      onClearAll,
+      onFilter,
+    } = this.props;
 
     return (
       <form className='sv-form'>
@@ -36,16 +67,22 @@ class Filter extends React.Component {
           <span className='label at-first'>
             <i className='fa fa-search fa-fw'/>
           </span>
-          <input className='on-center'
+          <input
+            className='on-center'
             name={name}
-            onKeyDown={(e) => {this.searchByEnter(e);}}
+            onKeyDown={(e) => {this.doFilterBySearchField(e);}}
             placeholder={placeholder}
             type='search'
           />
           <FilterOptions
+            applyFilterButtonLabel={applyFilterButtonLabel}
+            cancelButtonLabel={cancelButtonLabel}
+            clearAllButtonLabel={clearAllButtonLabel}
+            doFilterByApplyFilter={this.doFilterByApplyFilter}
+            filterButtonLabel={filterButtonLabel}
             hasFilterOptions={!_isUndefined(children)}
-            onApplyFilter={(filterOptionValues) => this.applyFilter(filterOptionValues)}
             onClearAll={onClearAll}
+            onFilter={onFilter}
             ref='filterOptions'>
             {this.props.children}
           </FilterOptions>
@@ -56,14 +93,17 @@ class Filter extends React.Component {
 }
 
 Filter.defaultProps = {
-  placeholder: 'Type to search!'
+  placeholder: 'Buscar'
 };
 
 Filter.propTypes = {
+  applyFilterButtonLabel: React.PropTypes.string,
+  cancelButtonLabel: React.PropTypes.string,
+  clearAllButtonLabel: React.PropTypes.string,
+  filterButtonLabel: React.PropTypes.string,
   name: React.PropTypes.string.isRequired,
-  onApplyFilter: React.PropTypes.func,
   onClearAll: React.PropTypes.func,
-  onSearchByEnter: React.PropTypes.func,
+  onFilter: React.PropTypes.func,
   placeholder: React.PropTypes.string,
 };
 
