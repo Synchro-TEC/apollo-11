@@ -10,7 +10,6 @@ class Filter extends React.Component {
     this.addSearchValueToFilterValues = this.addSearchValueToFilterValues.bind(this);
   }
 
-
   /**
    * shouldComponentUpdate - description
    * Componente não deve atualizar caso o estado clearFieldIsVisible
@@ -54,14 +53,11 @@ class Filter extends React.Component {
    * @return {void}
    */
   doFilterBySearchField(e) {
-    if(e.keyCode === 13) {
-      let isFilterWithOptions = this.refs.filterOptions.props.children;
-      e.preventDefault();
-      if(isFilterWithOptions) {
-        this.refs.filterOptions.applyFilter();
-      } else {
-        this.props.onFilter(e.target.value);
-      }
+    let isFilterWithOptions = this.refs.filterOptions.props.children;
+    if(isFilterWithOptions) {
+      this.refs.filterOptions.applyFilter();
+    } else {
+      this.props.onFilter(e.target.value);
     }
   }
 
@@ -69,11 +65,13 @@ class Filter extends React.Component {
     document.getElementsByName(this.props.name)[0].value = '';
     let isFilterWithOptions = this.refs.filterOptions.props.children;
 
-    if(isFilterWithOptions) {
-      this.setState({clearFieldIsVisible: false}, this.refs.filterOptions.applyFilter());
-    } else {
-      this.setState({clearFieldIsVisible: false}, this.props.onFilter(''));
-    }
+    this.setState({clearFieldIsVisible: false}, () => {
+      if(isFilterWithOptions) {
+        this.refs.filterOptions.applyFilter();
+      } else {
+        this.props.onFilter('');
+      }
+    });
   }
 
   render() {
@@ -113,8 +111,7 @@ class Filter extends React.Component {
           <input
             className='on-center'
             name={name}
-            onChange={(e) => {this.toggleClearField(e);}}
-            onKeyDown={(e) => {this.doFilterBySearchField(e);}}
+            onChange={(e) => {this.toggleClearField(e); this.doFilterBySearchField(e);}}
             placeholder={placeholder}
             ref='searchField'
             type='search'/>
