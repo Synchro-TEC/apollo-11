@@ -6,7 +6,25 @@ class Filter extends React.Component {
 
   constructor(props) {
     super(props);
+    this.state = {clearFieldIsVisible: false};
     this.addSearchValueToFilterValues = this.addSearchValueToFilterValues.bind(this);
+  }
+
+
+  /**
+   * shouldComponentUpdate - description
+   * Componente não deve atualizar caso o estado clearFieldIsVisible
+   * seja o mesmo do próximo estado
+   * @param  {type} nextProps description
+   * @param  {type} nextState description
+   * @return {boolean}
+   */
+  shouldComponentUpdate(nextProps, nextState) {
+    return this.state.clearFieldIsVisible !== nextState.clearFieldIsVisible;
+  }
+
+  toggleClearField(e) {
+    this.setState({clearFieldIsVisible: e.target.value !== ''});
   }
 
   /**
@@ -48,8 +66,13 @@ class Filter extends React.Component {
   }
 
   clearSearchField() {
-    if(this.props.onClearSearchField) {
-      this.props.onClearSearchField();
+    document.getElementsByName(this.props.name)[0].value = '';
+    let isFilterWithOptions = this.refs.filterOptions.props.children;
+
+    if(isFilterWithOptions) {
+      this.setState({clearFieldIsVisible: false}, this.refs.filterOptions.applyFilter());
+    } else {
+      this.setState({clearFieldIsVisible: false}, this.props.onFilter(''));
     }
   }
 
@@ -67,6 +90,20 @@ class Filter extends React.Component {
       onFilter,
     } = this.props;
 
+    let clearFieldIcon = '';
+
+    if(this.state.clearFieldIsVisible) {
+      clearFieldIcon = (
+        <span>
+          <i className='fa fa-times'
+            onClick={() => this.clearSearchField()}
+            style={{'lineHeight': '34px',
+              'marginLeft': '-25px',
+              'cursor': 'pointer'}}/>
+        </span>
+      );
+    }
+
     return (
       <form className='sv-form'>
         <div className='sv-input-group'>
@@ -76,18 +113,12 @@ class Filter extends React.Component {
           <input
             className='on-center'
             name={name}
+            onChange={(e) => {this.toggleClearField(e);}}
             onKeyDown={(e) => {this.doFilterBySearchField(e);}}
             placeholder={placeholder}
             ref='searchField'
             type='search'/>
-            <span>
-              <i className='fa fa-times'
-                onClick={() => this.clearSearchField()}
-                style={{'lineHeight': '34px',
-                  'position': 'absolute',
-                  'marginLeft': '-25px',
-                  'cursor': 'pointer'}}/>
-            </span>
+            {clearFieldIcon}
           <FilterOptions
             addSearchValueToFilterValues={this.addSearchValueToFilterValues}
             applyFilterButtonLabel={applyFilterButtonLabel}
@@ -107,7 +138,7 @@ class Filter extends React.Component {
 }
 
 Filter.defaultProps = {
-  applyFilterButtonLabel: 'Aplicar',
+  applyFilterButtonLabel: 'Aplicar Filtro',
   cancelButtonLabel: 'Cancelar',
   clearFilterOptionsButtonLabel: 'Limpar',
   filterButtonLabel: 'Filtro',
@@ -121,7 +152,6 @@ Filter.propTypes = {
   filterButtonLabel: React.PropTypes.string,
   name: React.PropTypes.string.isRequired,
   onClearAll: React.PropTypes.func,
-  onClearSearchField: React.PropTypes.func,
   onFilter: React.PropTypes.func,
   placeholder: React.PropTypes.string,
 };
