@@ -17,7 +17,6 @@ class FilterOptions extends React.Component {
   }
 
   componentDidMount() {
-    debugger;
     for(let i = 0; i<this.namesOfFields.length; i++) {
       // Nomes iguais, nao podem ser colocados no formFields
       if(this.namesOfFields[i] !== this.namesOfFields[i+1]) {
@@ -58,7 +57,9 @@ class FilterOptions extends React.Component {
         }
       }
     });
-    this.props.addSearchValueToFilterValues(this.filterValues);
+    this.setState({isOpen: false},
+      this.props.addSearchValueToFilterValues(this.filterValues)
+    );
     this.filterValues = {};
   }
 
