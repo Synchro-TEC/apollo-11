@@ -37,7 +37,7 @@
             "error",
             "always"
         ],
-        "react/display-name": 2,
+        "react/display-name": [1, { "ignoreTranspilerName": true }],
         "react/jsx-boolean-value": 1,
         "react/jsx-curly-spacing": 1,
         "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
