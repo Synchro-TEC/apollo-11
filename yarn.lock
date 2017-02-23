@@ -1425,6 +1425,10 @@ lodash@^4.0.0, lodash@^4.2.0, lodash@^4.3.0:
   version "4.17.4"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.4.tgz#78203a4d1c328ae1d86dca6460e369b57f4055ae"
 
+lokijs@^1.4.3:
+  version "1.4.3"
+  resolved "https://registry.yarnpkg.com/lokijs/-/lokijs-1.4.3.tgz#f2a47ba8d6991c92d6da6a5b35be79b674453abb"
+
 loose-envify@^1.0.0, loose-envify@^1.1.0:
   version "1.3.1"
   resolved "https://registry.yarnpkg.com/loose-envify/-/loose-envify-1.3.1.tgz#d1a8ad33fa9ce0e713d65fdd0ac8b748d478c848"

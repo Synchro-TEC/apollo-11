@@ -6,6 +6,7 @@ import Filter from './filter/Filter';
 import DataTable from './data-table/DataTable';
 import DataTableColumn from './data-table/data-table-header/DataTableColumn.js';
 import Paginate from './paginate/Paginate.js';
+import PowerTable from './PowerTable/index';
 
 export {
   Hermes,
@@ -15,5 +16,6 @@ export {
   Filter,
   DataTable,
   DataTableColumn,
-  Paginate
+  Paginate,
+  PowerTable,
 };
