@@ -7,6 +7,7 @@ import DataTable from './data-table/DataTable';
 import DataTableColumn from './data-table/data-table-header/DataTableColumn.js';
 import Paginate from './paginate/Paginate.js';
 import PowerTable from './PowerTable/index';
+import PowerColumn from './PowerTable/PowerColumn';
 
 export {
   Hermes,
@@ -18,4 +19,5 @@ export {
   DataTableColumn,
   Paginate,
   PowerTable,
+  PowerColumn,
 };
