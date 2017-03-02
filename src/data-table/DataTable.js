@@ -35,4 +35,6 @@ DataTable.propTypes = {
   onSort: React.PropTypes.func,
 };
 
+DataTable.displayName = 'DataTable';
+
 export default DataTable;

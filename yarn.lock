@@ -1607,7 +1607,7 @@ fast-levenshtein@~2.0.4:
   version "2.0.6"
   resolved "https://registry.yarnpkg.com/fast-levenshtein/-/fast-levenshtein-2.0.6.tgz#3d8a5c66883a16a30ca8643e851f19baa7797917"
 
-fbjs@^0.8.1, fbjs@^0.8.4:
+fbjs@^0.8.4:
   version "0.8.9"
   resolved "https://registry.yarnpkg.com/fbjs/-/fbjs-0.8.9.tgz#180247fbd347dcc9004517b904f865400a0c8f14"
   dependencies:
@@ -2292,6 +2292,10 @@ lodash.pickby@^4.6.0:
   version "4.6.0"
   resolved "https://registry.yarnpkg.com/lodash.pickby/-/lodash.pickby-4.6.0.tgz#7dea21d8c18d7703a27c704c15d3b84a67e33aff"
 
+lodash.throttle@^4.1.1:
+  version "4.1.1"
+  resolved "https://registry.yarnpkg.com/lodash.throttle/-/lodash.throttle-4.1.1.tgz#c23e91b710242ac70c37f1e1cda9274cc39bf2f4"
+
 lodash@^4.0.0, lodash@^4.14.0, lodash@^4.2.0, lodash@^4.3.0:
   version "4.17.4"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.4.tgz#78203a4d1c328ae1d86dca6460e369b57f4055ae"
@@ -2738,14 +2742,6 @@ react-addons-update@^15.4.2:
   resolved "https://registry.yarnpkg.com/react-addons-update/-/react-addons-update-15.4.2.tgz#43a9578e3b46bc5f7eed2ba52560dd57a8aff918"
   dependencies:
     fbjs "^0.8.4"
-    object-assign "^4.1.0"
-
-react-dom@^15.4.2:
-  version "15.4.2"
-  resolved "https://registry.yarnpkg.com/react-dom/-/react-dom-15.4.2.tgz#015363f05b0a1fd52ae9efdd3a0060d90695208f"
-  dependencies:
-    fbjs "^0.8.1"
-    loose-envify "^1.1.0"
     object-assign "^4.1.0"
 
 react@^15.4.2:

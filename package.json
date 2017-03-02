@@ -39,7 +39,6 @@
     "eslint-plugin-react": "^6.8.0",
     "react": "^15.4.2",
     "react-addons-update": "^15.4.2",
-    "react-dom": "^15.4.2",
     "webpack": "^2.2.1",
     "worker-loader": "^0.7.1"
   },
@@ -48,6 +47,7 @@
     "data-collection": "^1.1.6",
     "immutability-helper": "^2.1.2",
     "lodash.max": "^4.0.1",
+    "lodash.throttle": "^4.1.1",
     "uuid": "^3.0.1"
   }
 }

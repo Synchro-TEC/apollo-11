@@ -1,9 +1,10 @@
 
+/*eslint no-undef: 0, no-inner-declarations: 0, no-console: 0 */
 
 const worker = function () {
 
   this.collection = null;
-  this.perPage = 200;
+  this.perPage = 300;
   this.offSet = 0;
   this.sort = null;
 
@@ -30,9 +31,14 @@ const worker = function () {
       };
 
       request.onload = () => {
+        console.time('collectionRequest');
         this.collection = new DataCollection(request.response);
+        console.timeEnd('collectionRequest');
 
-        this.postMessage(this.collection.query().filter().limit(this.offSet, this.perPage).values());
+        console.time('query');
+        let itens = this.collection.query().filter();
+        console.timeEnd('query');
+        this.postMessage({itens: itens.limit(this.offSet, this.perPage).values(), count: itens.count()});
       };
 
       request.onerror = () => {
@@ -46,23 +52,26 @@ const worker = function () {
 
     if(e.data.action === 'PAGINATE_NEXT') {
       this.offSet += this.perPage;
-      this.postMessage(this.collection.query().filter().sort(this.sort).limit(this.offSet, this.perPage).values());
+      console.time('query');
+      let itens = this.collection.query().filter();
+      console.timeEnd('query');
+      this.postMessage({itens: itens.limit(this.offSet, this.perPage).values(), count: itens.count()});
     }
 
     if(e.data.action === 'PAGINATE_PREV') {
       this.offSet -= this.perPage;
-      this.postMessage(this.collection.query().filter().sort(this.sort).limit(this.offSet, this.perPage).values());
+      console.time('query');
+      let itens = this.collection.query().filter();
+      console.timeEnd('query');
+      this.postMessage({itens: itens.limit(this.offSet, this.perPage).values(), count: itens.count()});
     }
 
     if(e.data.action === 'SORT') {
       this.offSet = 0;
       this.sort = 'firstName';
-      this.postMessage(this.collection.query().sort(this.sort).limit(this.offSet, this.perPage).values());
+      let itens = this.collection.query().filter();
+      this.postMessage({itens: itens.limit(this.offSet, this.perPage).values(), count: itens.count()});
     }
-
-
-
-
 
   }, false);
 
