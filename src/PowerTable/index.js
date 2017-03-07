@@ -1,4 +1,5 @@
 import React from 'react';
+import ReactDOM from 'react-dom';
 import worker from './fetch.worker';
 import update from 'immutability-helper';
 import ScrollArea from './ScrollArea';
@@ -13,9 +14,9 @@ class PowerTable extends React.Component {
       type: 'text/javascript'
     });
     this.workerReturn = this.workerReturn.bind(this);
-    this.scroll = this.scroll.bind(this);
     this.distincts = {};
     this.distinctsLoaded = false;
+    this.next = this.next.bind(this);
 
     this.columns = React.Children.map(props.children, (child) => {
       return {
@@ -49,8 +50,7 @@ class PowerTable extends React.Component {
       }
     );
 
-    // let headerContainer = document.getElementById('tableHeader');
-    let ths = [].slice.call(document.querySelectorAll('#tableHeader th'));
+    let ths = [].slice.call(ReactDOM.findDOMNode(this).querySelectorAll('.PWT-TableHeader th'));
 
     for (let i = 0; i < ths.length; i++) {
       ths[i].addEventListener('click', () => {
@@ -59,9 +59,6 @@ class PowerTable extends React.Component {
         }
       });
     }
-
-    // recordsContainer.addEventListener('scroll', _throttle(this.scroll, 1000));
-
   }
 
   componentWillUnmount() {
@@ -109,19 +106,18 @@ class PowerTable extends React.Component {
       // let after = document.getElementById('after');
       // after.style.height = `${(this.props.rowHeight * e.data.count) - (this.props.rowHeight * this.props.itensInViewPort)}px`;
   }
-
-  scroll(e) {
-    // console.log('Scroll Height', e.target.scrollHeight);
-    // console.log('Offset Height', e.target.offsetHeight);
-    // console.log('Scroll Top', e.target.scrollTop);
-    console.log('Total rodado', e.target.scrollTop + e.target.offsetHeight);
-
-    if(e.target.scrollTop > ((this.props.rowHeight * this.props.itensInViewPort) * 2)) {
-      console.log('PAGE');
-      this.worker.postMessage({ action: 'PAGINATE_NEXT' });
-    }
-
-  }
+  //
+  // scroll(e) {
+  //   // console.log('Scroll Height', e.target.scrollHeight);
+  //   // console.log('Offset Height', e.target.offsetHeight);
+  //   // console.log('Scroll Top', e.target.scrollTop);
+  //   console.log('Total rodado', e.target.scrollTop + e.target.offsetHeight);
+  //
+  //   if(e.target.scrollTop > ((this.props.rowHeight * this.props.itensInViewPort) * 2)) {
+  //     this.worker.postMessage({ action: 'PAGINATE_NEXT' });
+  //   }
+  //
+  // }
 
   next() {
     this.worker.postMessage({ action: 'PAGINATE_NEXT' });
@@ -132,6 +128,19 @@ class PowerTable extends React.Component {
   }
 
   render() {
+
+    let node = ReactDOM.findDOMNode(this);
+
+    let scrollableArea = this.state.collection.length ?
+      (<ScrollArea
+        collection={this.state.collection}
+        columns={this.columns}
+        container={node}
+        itensInViewPort={this.props.itensInViewPort}
+        onScroll={this.next}
+        rowHeight={this.props.rowHeight}
+      />) : '';
+
     return (
       <div>
         <p>{this.state.message}</p>
@@ -141,7 +150,7 @@ class PowerTable extends React.Component {
           <button className='sv-button primary' onClick={()=> this.next()} type='button'>Next</button>
         </p>
 
-        <div id='tableHeader'>
+        <div className='PWT-TableHeader' style={{backgroundColor: '#f3f3f3'}}>
           <table className='sv-table with--hover with--grid' style={{tableLayout: 'fixed'}}>
             <thead>
               <tr>
@@ -150,14 +159,8 @@ class PowerTable extends React.Component {
             </thead>
           </table>
         </div>
-        <ColumnActions  />
-        <ScrollArea
-          collection={this.state.collection}
-          columns={this.columns}
-          itensInViewPort={this.props.itensInViewPort}
-          rowHeight={this.props.rowHeight}
-        />
-
+        <ColumnActions />
+        {scrollableArea}
       </div>
     );
   }

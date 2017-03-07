@@ -71,6 +71,7 @@ const worker = function () {
     }
 
     if(e.data.action === 'PAGINATE_NEXT') {
+      debugger;
       this.offSet += this.perPage;
       let itens = this.collection.query().filter();
       this.postMessage(decoratedReturn('NEXT', '', itens.limit(this.offSet, this.perPage).values(), itens.count()));
