@@ -1,8 +1,8 @@
 import React from 'react';
 import worker from './fetch.worker';
-// import DataCollection from 'data-collection';
 import update from 'immutability-helper';
-import _throttle from 'lodash.throttle';
+import ScrollArea from './ScrollArea';
+import ColumnActions from './ColumnActions';
 
 class PowerTable extends React.Component {
 
@@ -14,13 +14,19 @@ class PowerTable extends React.Component {
     });
     this.workerReturn = this.workerReturn.bind(this);
     this.scroll = this.scroll.bind(this);
-    this.collection = null;
+    this.distincts = {};
+    this.distinctsLoaded = false;
 
     this.columns = React.Children.map(props.children, (child) => {
-      return { title: child.props.columnTitle, key: child.props.dataKey, formatter: child.props.formatter };
+      return {
+        title: child.props.columnTitle,
+        key: child.props.dataKey,
+        formatter: child.props.formatter,
+        searchable: child.props.searchable,
+      };
     });
 
-    this.state = {collection: [], message: ''};
+    this.state = {collection: [], message: '', distincts: []};
 
   }
 
@@ -34,13 +40,27 @@ class PowerTable extends React.Component {
         action: 'LOAD',
         url: 'http://localhost:9000/data_collection-1.1.6.js',
         dataUrl: this.props.dataUrl,
-        fetchMethod: this.props.fetchMethod
+        fetchMethod: this.props.fetchMethod,
+        cols: this.columns.map((col) => {
+          if(col.key) {
+            return {key: col.key, searchable: col.searchable};
+          }
+        }),
       }
     );
 
-    let recordsContainer = document.getElementById('scroll');
+    // let headerContainer = document.getElementById('tableHeader');
+    let ths = [].slice.call(document.querySelectorAll('#tableHeader th'));
 
-    recordsContainer.addEventListener('scroll', _throttle(this.scroll, 1000));
+    for (let i = 0; i < ths.length; i++) {
+      ths[i].addEventListener('click', () => {
+        if(ths[i].dataset.key) {
+          this.worker.postMessage({ action: 'SORT', value: ths[i].dataset.key });
+        }
+      });
+    }
+
+    // recordsContainer.addEventListener('scroll', _throttle(this.scroll, 1000));
 
   }
 
@@ -49,16 +69,45 @@ class PowerTable extends React.Component {
   }
 
   workerReturn(e) {
-    if(typeof e.data === 'string') {
-      const newState = update(this.state, {message: {$set: e.data}});
-      this.setState(newState);
-    } else {
-      this.setState({collection: e.data.itens, message: 'Dados carregados!'});
-      console.log('TOTAL', e.data.count);
-      let after = document.getElementById('after');
-      after.style.height = `${(this.props.rowHeight * e.data.count) - (this.props.rowHeight * this.props.itensInViewPort)}px`;
 
+    const updateMessage = (message) => {
+      const newState = update(this.state, {message: {$set: message}});
+      this.setState(newState);
+    };
+
+    switch (e.data.type) {
+      case 'LOADING_INIT':
+        updateMessage(e.data.message);
+        break;
+      case 'LOADING_ERROR':
+        updateMessage(e.data.message);
+        break;
+      case 'LOADING':
+        updateMessage(e.data.message);
+        break;
+      case 'LOADED':
+        this.setState({collection: e.data.itens, message: e.data.message, count: e.data.count});
+        break;
+      case 'NEXT':
+        this.setState({collection: e.data.itens, message: e.data.message, count: e.data.count});
+        break;
+      case 'PREV':
+        this.setState({collection: e.data.itens, message: e.data.message, count: e.data.count});
+        break;
+      case 'SORT':
+        this.setState({collection: e.data.itens, message: e.data.message, count: e.data.count});
+        break;
+      case 'DISTINCT':
+        this.distinctsLoaded = true;
+        this.distincts = e.data.itens;
+        console.log(this.distincts);
+        break;
     }
+
+
+
+      // let after = document.getElementById('after');
+      // after.style.height = `${(this.props.rowHeight * e.data.count) - (this.props.rowHeight * this.props.itensInViewPort)}px`;
   }
 
   scroll(e) {
@@ -82,72 +131,32 @@ class PowerTable extends React.Component {
     this.worker.postMessage({ action: 'PAGINATE_PREV' });
   }
 
-  sort() {
-    this.worker.postMessage({ action: 'SORT' });
-  }
-
   render() {
-
-    let result = this.state.collection.map((row, i) => {
-      return (
-        <tr key={i}>
-          { this.columns.map((col, j) => {
-            let rendered = col.key ? row[col.key] : col.formatter(row);
-
-            let style = {textAlign: 'left', borderRight: '1px solid #dadada'};
-            if(j === 0 ) {
-              style.borderLeft = '1px solid #dadada';
-            }
-
-            return (<td key={`${i}${j}`} style={style}>{rendered}</td>); })
-          }
-        </tr>
-      );
-    });
-
-    let ths = this.columns.map((col, i) => {
-      let style = {textAlign: 'left', borderRight: '1px solid #dadada'};
-      if(i === 0 ) {
-        style.borderLeft = '1px solid #dadada';
-      }
-
-      return (<th key={`th-${i}`} style={style}>{col.title}</th>);
-    });
-
     return (
       <div>
         <p>{this.state.message}</p>
-
+        <span className='sv-bar-loader large' />
         <p>
           <button className='sv-button primary' onClick={()=> this.prev()} type='button'>Prev</button>
           <button className='sv-button primary' onClick={()=> this.next()} type='button'>Next</button>
-          <button className='sv-button info' onClick={()=> this.sort()} type='button'>Sort</button>
         </p>
 
-        <div>
-          <table className='sv-table with--borders with--hover' style={{tableLayout: 'fixed'}}>
+        <div id='tableHeader'>
+          <table className='sv-table with--hover with--grid' style={{tableLayout: 'fixed'}}>
             <thead>
-            <tr>
-              {ths}
-            </tr>
+              <tr>
+                {this.props.children}
+              </tr>
             </thead>
           </table>
         </div>
-
-        <div id='scroll'
-             style={{
-               display: 'block',
-               height: (this.props.itensInViewPort * this.props.rowHeight),
-               overflow: 'auto',
-               marginTop: '-31px',
-             }}>
-          <table className='sv-table with--borders with--hover' style={{tableLayout: 'fixed', marginBottom: '0px'}}>
-            <tbody>
-              {result}
-            </tbody>
-          </table>
-          <div id='after' />
-        </div>
+        <ColumnActions  />
+        <ScrollArea
+          collection={this.state.collection}
+          columns={this.columns}
+          itensInViewPort={this.props.itensInViewPort}
+          rowHeight={this.props.rowHeight}
+        />
 
       </div>
     );
