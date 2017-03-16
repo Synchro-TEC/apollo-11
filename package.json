@@ -23,7 +23,7 @@
   "homepage": "https://github.com/Synchro-OSS/apollo#readme",
   "peerDependencies": {
     "react": "^15.4.2",
-    "react-addons-update": "^15.4.2"
+    "react-dom": "^15.4.2"
   },
   "devDependencies": {
     "babel-core": "^6.23.1",
@@ -47,8 +47,12 @@
     "classnames": "^2.2.5",
     "data-collection": "^1.1.6",
     "immutability-helper": "^2.1.2",
+    "lodash.debounce": "^4.0.8",
     "lodash.max": "^4.0.1",
+    "lodash.take": "^4.1.1",
+    "lodash.takeright": "^4.1.1",
     "lodash.throttle": "^4.1.1",
+    "lodash.times": "^4.3.2",
     "uuid": "^3.0.1"
   }
 }

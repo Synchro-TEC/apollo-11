@@ -25,6 +25,20 @@ module.exports = env => {
       library: 'apollo-11',
       libraryTarget: 'umd'
     },
+    externals: {
+      react: {
+        root: 'React',
+        commonjs: 'react',
+        commonjs2: 'react',
+        amd: 'react',
+      },
+      'react-dom': {
+        root: 'ReactDOM',
+        commonjs: 'react-dom',
+        commonjs2: 'react-dom',
+        amd: 'react-dom',
+      },
+    },
     // context: resolve(__dirname, 'src'),
     devtool: env.prod ? 'source-map' : 'eval',
     bail: env.prod,

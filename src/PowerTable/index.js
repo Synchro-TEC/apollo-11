@@ -1,9 +1,11 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+import { findDOMNode } from 'react-dom';
 import worker from './fetch.worker';
 import update from 'immutability-helper';
 import ScrollArea from './ScrollArea';
 import ColumnActions from './ColumnActions';
+// import _takeRight from 'lodash.takeright';
+// import _take from 'lodash.take';
 
 class PowerTable extends React.Component {
 
@@ -16,7 +18,11 @@ class PowerTable extends React.Component {
     this.workerReturn = this.workerReturn.bind(this);
     this.distincts = {};
     this.distinctsLoaded = false;
-    this.next = this.next.bind(this);
+    this.paginate = this.paginate.bind(this);
+    this.node = null;
+    this.before = null;
+    this.after = null;
+    this.offset = 0;
 
     this.columns = React.Children.map(props.children, (child) => {
       return {
@@ -27,7 +33,7 @@ class PowerTable extends React.Component {
       };
     });
 
-    this.state = {collection: [], message: '', distincts: []};
+    this.state = {collection: [], message: '', count: 0, scrolled: 0};
 
   }
 
@@ -50,7 +56,7 @@ class PowerTable extends React.Component {
       }
     );
 
-    let ths = [].slice.call(ReactDOM.findDOMNode(this).querySelectorAll('.PWT-TableHeader th'));
+    let ths = [].slice.call(findDOMNode(this).querySelectorAll('.PWT-TableHeader th'));
 
     for (let i = 0; i < ths.length; i++) {
       ths[i].addEventListener('click', () => {
@@ -59,6 +65,8 @@ class PowerTable extends React.Component {
         }
       });
     }
+
+    this.node = findDOMNode(this);
   }
 
   componentWillUnmount() {
@@ -85,11 +93,31 @@ class PowerTable extends React.Component {
       case 'LOADED':
         this.setState({collection: e.data.itens, message: e.data.message, count: e.data.count});
         break;
-      case 'NEXT':
-        this.setState({collection: e.data.itens, message: e.data.message, count: e.data.count});
-        break;
-      case 'PREV':
-        this.setState({collection: e.data.itens, message: e.data.message, count: e.data.count});
+      case 'PAGINATE':
+        // var itensInCache = this.props.itensInViewPort / 2;
+        // var cache = null;
+        // var newCollectionWithoutCache = null;
+        // var newCollection = null;
+
+        // if(e.data.page === 0) {
+        var newCollection = e.data.itens;
+        // } else {
+        //   if(e.data.direction === 'NEXT') {
+        //     cache = _takeRight(this.state.collection, itensInCache);
+        // let newCollectionWithoutCache = newCollection.splice(0, this.offset);
+        //     newCollection = cache.concat(newCollectionWithoutCache);
+        //   } else {
+        //     cache = _take(this.state.collection, itensInCache);
+        //     newCollectionWithoutCache = _takeRight(e.data.itens, itensInCache);
+        //     newCollection = newCollectionWithoutCache.concat(cache);
+        //   }
+        // }
+
+
+
+
+
+        this.setState({collection: newCollection, message: e.data.message, count: e.data.count});
         break;
       case 'SORT':
         this.setState({collection: e.data.itens, message: e.data.message, count: e.data.count});
@@ -100,56 +128,33 @@ class PowerTable extends React.Component {
         console.log(this.distincts);
         break;
     }
-
-
-
-      // let after = document.getElementById('after');
-      // after.style.height = `${(this.props.rowHeight * e.data.count) - (this.props.rowHeight * this.props.itensInViewPort)}px`;
-  }
-  //
-  // scroll(e) {
-  //   // console.log('Scroll Height', e.target.scrollHeight);
-  //   // console.log('Offset Height', e.target.offsetHeight);
-  //   // console.log('Scroll Top', e.target.scrollTop);
-  //   console.log('Total rodado', e.target.scrollTop + e.target.offsetHeight);
-  //
-  //   if(e.target.scrollTop > ((this.props.rowHeight * this.props.itensInViewPort) * 2)) {
-  //     this.worker.postMessage({ action: 'PAGINATE_NEXT' });
-  //   }
-  //
-  // }
-
-  next() {
-    this.worker.postMessage({ action: 'PAGINATE_NEXT' });
   }
 
-  prev() {
-    this.worker.postMessage({ action: 'PAGINATE_PREV' });
+  paginate(page, offset, scrollTop) {
+    this.offset = offset;
+    this.worker.postMessage({ action: 'PAGINATE', page, offset });
+    const newState = update(this.state, {scrolled: {$set: scrollTop}});
+    this.setState(newState);
   }
 
   render() {
 
-    let node = ReactDOM.findDOMNode(this);
-
     let scrollableArea = this.state.collection.length ?
       (<ScrollArea
+        afterHeight={(this.props.rowHeight * this.state.count - this.props.rowHeight * this.props.itensInViewPort)}
+        beforeHeight={this.state.scrolled}
         collection={this.state.collection}
         columns={this.columns}
-        container={node}
+        container={this.node}
         itensInViewPort={this.props.itensInViewPort}
-        onScroll={this.next}
+        onScroll={this.paginate}
         rowHeight={this.props.rowHeight}
+        totalRecords={this.state.count}
       />) : '';
 
     return (
       <div>
         <p>{this.state.message}</p>
-        <span className='sv-bar-loader large' />
-        <p>
-          <button className='sv-button primary' onClick={()=> this.prev()} type='button'>Prev</button>
-          <button className='sv-button primary' onClick={()=> this.next()} type='button'>Next</button>
-        </p>
-
         <div className='PWT-TableHeader' style={{backgroundColor: '#f3f3f3'}}>
           <table className='sv-table with--hover with--grid' style={{tableLayout: 'fixed'}}>
             <thead>

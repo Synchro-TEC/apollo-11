@@ -168,6 +168,8 @@ class Paginate extends React.Component {
   }
 }
 
+Paginate.displayName = 'Paginate';
+
 Paginate.defaultProps = {
   recordsByPage: 10
 };

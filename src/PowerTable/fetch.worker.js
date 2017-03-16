@@ -4,7 +4,7 @@
 const worker = function () {
 
   this.collection = null;
-  this.perPage = 150;
+  this.perPage = 16 * 2;
   this.offSet = 0;
   this.sort = null;
   this.sortDesc = false;
@@ -70,17 +70,15 @@ const worker = function () {
       this.postMessage(decoratedReturn('LOADING_INIT', 'Iniciando o carregamento dos registros...'));
     }
 
-    if(e.data.action === 'PAGINATE_NEXT') {
-      debugger;
-      this.offSet += this.perPage;
+    if(e.data.action === 'PAGINATE') {
+      let newOffset = e.data.offset;
+      let direction = newOffset > this.offSet ? 'NEXT' : 'PREV';
+      this.offSet = newOffset;
       let itens = this.collection.query().filter();
-      this.postMessage(decoratedReturn('NEXT', '', itens.limit(this.offSet, this.perPage).values(), itens.count()));
-    }
-
-    if(e.data.action === 'PAGINATE_PREV') {
-      this.offSet -= this.perPage;
-      let itens = this.collection.query().filter();
-      this.postMessage(decoratedReturn('PREV', '', itens.limit(this.offSet, this.perPage).values(), itens.count()));
+      let decoreateReturn = decoratedReturn('PAGINATE', '', itens.limit(this.offSet, this.perPage).values(), itens.count());
+      decoreateReturn.direction = direction;
+      decoreateReturn.page = e.data.page;
+      this.postMessage(decoreateReturn);
     }
 
     if(e.data.action === 'SORT') {
