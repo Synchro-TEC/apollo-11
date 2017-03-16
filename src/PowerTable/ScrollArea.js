@@ -1,6 +1,15 @@
 import React from 'react';
-import _throttle from 'lodash.throttle';
-import _times from 'lodash.times';
+// import _throttle from 'lodash.throttle';
+// let userHasScrolled = false;
+
+//
+// const delayedExec = function(after, fn) {
+//   let timer;
+//   return function() {
+//     timer && clearTimeout(timer);
+//     timer = setTimeout(fn, after);
+//   };
+// };
 
 class ScrollArea extends React.Component {
 
@@ -19,6 +28,9 @@ class ScrollArea extends React.Component {
     this.totalHeight = null;
     this.viewPortHeight = null;
 
+    this.scrollTimer = null;
+    this.scrollDuration = 250;
+    this.isScrolling= false;
 
     this.fixScrollBarDiff = this.fixScrollBarDiff.bind(this);
     this.handlerScroll = this.handlerScroll.bind(this);
@@ -29,7 +41,18 @@ class ScrollArea extends React.Component {
     this.totalHeight = this.props.rowHeight * this.props.totalRecords;
     this.viewPortHeight = this.props.rowHeight * this.props.itensInViewPort;
 
-    this.recordsContainer.addEventListener('scroll', _throttle(this.handlerScroll, 100, {leading: false, trailing: false}));
+    this.recordsContainer.addEventListener('scroll', (e) => {
+
+      clearTimeout(this.scrollTimer);
+      this.scrollTimer = setTimeout(() => {
+        this.isScrolling = false;
+        this.handlerScroll(e);
+      }, this.scrollDuration);
+
+      this.isScrolling = true;
+      this.handlerScroll(e);
+    });
+
     this.fixScrollBarDiff();
   }
 
@@ -41,56 +64,55 @@ class ScrollArea extends React.Component {
   }
 
   handlerScroll(e) {
-    let nPages = Math.ceil(this.viewPortHeight);
-    let pages = [];
+    // debugger;
+    // let nPages = Math.ceil(this.viewPortHeight);
+    // let pages = [];
 
-    _times(this.totalHeight, (n) => {
-      if((n % nPages) === 0) {
-        pages.push(n);
-      }
-    });
+    // _times(this.totalHeight, (n) => {
+    //   if((n % nPages) === 0) {
+    //     pages.push(n);
+    //   }
+    // });
 
-    const closestValue = (array, value) => {
-      let result = null;
-      let lastDelta;
-
-      array.some((item) => {
-        let delta = Math.abs(value - item);
-        if (delta >= lastDelta) {
-          return true;
-        }
-        result = item;
-        lastDelta = delta;
-      });
-
-      return array.indexOf(result);
-    };
+    // const closestValue = (array, value) => {
+    //   let result = null;
+    //   let lastDelta;
+    //
+    //   array.some((item) => {
+    //     debugger;
+    //     let delta = Math.abs(value - item);
+    //     if (delta > lastDelta) {
+    //       return true;
+    //     }
+    //     result = item;
+    //     lastDelta = delta;
+    //   });
+    //
+    //   return array.indexOf(result);
+    // };
 
     const calculateOffset = (scrollTop) => {
-      return Math.floor(scrollTop / this.props.rowHeight);
+      return Math.ceil(scrollTop / this.props.rowHeight);
     };
 
 
     let scrollTop = e.target.scrollTop;
-    let page = closestValue(pages, scrollTop);
+    // debugger;
+    // let page = closestValue(pages, scrollTop);
     let offset = calculateOffset(scrollTop);
+    let page = Math.floor(offset / this.props.itensInViewPort);
+    this.props.onScroll(page, offset, scrollTop, this.isScrolling);
 
-    this.props.onScroll(page, offset, scrollTop);
-
-    console.log('SCROLLTOP ', scrollTop);
-    console.log('PAGE ', page);
-    console.log('OFFSET ', offset);
-
-    // this.before.style.height = `${e.target.scrollTop}px`;
-    // this.after.style.height = `${this.totalHeight - this.viewPortHeight - e.target.scrollTop}px`;
-
+    // console.log('SCROLLTOP ', scrollTop);
+    // console.log('PAGE ', page);
+    // console.log('OFFSET ', offset);
   }
 
   render() {
 
     let result = this.props.collection.map((row, i) => {
       return (
-        <tr key={i}>
+        <tr key={i} style={{height: '40px'}}>
           { this.props.columns.map((col, j) => {
             let rendered = col.formatter ? col.formatter(row) : row[col.key];
             return (<td key={`${i}${j}`} style={this.style}>{rendered}</td>); })
@@ -99,8 +121,13 @@ class ScrollArea extends React.Component {
       );
     });
 
-    let firstTr = (<tr><td colSpan={this.props.columns.length} style={{height: `${this.props.beforeHeight}px`, padding: '0px'}} /></tr>);
-    let lastTr = (<tr><td colSpan={this.props.columns.length} style={{height: `${this.props.afterHeight - this.props.beforeHeight}px`, padding: '0px'}} /></tr>);
+    let firstTr = (<tr style={{boder: '0px'}}>
+      <td colSpan={this.props.columns.length} style={{height: `${this.props.beforeHeight}px`, padding: '0px'}} />
+    </tr>);
+
+    let lastTr = (<tr style={{boder: '0px'}}>
+      <td colSpan={this.props.columns.length} style={{height: `${this.props.afterHeight - this.props.beforeHeight}px`, padding: '0px'}} />
+    </tr>);
 
     return (
       <div

@@ -3,8 +3,10 @@
 
 const worker = function () {
 
+  this.itensPerPage = 16;
+
   this.collection = null;
-  this.perPage = 16 * 2;
+  this.perPage = this.itensPerPage * 3;
   this.offSet = 0;
   this.sort = null;
   this.sortDesc = false;
@@ -72,12 +74,15 @@ const worker = function () {
 
     if(e.data.action === 'PAGINATE') {
       let newOffset = e.data.offset;
+
       let direction = newOffset > this.offSet ? 'NEXT' : 'PREV';
-      this.offSet = newOffset;
+      this.offSet = (e.data.page > 0 && newOffset > this.itensPerPage) ? (newOffset - this.itensPerPage) : newOffset;
+      debugger;
       let itens = this.collection.query().filter();
       let decoreateReturn = decoratedReturn('PAGINATE', '', itens.limit(this.offSet, this.perPage).values(), itens.count());
       decoreateReturn.direction = direction;
       decoreateReturn.page = e.data.page;
+      decoreateReturn.offSet = this.offSet;
       this.postMessage(decoreateReturn);
     }
 

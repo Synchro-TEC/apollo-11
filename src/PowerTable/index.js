@@ -23,6 +23,7 @@ class PowerTable extends React.Component {
     this.before = null;
     this.after = null;
     this.offset = 0;
+    this.isScrolling = false;
 
     this.columns = React.Children.map(props.children, (child) => {
       return {
@@ -94,14 +95,17 @@ class PowerTable extends React.Component {
         this.setState({collection: e.data.itens, message: e.data.message, count: e.data.count});
         break;
       case 'PAGINATE':
+
         // var itensInCache = this.props.itensInViewPort / 2;
         // var cache = null;
         // var newCollectionWithoutCache = null;
-        // var newCollection = null;
+        var newCollection = null;
 
-        // if(e.data.page === 0) {
-        var newCollection = e.data.itens;
-        // } else {
+        if(e.data.page > 0) {
+          e.data.itens.splice(0, this.props.itensInViewPort);
+        }
+        debugger;
+        newCollection = e.data.itens;
         //   if(e.data.direction === 'NEXT') {
         //     cache = _takeRight(this.state.collection, itensInCache);
         // let newCollectionWithoutCache = newCollection.splice(0, this.offset);
@@ -130,27 +134,38 @@ class PowerTable extends React.Component {
     }
   }
 
-  paginate(page, offset, scrollTop) {
+  paginate(page, offset, scrollTop, isScrolling) {
     this.offset = offset;
-    this.worker.postMessage({ action: 'PAGINATE', page, offset });
-    const newState = update(this.state, {scrolled: {$set: scrollTop}});
-    this.setState(newState);
+    this.isScrolling = isScrolling;
+    console.log('isScrolling ', isScrolling);
+
+    if(page > 0 && offset > this.props.itensInViewPort) {
+      this.worker.postMessage({ action: 'PAGINATE', page, offset });
+    }
+
+    // const newState = update(this.state, {scrolled: {$set: scrollTop}});
+    // this.setState(newState);
   }
 
   render() {
 
+    let opts = {
+      collection: this.state.collection,
+      columns: this.columns,
+      container: this.node,
+      itensInViewPort: this.props.itensInViewPort,
+      onScroll: this.paginate,
+      rowHeight: this.props.rowHeight,
+      totalRecords: this.state.count,
+    };
+
+    if(!this.isScrolling) {
+      opts.afterHeight = (this.props.rowHeight * this.state.count - this.props.rowHeight * this.props.itensInViewPort);
+      opts.beforeHeight = this.offset * this.props.rowHeight;
+    }
+
     let scrollableArea = this.state.collection.length ?
-      (<ScrollArea
-        afterHeight={(this.props.rowHeight * this.state.count - this.props.rowHeight * this.props.itensInViewPort)}
-        beforeHeight={this.state.scrolled}
-        collection={this.state.collection}
-        columns={this.columns}
-        container={this.node}
-        itensInViewPort={this.props.itensInViewPort}
-        onScroll={this.paginate}
-        rowHeight={this.props.rowHeight}
-        totalRecords={this.state.count}
-      />) : '';
+      (<ScrollArea {...opts} />) : '';
 
     return (
       <div>
