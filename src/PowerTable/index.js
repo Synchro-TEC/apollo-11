@@ -139,9 +139,9 @@ class PowerTable extends React.Component {
     this.isScrolling = isScrolling;
     console.log('isScrolling ', isScrolling);
 
-    if(page > 0 && offset > this.props.itensInViewPort) {
+    // if(offset > this.props.itensInViewPort) {
       this.worker.postMessage({ action: 'PAGINATE', page, offset });
-    }
+    // }
 
     // const newState = update(this.state, {scrolled: {$set: scrollTop}});
     // this.setState(newState);
@@ -159,7 +159,7 @@ class PowerTable extends React.Component {
       totalRecords: this.state.count,
     };
 
-    if(!this.isScrolling) {
+    if(this.isScrolling) {
       opts.afterHeight = (this.props.rowHeight * this.state.count - this.props.rowHeight * this.props.itensInViewPort);
       opts.beforeHeight = this.offset * this.props.rowHeight;
     }

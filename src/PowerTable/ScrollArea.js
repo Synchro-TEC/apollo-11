@@ -29,7 +29,7 @@ class ScrollArea extends React.Component {
     this.viewPortHeight = null;
 
     this.scrollTimer = null;
-    this.scrollDuration = 250;
+    this.scrollDuration = 150;
     this.isScrolling= false;
 
     this.fixScrollBarDiff = this.fixScrollBarDiff.bind(this);
@@ -63,7 +63,22 @@ class ScrollArea extends React.Component {
     header.style.paddingRight = `${scrollAreaWidth - tableWidth}px`;
   }
 
+  _debounceScrollEnded () {
+
+    if (this._disablePointerEventsTimeoutId) {
+      clearTimeout(this._disablePointerEventsTimeoutId)
+    }
+
+    this._disablePointerEventsTimeoutId = setTimeout(
+      this.handlerScroll,
+      this.scrollDuration
+    )
+  }
+
   handlerScroll(e) {
+    if(!this.isScrolling) {
+      return;
+    }
     // debugger;
     // let nPages = Math.ceil(this.viewPortHeight);
     // let pages = [];
@@ -121,6 +136,7 @@ class ScrollArea extends React.Component {
       );
     });
 
+    console.log('BEFORE', this.props.beforeHeight);
     let firstTr = (<tr style={{boder: '0px'}}>
       <td colSpan={this.props.columns.length} style={{height: `${this.props.beforeHeight}px`, padding: '0px'}} />
     </tr>);
@@ -139,10 +155,11 @@ class ScrollArea extends React.Component {
             marginTop: '-31px',
             position: 'relative',
             borderBottom: '1px solid #dadada',
+            pointerEvents: this.isScrolling ? 'none' : '',
           }}
         >
           <table className='sv-table with--grid' style={{tableLayout: 'fixed', marginBottom: '0px'}}>
-            <tbody style={{pointerEvents: 'auto'}}>
+            <tbody>
             {firstTr}
             {result}
             {lastTr}
