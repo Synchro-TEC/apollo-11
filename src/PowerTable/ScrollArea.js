@@ -1,15 +1,4 @@
 import React from 'react';
-// import _throttle from 'lodash.throttle';
-// let userHasScrolled = false;
-
-//
-// const delayedExec = function(after, fn) {
-//   let timer;
-//   return function() {
-//     timer && clearTimeout(timer);
-//     timer = setTimeout(fn, after);
-//   };
-// };
 
 class ScrollArea extends React.Component {
 
@@ -33,25 +22,12 @@ class ScrollArea extends React.Component {
     this.isScrolling= false;
 
     this.fixScrollBarDiff = this.fixScrollBarDiff.bind(this);
-    this.handlerScroll = this.handlerScroll.bind(this);
   }
 
   componentDidMount() {
     this.recordsContainer = this.props.container.querySelector('.PWT-Scroll');
     this.totalHeight = this.props.rowHeight * this.props.totalRecords;
     this.viewPortHeight = this.props.rowHeight * this.props.itensInViewPort;
-
-    this.recordsContainer.addEventListener('scroll', (e) => {
-
-      clearTimeout(this.scrollTimer);
-      this.scrollTimer = setTimeout(() => {
-        this.isScrolling = false;
-        this.handlerScroll(e);
-      }, this.scrollDuration);
-
-      this.isScrolling = true;
-      this.handlerScroll(e);
-    });
 
     this.fixScrollBarDiff();
   }
@@ -61,66 +37,6 @@ class ScrollArea extends React.Component {
     let tableWidth = this.props.container.querySelector('.PWT-Scroll table').offsetWidth;
     let header = this.props.container.querySelector('.PWT-TableHeader');
     header.style.paddingRight = `${scrollAreaWidth - tableWidth}px`;
-  }
-
-  _debounceScrollEnded () {
-
-    if (this._disablePointerEventsTimeoutId) {
-      clearTimeout(this._disablePointerEventsTimeoutId)
-    }
-
-    this._disablePointerEventsTimeoutId = setTimeout(
-      this.handlerScroll,
-      this.scrollDuration
-    )
-  }
-
-  handlerScroll(e) {
-    if(!this.isScrolling) {
-      return;
-    }
-    // debugger;
-    // let nPages = Math.ceil(this.viewPortHeight);
-    // let pages = [];
-
-    // _times(this.totalHeight, (n) => {
-    //   if((n % nPages) === 0) {
-    //     pages.push(n);
-    //   }
-    // });
-
-    // const closestValue = (array, value) => {
-    //   let result = null;
-    //   let lastDelta;
-    //
-    //   array.some((item) => {
-    //     debugger;
-    //     let delta = Math.abs(value - item);
-    //     if (delta > lastDelta) {
-    //       return true;
-    //     }
-    //     result = item;
-    //     lastDelta = delta;
-    //   });
-    //
-    //   return array.indexOf(result);
-    // };
-
-    const calculateOffset = (scrollTop) => {
-      return Math.ceil(scrollTop / this.props.rowHeight);
-    };
-
-
-    let scrollTop = e.target.scrollTop;
-    // debugger;
-    // let page = closestValue(pages, scrollTop);
-    let offset = calculateOffset(scrollTop);
-    let page = Math.floor(offset / this.props.itensInViewPort);
-    this.props.onScroll(page, offset, scrollTop, this.isScrolling);
-
-    // console.log('SCROLLTOP ', scrollTop);
-    // console.log('PAGE ', page);
-    // console.log('OFFSET ', offset);
   }
 
   render() {
@@ -136,33 +52,20 @@ class ScrollArea extends React.Component {
       );
     });
 
-    console.log('BEFORE', this.props.beforeHeight);
-    let firstTr = (<tr style={{boder: '0px'}}>
-      <td colSpan={this.props.columns.length} style={{height: `${this.props.beforeHeight}px`, padding: '0px'}} />
-    </tr>);
-
-    let lastTr = (<tr style={{boder: '0px'}}>
-      <td colSpan={this.props.columns.length} style={{height: `${this.props.afterHeight - this.props.beforeHeight}px`, padding: '0px'}} />
-    </tr>);
-
     return (
       <div
           className='PWT-Scroll'
           style={{
             display: 'block',
-            height: ((this.props.itensInViewPort - 1) * this.props.rowHeight),
             overflow: 'auto',
             marginTop: '-31px',
             position: 'relative',
             borderBottom: '1px solid #dadada',
-            pointerEvents: this.isScrolling ? 'none' : '',
           }}
         >
           <table className='sv-table with--grid' style={{tableLayout: 'fixed', marginBottom: '0px'}}>
             <tbody>
-            {firstTr}
             {result}
-            {lastTr}
             </tbody>
           </table>
       </div>

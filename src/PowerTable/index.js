@@ -4,8 +4,7 @@ import worker from './fetch.worker';
 import update from 'immutability-helper';
 import ScrollArea from './ScrollArea';
 import ColumnActions from './ColumnActions';
-// import _takeRight from 'lodash.takeright';
-// import _take from 'lodash.take';
+import Paginate from '../paginate/Paginate';
 
 class PowerTable extends React.Component {
 
@@ -19,6 +18,7 @@ class PowerTable extends React.Component {
     this.distincts = {};
     this.distinctsLoaded = false;
     this.paginate = this.paginate.bind(this);
+    this.showOptions = this.showOptions.bind(this);
     this.node = null;
     this.before = null;
     this.after = null;
@@ -40,9 +40,11 @@ class PowerTable extends React.Component {
 
   componentDidMount() {
     this.worker = new Worker(window.URL.createObjectURL(this.workerInstace));
+
     this.worker.addEventListener('message', (e) => {
       this.workerReturn(e);
     }, false);
+
     this.worker.postMessage(
       {
         action: 'LOAD',
@@ -62,7 +64,7 @@ class PowerTable extends React.Component {
     for (let i = 0; i < ths.length; i++) {
       ths[i].addEventListener('click', () => {
         if(ths[i].dataset.key) {
-          this.worker.postMessage({ action: 'SORT', value: ths[i].dataset.key });
+          this.showOptions(ths[i].dataset.key);
         }
       });
     }
@@ -72,6 +74,10 @@ class PowerTable extends React.Component {
 
   componentWillUnmount() {
     this.worker.terminate();
+  }
+
+  showOptions(key) {
+    console.log(key);
   }
 
   workerReturn(e) {
@@ -95,33 +101,7 @@ class PowerTable extends React.Component {
         this.setState({collection: e.data.itens, message: e.data.message, count: e.data.count});
         break;
       case 'PAGINATE':
-
-        // var itensInCache = this.props.itensInViewPort / 2;
-        // var cache = null;
-        // var newCollectionWithoutCache = null;
-        var newCollection = null;
-
-        if(e.data.page > 0) {
-          e.data.itens.splice(0, this.props.itensInViewPort);
-        }
-        debugger;
-        newCollection = e.data.itens;
-        //   if(e.data.direction === 'NEXT') {
-        //     cache = _takeRight(this.state.collection, itensInCache);
-        // let newCollectionWithoutCache = newCollection.splice(0, this.offset);
-        //     newCollection = cache.concat(newCollectionWithoutCache);
-        //   } else {
-        //     cache = _take(this.state.collection, itensInCache);
-        //     newCollectionWithoutCache = _takeRight(e.data.itens, itensInCache);
-        //     newCollection = newCollectionWithoutCache.concat(cache);
-        //   }
-        // }
-
-
-
-
-
-        this.setState({collection: newCollection, message: e.data.message, count: e.data.count});
+        this.setState({collection: e.data.itens, message: e.data.message, count: e.data.count});
         break;
       case 'SORT':
         this.setState({collection: e.data.itens, message: e.data.message, count: e.data.count});
@@ -134,17 +114,9 @@ class PowerTable extends React.Component {
     }
   }
 
-  paginate(page, offset, scrollTop, isScrolling) {
-    this.offset = offset;
-    this.isScrolling = isScrolling;
-    console.log('isScrolling ', isScrolling);
-
-    // if(offset > this.props.itensInViewPort) {
-      this.worker.postMessage({ action: 'PAGINATE', page, offset });
-    // }
-
-    // const newState = update(this.state, {scrolled: {$set: scrollTop}});
-    // this.setState(newState);
+  paginate(pagerObject) {
+    const { currentPage, offset } = pagerObject;
+    this.worker.postMessage({ action: 'PAGINATE', currentPage, offset });
   }
 
   render() {
@@ -165,11 +137,24 @@ class PowerTable extends React.Component {
     }
 
     let scrollableArea = this.state.collection.length ?
-      (<ScrollArea {...opts} />) : '';
+      (
+        <div>
+          <ScrollArea {...opts} />
+          <div className='sv-padd-25'>
+            <Paginate
+              onNextPage={this.paginate}
+              onPreviousPage={this.paginate}
+              onSelectASpecifPage={this.paginate}
+              recordsByPage={16}
+              totalSizeOfData={this.state.count}
+            />
+          </div>
+        </div>
+      ) : '';
 
     return (
       <div>
-        <p>{this.state.message}</p>
+        <p>{this.state.message || ''}</p>
         <div className='PWT-TableHeader' style={{backgroundColor: '#f3f3f3'}}>
           <table className='sv-table with--hover with--grid' style={{tableLayout: 'fixed'}}>
             <thead>
