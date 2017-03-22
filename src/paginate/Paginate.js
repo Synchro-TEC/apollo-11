@@ -9,6 +9,14 @@ class Paginate extends React.Component {
     this.totalOfPieces = Math.ceil(this.props.totalSizeOfData/this.props.recordsByPage);
   }
 
+  componentWillReceiveProps(nextProps) {
+    this.totalOfPieces = Math.ceil(nextProps.totalSizeOfData/nextProps.recordsByPage);
+  }
+
+  shouldComponentUpdate(nextProps) {
+    return nextProps !== this.props;
+  }
+
   /**
    * Monta um objeto com informações do paginate
    * @returns {{}}

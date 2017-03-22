@@ -9,9 +9,13 @@ class ColumnActions extends React.Component {
 
   filterChange(e) {
     let queryText = e.target.value.trim();
+
     if(queryText.length >= 3) {
       this.props.onSearch({dataKey: this.props.dataKey, value: queryText});
+    } else {
+      this.props.onSearch({dataKey: this.props.dataKey, value: ''});
     }
+
   }
 
   render() {
@@ -44,7 +48,7 @@ class ColumnActions extends React.Component {
 
         <div>
           <form className='sv-form' onSubmit={(e) => e.preventDefault()}>
-            <input  onChange={(e) => this.filterChange(e)} placeholder='Digite para pesquisar' type='text' />
+            <input onBlur={(e) => this.filterChange(e)}  onChange={(e) => this.filterChange(e)} placeholder='Digite para pesquisar' type='text' />
           </form>
         </div>
 
@@ -56,8 +60,8 @@ class ColumnActions extends React.Component {
 ColumnActions.displayName = 'ColumnActions';
 
 ColumnActions.propTypes = {
-  isVisible: React.PropTypes.bool,
   dataKey: React.PropTypes.string,
+  isVisible: React.PropTypes.bool,
   onSearch: React.PropTypes.func,
   onSort: React.PropTypes.func,
   position: React.PropTypes.object,

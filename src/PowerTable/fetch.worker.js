@@ -3,14 +3,13 @@
 
 const worker = function () {
 
-  this.itensPerPage = 16;
-
   this.collection = null;
   this.perPage = 16;
   this.offSet = 0;
   this.sort = null;
   this.sortDesc = false;
   this.distincts = {};
+  this.filters = {};
 
   const bytesToSize = (bytes) => {
     let sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
@@ -78,7 +77,7 @@ const worker = function () {
       let direction = newOffset > this.offSet ? 'NEXT' : 'PREV';
       this.offSet = newOffset;
 
-      let itens = this.collection.query().filter();
+      let itens = this.collection.query().filter(this.filters);
       let decoreateReturn = decoratedReturn('PAGINATE', '', itens.limit(this.offSet, this.perPage).values(), itens.count());
       decoreateReturn.direction = direction;
       decoreateReturn.page = e.data.page;
@@ -103,11 +102,13 @@ const worker = function () {
 
     if(e.data.action === 'FILTER') {
       const {dataKey, value} = e.data.filterProps;
-
-      let query = {};
-      query[`${dataKey}__icontains`] = value;
-
-      let itens = this.collection.query().filter(query);
+      if(!value) {
+        delete this.filters[`${dataKey}__icontains`];
+      } else {
+        this.filters[`${dataKey}__icontains`] = value;
+      }
+      this.offSet = 0;
+      let itens = this.collection.query().filter(this.filters);
       this.postMessage(decoratedReturn('FILTER', '', itens.limit(this.offSet, this.perPage).values(), itens.count()));
     }
 

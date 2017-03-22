@@ -12,6 +12,8 @@ class DataTableCell extends React.Component {
   }
 }
 
+DataTableCell.displayName = 'DataTableCell';
+
 DataTableCell.propTypes = {
   valueOfCell: React.PropTypes.any
 };

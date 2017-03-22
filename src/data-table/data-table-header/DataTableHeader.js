@@ -77,6 +77,8 @@ class DataTableHeader extends React.Component {
   }
 }
 
+DataTableHeader.displayName = 'DataTableHeader';
+
 DataTableHeader.propTypes = {
   onSort: React.PropTypes.func,
 };

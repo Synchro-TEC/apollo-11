@@ -17,7 +17,6 @@ class PowerTable extends React.Component {
     this.workerReturn = this.workerReturn.bind(this);
     this.distinctsLoaded = false;
     this.paginate = this.paginate.bind(this);
-    this.showOptions = this.showOptions.bind(this);
     this.filter = this.filter.bind(this);
 
     this.node = null;
@@ -57,25 +56,21 @@ class PowerTable extends React.Component {
       }
     );
 
-    let ths = [].slice.call(findDOMNode(this).querySelectorAll('.PWT-TableHeader th'));
-
-    for (let i = 0; i < ths.length; i++) {
-      ths[i].addEventListener('click', () => {
-        if(ths[i].dataset.key) {
-          this.showOptions(ths[i].dataset.key);
-        }
-      });
-    }
+    // let ths = [].slice.call(findDOMNode(this).querySelectorAll('.PWT-TableHeader th'));
+    //
+    // for (let i = 0; i < ths.length; i++) {
+    //   ths[i].addEventListener('click', () => {
+    //     if(ths[i].dataset.key) {
+    //       this.showOptions(ths[i].dataset.key);
+    //     }
+    //   });
+    // }
 
     this.node = findDOMNode(this);
   }
 
   componentWillUnmount() {
     this.worker.terminate();
-  }
-
-  showOptions(key) {
-    console.log(key);
   }
 
   workerReturn(e) {
@@ -146,7 +141,7 @@ class PowerTable extends React.Component {
       return React.cloneElement(chield, props);
     });
 
-
+    debugger;
     let scrollableArea = this.state.collection.length ?
       (
         <div>

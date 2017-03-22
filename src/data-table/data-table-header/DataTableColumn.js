@@ -52,6 +52,8 @@ class DataTableColumn extends React.Component {
   }
 }
 
+DataTableColumn.displayName = 'DataTableColumn';
+
 DataTableColumn.propTypes = {
   dataKey: React.PropTypes.string.isRequired,
   direction: React.PropTypes.string,

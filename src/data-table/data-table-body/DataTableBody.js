@@ -22,6 +22,8 @@ class DataTableBody extends React.Component {
   }
 }
 
+DataTableBody.displayName = 'DataTableBody';
+
 DataTableBody.propTypes = {
   dataTableHeader: React.PropTypes.array.isRequired,
   dataTableRows: React.PropTypes.array.isRequired,
