@@ -101,6 +101,16 @@ const worker = function () {
       this.postMessage(decoratedReturn('SORT', '', itens.limit(this.offSet, this.perPage).values(), itens.count()));
     }
 
+    if(e.data.action === 'FILTER') {
+      const {dataKey, value} = e.data.filterProps;
+
+      let query = {};
+      query[`${dataKey}__icontains`] = value;
+
+      let itens = this.collection.query().filter(query);
+      this.postMessage(decoratedReturn('FILTER', '', itens.limit(this.offSet, this.perPage).values(), itens.count()));
+    }
+
   }, false);
 
 };

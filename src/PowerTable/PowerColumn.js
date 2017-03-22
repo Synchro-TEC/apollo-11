@@ -16,7 +16,7 @@ class PowerColumn extends React.Component {
     return (
       <th data-key={this.props.dataKey} onClick={() => this.toggle()}>
         {this.props.columnTitle}
-        <ColumnActions isVisible={this.state.actionIsVisible} distinctData={this.props.uniqueValues} />
+        <ColumnActions dataKey={this.props.dataKey} isVisible={this.state.actionIsVisible} onSearch={this.props.onSearch}  />
       </th>
     );
   }
@@ -33,6 +33,7 @@ PowerColumn.propTypes = {
   columnTitle: React.PropTypes.string.isRequired,
   dataKey: React.PropTypes.string,
   formatter: React.PropTypes.func,
+  onSearch: React.PropTypes.func,
   searchable: React.PropTypes.bool,
   uniqueValues: React.PropTypes.any,
 };

@@ -18,6 +18,8 @@ class PowerTable extends React.Component {
     this.distinctsLoaded = false;
     this.paginate = this.paginate.bind(this);
     this.showOptions = this.showOptions.bind(this);
+    this.filter = this.filter.bind(this);
+
     this.node = null;
     this.offset = 0;
 
@@ -102,8 +104,11 @@ class PowerTable extends React.Component {
       case 'SORT':
         this.setState({collection: e.data.itens, message: e.data.message, count: e.data.count});
         break;
+      case 'FILTER':
+        this.setState({collection: e.data.itens, message: e.data.message, count: e.data.count});
+        break;
       case 'DISTINCT':
-        const newState = update(this.state, {distincts: {$set: e.data.itens}});
+        var newState = update(this.state, {distincts: {$set: e.data.itens}});
         this.setState(newState);
         break;
     }
@@ -112,6 +117,10 @@ class PowerTable extends React.Component {
   paginate(pagerObject) {
     const { currentPage, offset } = pagerObject;
     this.worker.postMessage({ action: 'PAGINATE', currentPage, offset });
+  }
+
+  filter(filterProps) {
+    this.worker.postMessage({ action: 'FILTER', filterProps});
   }
 
   render() {
@@ -129,8 +138,8 @@ class PowerTable extends React.Component {
     let headers = this.props.children.map((chield, i) => {
 
       let newProps = {key: i};
-      if(chield.props.dataKey && this.state.distincts){
-        newProps.uniqueValues = this.state.distincts[chield.props.dataKey];
+      if(chield.props.dataKey){
+        newProps.onSearch = this.filter;
       }
       let props = {...chield.props, ...newProps};
 
@@ -141,15 +150,6 @@ class PowerTable extends React.Component {
     let scrollableArea = this.state.collection.length ?
       (
         <div>
-          <div className='PWT-TableHeader' style={{backgroundColor: '#f3f3f3'}}>
-            <table className='sv-table with--hover with--grid' style={{tableLayout: 'fixed'}}>
-              <thead>
-              <tr>
-                {headers}
-              </tr>
-              </thead>
-            </table>
-          </div>
           <ScrollArea {...opts} />
           <div className='sv-padd-25'>
             <Paginate
@@ -166,6 +166,15 @@ class PowerTable extends React.Component {
     return (
       <div>
         <p>{this.state.message || ' '}</p>
+        <div className='PWT-TableHeader' style={{backgroundColor: '#f3f3f3'}}>
+          <table className='sv-table with--hover with--grid' style={{tableLayout: 'fixed'}}>
+            <thead>
+            <tr>
+              {headers}
+            </tr>
+            </thead>
+          </table>
+        </div>
         {scrollableArea}
       </div>
     );

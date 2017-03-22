@@ -3,6 +3,15 @@ import React from 'react';
 class ColumnActions extends React.Component {
   constructor(props){
     super(props);
+
+    this.filterChange = this.filterChange.bind(this);
+  }
+
+  filterChange(e) {
+    let queryText = e.target.value.trim();
+    if(queryText.length >= 3) {
+      this.props.onSearch({dataKey: this.props.dataKey, value: queryText});
+    }
   }
 
   render() {
@@ -14,7 +23,7 @@ class ColumnActions extends React.Component {
       width: '200px',
       height: '300px',
       padding: '10px',
-      backgroundColor: '#fff',
+      backgroundColor: 'rgba(255, 255, 255, .9)',
       border: '1px solid rgba(0,0,0,.2)',
       boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
       zIndex: '99',
@@ -25,21 +34,19 @@ class ColumnActions extends React.Component {
     } else {
       dialogStyles.display = 'none';
     }
-    //
-    // let data = this.props.distinctData.map((data, i) => {
-    //   return (<li key={`data-${i}`}>{data}</li>);
-    // });
 
     return (
-      <div style={dialogStyles} onClick={(e) => e.stopPropagation()}>
+      <div onClick={(e) => e.stopPropagation()} style={dialogStyles}>
         <p>
           <button className='sv-button default small marged'><i className='fa fa-sort-amount-asc'/></button>
           <button className='sv-button default small'><i className='fa fa-sort-amount-desc'/></button>
         </p>
 
-        <ul>
-          {/*{data}*/}
-        </ul>
+        <div>
+          <form className='sv-form' onSubmit={(e) => e.preventDefault()}>
+            <input  onChange={(e) => this.filterChange(e)} placeholder='Digite para pesquisar' type='text' />
+          </form>
+        </div>
 
       </div>
     );
@@ -48,18 +55,12 @@ class ColumnActions extends React.Component {
 
 ColumnActions.displayName = 'ColumnActions';
 
-ColumnActions.defaultProps = {
-  distinctData: [],
-};
-
 ColumnActions.propTypes = {
-  distinctData: React.PropTypes.array,
   isVisible: React.PropTypes.bool,
-  key: React.PropTypes.string,
+  dataKey: React.PropTypes.string,
   onSearch: React.PropTypes.func,
   onSort: React.PropTypes.func,
   position: React.PropTypes.object,
-
 };
 
 export default ColumnActions;
