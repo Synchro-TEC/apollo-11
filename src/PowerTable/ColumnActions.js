@@ -9,7 +9,7 @@ class ColumnActions extends React.Component {
 
     let dialogStyles = {
       position: 'absolute',
-      top: '135px',
+      top: '35px',
       right: '0',
       width: '200px',
       height: '300px',
@@ -17,6 +17,7 @@ class ColumnActions extends React.Component {
       backgroundColor: '#fff',
       border: '1px solid rgba(0,0,0,.2)',
       boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
+      zIndex: '99',
     };
 
     if (this.props.isVisible) {
@@ -24,15 +25,21 @@ class ColumnActions extends React.Component {
     } else {
       dialogStyles.display = 'none';
     }
+    //
+    // let data = this.props.distinctData.map((data, i) => {
+    //   return (<li key={`data-${i}`}>{data}</li>);
+    // });
 
     return (
-      <div style={dialogStyles}>
+      <div style={dialogStyles} onClick={(e) => e.stopPropagation()}>
         <p>
           <button className='sv-button default small marged'><i className='fa fa-sort-amount-asc'/></button>
           <button className='sv-button default small'><i className='fa fa-sort-amount-desc'/></button>
         </p>
 
-
+        <ul>
+          {/*{data}*/}
+        </ul>
 
       </div>
     );
@@ -40,6 +47,10 @@ class ColumnActions extends React.Component {
 }
 
 ColumnActions.displayName = 'ColumnActions';
+
+ColumnActions.defaultProps = {
+  distinctData: [],
+};
 
 ColumnActions.propTypes = {
   distinctData: React.PropTypes.array,

@@ -3,7 +3,7 @@ import { findDOMNode } from 'react-dom';
 import worker from './fetch.worker';
 import update from 'immutability-helper';
 import ScrollArea from './ScrollArea';
-import ColumnActions from './ColumnActions';
+
 import Paginate from '../paginate/Paginate';
 
 class PowerTable extends React.Component {
@@ -15,15 +15,11 @@ class PowerTable extends React.Component {
       type: 'text/javascript'
     });
     this.workerReturn = this.workerReturn.bind(this);
-    this.distincts = {};
     this.distinctsLoaded = false;
     this.paginate = this.paginate.bind(this);
     this.showOptions = this.showOptions.bind(this);
     this.node = null;
-    this.before = null;
-    this.after = null;
     this.offset = 0;
-    this.isScrolling = false;
 
     this.columns = React.Children.map(props.children, (child) => {
       return {
@@ -34,7 +30,7 @@ class PowerTable extends React.Component {
       };
     });
 
-    this.state = {collection: [], message: '', count: 0, scrolled: 0};
+    this.state = {collection: [], message: '', count: 0, distincts: null};
 
   }
 
@@ -107,9 +103,8 @@ class PowerTable extends React.Component {
         this.setState({collection: e.data.itens, message: e.data.message, count: e.data.count});
         break;
       case 'DISTINCT':
-        this.distinctsLoaded = true;
-        this.distincts = e.data.itens;
-        console.log(this.distincts);
+        const newState = update(this.state, {distincts: {$set: e.data.itens}});
+        this.setState(newState);
         break;
     }
   }
@@ -131,14 +126,30 @@ class PowerTable extends React.Component {
       totalRecords: this.state.count,
     };
 
-    if(this.isScrolling) {
-      opts.afterHeight = (this.props.rowHeight * this.state.count - this.props.rowHeight * this.props.itensInViewPort);
-      opts.beforeHeight = this.offset * this.props.rowHeight;
-    }
+    let headers = this.props.children.map((chield, i) => {
+
+      let newProps = {key: i};
+      if(chield.props.dataKey && this.state.distincts){
+        newProps.uniqueValues = this.state.distincts[chield.props.dataKey];
+      }
+      let props = {...chield.props, ...newProps};
+
+      return React.cloneElement(chield, props);
+    });
+
 
     let scrollableArea = this.state.collection.length ?
       (
         <div>
+          <div className='PWT-TableHeader' style={{backgroundColor: '#f3f3f3'}}>
+            <table className='sv-table with--hover with--grid' style={{tableLayout: 'fixed'}}>
+              <thead>
+              <tr>
+                {headers}
+              </tr>
+              </thead>
+            </table>
+          </div>
           <ScrollArea {...opts} />
           <div className='sv-padd-25'>
             <Paginate
@@ -154,17 +165,7 @@ class PowerTable extends React.Component {
 
     return (
       <div>
-        <p>{this.state.message || ''}</p>
-        <div className='PWT-TableHeader' style={{backgroundColor: '#f3f3f3'}}>
-          <table className='sv-table with--hover with--grid' style={{tableLayout: 'fixed'}}>
-            <thead>
-              <tr>
-                {this.props.children}
-              </tr>
-            </thead>
-          </table>
-        </div>
-        <ColumnActions />
+        <p>{this.state.message || ' '}</p>
         {scrollableArea}
       </div>
     );

@@ -1,4 +1,5 @@
 import React from 'react';
+import ColumnActions from './ColumnActions';
 
 class PowerColumn extends React.Component {
 
@@ -7,10 +8,15 @@ class PowerColumn extends React.Component {
     this.state = {actionIsVisible: false};
   }
 
+  toggle() {
+    this.setState({actionIsVisible: !this.state.actionIsVisible});
+  }
+
   render() {
     return (
-      <th data-key={this.props.dataKey}>
+      <th data-key={this.props.dataKey} onClick={() => this.toggle()}>
         {this.props.columnTitle}
+        <ColumnActions isVisible={this.state.actionIsVisible} distinctData={this.props.uniqueValues} />
       </th>
     );
   }
@@ -28,6 +34,7 @@ PowerColumn.propTypes = {
   dataKey: React.PropTypes.string,
   formatter: React.PropTypes.func,
   searchable: React.PropTypes.bool,
+  uniqueValues: React.PropTypes.any,
 };
 
 export default PowerColumn;
