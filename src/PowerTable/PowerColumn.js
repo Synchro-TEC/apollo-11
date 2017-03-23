@@ -1,5 +1,4 @@
 import React from 'react';
-import ColumnActions from './ColumnActions';
 
 class PowerColumn extends React.Component {
 
@@ -11,8 +10,19 @@ class PowerColumn extends React.Component {
     this.state = {actionIsVisible: false};
   }
 
-  toggle() {
-    this.setState({actionIsVisible: !this.state.actionIsVisible});
+  toggle(e) {
+    this.props.onSelect(e, this.props.dataKey);
+    // let otherActions = [].slice.call(
+    //                       this
+    //                       .props
+    //                       .container
+    //                       .querySelectorAll(`th:not([data-title="${this.props.columnTitle}"]) .pwt-actions`));
+    //
+    // for (let i = 0; i < otherActions.length; i++ ) {
+    //   otherActions[i].style.display = 'none';
+    // }
+    //
+    // this.setState({actionIsVisible: !this.state.actionIsVisible});
   }
 
   renderFilter() {
@@ -34,15 +44,8 @@ class PowerColumn extends React.Component {
 
   render() {
     return (
-      <th data-key={this.props.dataKey} onClick={() => this.toggle()}>
+      <th data-key={this.props.dataKey} data-title={this.props.columnTitle} onClick={(e) => this.toggle(e)}>
         {this.props.columnTitle}
-        <ColumnActions
-          dataKey={this.props.dataKey}
-          dataType={this.props.dataType}
-          isVisible={this.state.actionIsVisible}
-          onSearch={this.props.onSearch}
-          onSort={this.props.onSort}
-        />
         {this.renderFilter()}
         {this.renderSort()}
       </th>
@@ -60,15 +63,18 @@ PowerColumn.defaultProps = {
 
 PowerColumn.propTypes = {
   columnTitle: React.PropTypes.string.isRequired,
+  container: React.PropTypes.any,
   dataKey: React.PropTypes.string,
   dataType: React.PropTypes.oneOf(['numeric', 'text', 'date']),
   filters: React.PropTypes.object,
   formatter: React.PropTypes.func,
   onSearch: React.PropTypes.func,
+  onSelect: React.PropTypes.func,
   onSort: React.PropTypes.func,
   searchable: React.PropTypes.bool,
   sorts: React.PropTypes.object,
   uniqueValues: React.PropTypes.any,
+
 };
 
 export default PowerColumn;

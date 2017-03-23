@@ -54,7 +54,7 @@ const worker = function () {
         for (let i = 0; i < e.data.cols.length; i++) {
           let col = e.data.cols[i];
           if(col && col.searchable) {
-            this.distincts[col.key] = this.collection.query().distinct(col.key);
+            this.distincts[col.key] = this.collection.query().limit(0, 100).distinct(col.key);
           }
         }
 
@@ -117,11 +117,14 @@ const worker = function () {
         }
       }
       this.offSet = 0;
+
       let itens = this.collection.query().filter(this.filters);
+
       if(this.sorts) {
         let key = Object.keys(this.sorts)[0];
         itens = itens.sort(key, this.sorts[key]);
       }
+
       this.postMessage(decoratedReturn('FILTER', '', itens.limit(this.offSet, this.perPage).values(), itens.count()));
     }
 

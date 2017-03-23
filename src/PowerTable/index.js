@@ -3,8 +3,8 @@ import { findDOMNode } from 'react-dom';
 import worker from './fetch.worker';
 import update from 'immutability-helper';
 import ScrollArea from './ScrollArea';
-
 import Paginate from '../paginate/Paginate';
+// import ColumnActions from './ColumnActions';
 
 class PowerTable extends React.Component {
 
@@ -19,6 +19,7 @@ class PowerTable extends React.Component {
     this.paginate = this.paginate.bind(this);
     this.filter = this.filter.bind(this);
     this.sort = this.sort.bind(this);
+    this.selectColumn = this.selectColumn.bind(this);
 
     this.node = null;
     this.offset = 0;
@@ -32,7 +33,15 @@ class PowerTable extends React.Component {
       };
     });
 
-    this.state = {collection: [], message: '', count: 0, filters: {}, loading: true, sorts: {}};
+    this.state = {
+      collection: [],
+      message: '',
+      count: 0,
+      filters: {},
+      loading: true,
+      sorts: {},
+      style: {},
+    };
 
   }
 
@@ -113,11 +122,11 @@ class PowerTable extends React.Component {
         refreshState.call(this);
         break;
       case 'FILTER':
-        this.refs.paginate.reset();
         refreshState.call(this);
         break;
       case 'DISTINCT':
         var newState = update(this.state, {distincts: {$set: e.data.itens}});
+        console.log(e.data.itens);
         this.setState(newState);
         break;
     }
@@ -134,6 +143,15 @@ class PowerTable extends React.Component {
 
   sort(direction, dataKey) {
     this.worker.postMessage({ action: 'SORT', direction, dataKey});
+  }
+
+  selectColumn(event, dataKey) {
+    if(dataKey) {
+      // let x = event.nativeEvent.pageX;
+      // let y = event.nativeEvent.pageY;
+
+
+    }
   }
 
   render() {
@@ -156,6 +174,8 @@ class PowerTable extends React.Component {
         newProps.onSort = this.sort;
         newProps.filters = this.state.filters;
         newProps.sorts = this.state.sorts;
+        newProps.container = this.node;
+        newProps.onSelect = this.selectColumn;
       }
       let props = {...chield.props, ...newProps};
 
@@ -163,21 +183,7 @@ class PowerTable extends React.Component {
     });
 
     let scrollableArea = this.state.collection.length ?
-      (
-        <div>
-          <ScrollArea {...opts} />
-          <div className='sv-padd-25'>
-            <Paginate
-              onNextPage={this.paginate}
-              onPreviousPage={this.paginate}
-              onSelectASpecifPage={this.paginate}
-              recordsByPage={16}
-              ref='paginate'
-              totalSizeOfData={this.state.count}
-            />
-          </div>
-        </div>
-      ) : (this.state.loading ? '' : <div>Nenhum Registro Encontrado.</div>);
+      (<ScrollArea {...opts} />) : (this.state.loading ? '' : <div>Nenhum Registro Encontrado.</div>);
 
     return (
       <div>
@@ -192,6 +198,17 @@ class PowerTable extends React.Component {
           </table>
         </div>
         {scrollableArea}
+        <div className='sv-padd-25'>
+          <Paginate
+            onNextPage={this.paginate}
+            onPreviousPage={this.paginate}
+            onSelectASpecifPage={this.paginate}
+            recordsByPage={16}
+            ref='paginate'
+            totalSizeOfData={this.state.count}
+          />
+        </div>
+
       </div>
     );
   }
