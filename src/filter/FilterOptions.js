@@ -38,6 +38,9 @@ class FilterOptions extends React.Component {
           this.fields[i].value = '';
         }
       }
+      this.setState({isOpen: false},
+        this.props.addSearchValueToFilterValues(this.filterValues)
+      );
     }
   }
 

@@ -72,14 +72,13 @@ class Paginate extends React.Component {
 
   createInitialOptionPages() {
     let initialPages = [];
-
     if(this.totalOfPieces >= 2) {
       for(let i = 1; i<=2; i++) {
         initialPages.push(
           this.colorPaginationOptionAndPutGapIfNeeded(i)
         );
       }
-    } else {
+    } else if(this.totalOfPieces > 0) {
       initialPages.push(this.colorPaginationOptionAndPutGapIfNeeded(this.totalOfPieces));
     }
 
@@ -158,7 +157,7 @@ class Paginate extends React.Component {
       <div className='sv-paginate'>
         <button
           className='sv-button link link-info'
-          disabled={this.currentPage === 1}
+          disabled={this.currentPage === 1 || this.totalOfPieces === 0}
           onClick={() => this.previousPage()}>
           <i className='fa fa-chevron-left'/>
           Anterior
@@ -166,7 +165,7 @@ class Paginate extends React.Component {
           {paginateOptions}
         <button
           className='sv-button link link-info'
-          disabled={this.currentPage === this.totalOfPieces}
+          disabled={this.totalOfPieces <= this.currentPage}
           onClick={() => this.nextPage()}>
           Próximo
           <i className='fa fa-chevron-right'/>
