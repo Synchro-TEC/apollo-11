@@ -15,9 +15,10 @@ class PowerTable extends React.Component {
       type: 'text/javascript'
     });
     this.workerReturn = this.workerReturn.bind(this);
-    this.distinctsLoaded = false;
+
     this.paginate = this.paginate.bind(this);
     this.filter = this.filter.bind(this);
+    this.sort = this.sort.bind(this);
 
     this.node = null;
     this.offset = 0;
@@ -31,7 +32,7 @@ class PowerTable extends React.Component {
       };
     });
 
-    this.state = {collection: [], message: '', count: 0, distincts: null};
+    this.state = {collection: [], message: '', count: 0, filters: {}, loading: true, sorts: {}};
 
   }
 
@@ -80,6 +81,17 @@ class PowerTable extends React.Component {
       this.setState(newState);
     };
 
+    const refreshState = () => {
+      this.setState({
+        collection: e.data.itens,
+        message: e.data.message,
+        count: e.data.count,
+        filters: e.data.filters,
+        loading: false,
+        sorts: e.data.sorts
+      });
+    };
+
     switch (e.data.type) {
       case 'LOADING_INIT':
         updateMessage(e.data.message);
@@ -91,16 +103,18 @@ class PowerTable extends React.Component {
         updateMessage(e.data.message);
         break;
       case 'LOADED':
-        this.setState({collection: e.data.itens, message: e.data.message, count: e.data.count});
+        refreshState.call(this);
         break;
       case 'PAGINATE':
-        this.setState({collection: e.data.itens, message: e.data.message, count: e.data.count});
+        refreshState.call(this);
         break;
       case 'SORT':
-        this.setState({collection: e.data.itens, message: e.data.message, count: e.data.count});
+        this.refs.paginate.reset();
+        refreshState.call(this);
         break;
       case 'FILTER':
-        this.setState({collection: e.data.itens, message: e.data.message, count: e.data.count});
+        this.refs.paginate.reset();
+        refreshState.call(this);
         break;
       case 'DISTINCT':
         var newState = update(this.state, {distincts: {$set: e.data.itens}});
@@ -116,6 +130,10 @@ class PowerTable extends React.Component {
 
   filter(filterProps) {
     this.worker.postMessage({ action: 'FILTER', filterProps});
+  }
+
+  sort(direction, dataKey) {
+    this.worker.postMessage({ action: 'SORT', direction, dataKey});
   }
 
   render() {
@@ -135,13 +153,15 @@ class PowerTable extends React.Component {
       let newProps = {key: i};
       if(chield.props.dataKey){
         newProps.onSearch = this.filter;
+        newProps.onSort = this.sort;
+        newProps.filters = this.state.filters;
+        newProps.sorts = this.state.sorts;
       }
       let props = {...chield.props, ...newProps};
 
       return React.cloneElement(chield, props);
     });
 
-    debugger;
     let scrollableArea = this.state.collection.length ?
       (
         <div>
@@ -152,11 +172,12 @@ class PowerTable extends React.Component {
               onPreviousPage={this.paginate}
               onSelectASpecifPage={this.paginate}
               recordsByPage={16}
+              ref='paginate'
               totalSizeOfData={this.state.count}
             />
           </div>
         </div>
-      ) : '';
+      ) : (this.state.loading ? '' : <div>Nenhum Registro Encontrado.</div>);
 
     return (
       <div>

@@ -5,18 +5,25 @@ class ColumnActions extends React.Component {
     super(props);
 
     this.filterChange = this.filterChange.bind(this);
+    this.sort = this.sort.bind(this);
   }
 
   filterChange(e) {
     let queryText = e.target.value.trim();
 
-    if(queryText.length >= 3) {
-      this.props.onSearch({dataKey: this.props.dataKey, value: queryText});
-    } else {
-      this.props.onSearch({dataKey: this.props.dataKey, value: ''});
-    }
-
+    // if(queryText.length >= 3) {
+    this.props.onSearch({dataKey: this.props.dataKey, value: queryText, dataType: this.props.dataType});
+    // } else {
+    //   this.props.onSearch({dataKey: this.props.dataKey, value: '', dataType: this.props.dataType});
+    // }
   }
+
+  sort(direction) {
+    if(this.props.dataKey) {
+      this.props.onSort(direction, this.props.dataKey);
+    }
+  }
+
 
   render() {
 
@@ -42,13 +49,13 @@ class ColumnActions extends React.Component {
     return (
       <div onClick={(e) => e.stopPropagation()} style={dialogStyles}>
         <p>
-          <button className='sv-button default small marged'><i className='fa fa-sort-amount-asc'/></button>
-          <button className='sv-button default small'><i className='fa fa-sort-amount-desc'/></button>
+          <button className='sv-button default small marged' onClick={() => this.sort('ASC')}><i className='fa fa-sort-amount-asc'/></button>
+          <button className='sv-button default small' onClick={() => this.sort('DESC')}><i className='fa fa-sort-amount-desc'/></button>
         </p>
 
         <div>
           <form className='sv-form' onSubmit={(e) => e.preventDefault()}>
-            <input onBlur={(e) => this.filterChange(e)}  onChange={(e) => this.filterChange(e)} placeholder='Digite para pesquisar' type='text' />
+            <input onChange={(e) => this.filterChange(e)} placeholder='Filtrar por' type='text' />
           </form>
         </div>
 
@@ -61,6 +68,7 @@ ColumnActions.displayName = 'ColumnActions';
 
 ColumnActions.propTypes = {
   dataKey: React.PropTypes.string,
+  dataType: React.PropTypes.string,
   isVisible: React.PropTypes.bool,
   onSearch: React.PropTypes.func,
   onSort: React.PropTypes.func,

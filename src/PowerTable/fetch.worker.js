@@ -10,6 +10,7 @@ const worker = function () {
   this.sortDesc = false;
   this.distincts = {};
   this.filters = {};
+  this.sorts = {};
 
   const bytesToSize = (bytes) => {
     let sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
@@ -19,7 +20,7 @@ const worker = function () {
   };
 
   const decoratedReturn = (type, message = '', data = [], count = 0) => {
-    return {type, itens: data, message, count};
+    return {type, itens: data, message, count, filters: this.filters, sorts: this.sorts};
   };
 
   this.addEventListener('message', (e) => {
@@ -78,6 +79,12 @@ const worker = function () {
       this.offSet = newOffset;
 
       let itens = this.collection.query().filter(this.filters);
+
+      if(this.sorts) {
+        let key = Object.keys(this.sorts)[0];
+        itens = itens.sort(key, this.sorts[key]);
+      }
+
       let decoreateReturn = decoratedReturn('PAGINATE', '', itens.limit(this.offSet, this.perPage).values(), itens.count());
       decoreateReturn.direction = direction;
       decoreateReturn.page = e.data.page;
@@ -88,27 +95,33 @@ const worker = function () {
     if(e.data.action === 'SORT') {
 
       this.offSet = 0;
+      this.sortDesc = e.data.direction !== 'ASC';
+      this.sort = e.data.dataKey;
+      this.sorts = {};
+      this.sorts[e.data.dataKey] = this.sortDesc;
 
-      if(this.sort === e.data.value) {
-        this.sortDesc = !this.sortDesc;
-      } else {
-        this.sortDesc = false;
-      }
-
-      this.sort = e.data.value;
-      let itens = this.collection.query().filter().sort(this.sort, this.sortDesc);
-      this.postMessage(decoratedReturn('SORT', '', itens.limit(this.offSet, this.perPage).values(), itens.count()));
+      let itens = this.collection.query().filter(this.filters);
+      this.postMessage(decoratedReturn('SORT', '', itens.sort(this.sort, this.sortDesc).limit(this.offSet, this.perPage).values(), itens.count()));
     }
 
     if(e.data.action === 'FILTER') {
-      const {dataKey, value} = e.data.filterProps;
+      const {dataKey, value, dataType} = e.data.filterProps;
+
       if(!value) {
-        delete this.filters[`${dataKey}__icontains`];
+        dataType === 'numeric' ? delete this.filters[dataKey] : delete this.filters[`${dataKey}__icontains`];
       } else {
-        this.filters[`${dataKey}__icontains`] = value;
+        if(dataType === 'numeric') {
+          this.filters[`${dataKey}`] = parseInt(value, 10);
+        } else {
+          this.filters[`${dataKey}__icontains`] = value;
+        }
       }
       this.offSet = 0;
       let itens = this.collection.query().filter(this.filters);
+      if(this.sorts) {
+        let key = Object.keys(this.sorts)[0];
+        itens = itens.sort(key, this.sorts[key]);
+      }
       this.postMessage(decoratedReturn('FILTER', '', itens.limit(this.offSet, this.perPage).values(), itens.count()));
     }
 

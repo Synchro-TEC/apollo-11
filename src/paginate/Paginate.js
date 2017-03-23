@@ -13,8 +13,8 @@ class Paginate extends React.Component {
     this.totalOfPieces = Math.ceil(nextProps.totalSizeOfData/nextProps.recordsByPage);
   }
 
-  shouldComponentUpdate(nextProps) {
-    return nextProps !== this.props;
+  reset() {
+    this.currentPage = 1;
   }
 
   /**
