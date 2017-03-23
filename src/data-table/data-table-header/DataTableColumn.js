@@ -9,7 +9,9 @@ class DataTableColumn extends React.Component {
   }
 
   onSort() {
-    this.props.setSortColumn(this.props.dataKey);
+    if(this.props.sortable) {
+      this.props.setSortColumn(this.props.dataKey);
+    }
   }
 
   render() {
