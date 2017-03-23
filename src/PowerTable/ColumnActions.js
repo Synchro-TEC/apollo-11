@@ -6,16 +6,13 @@ class ColumnActions extends React.Component {
 
     this.filterChange = this.filterChange.bind(this);
     this.sort = this.sort.bind(this);
+
+    this.state = {visible: false};
   }
 
   filterChange(e) {
     let queryText = e.target.value.trim();
-
-    // if(queryText.length >= 3) {
     this.props.onSearch({dataKey: this.props.dataKey, value: queryText, dataType: this.props.dataType});
-    // } else {
-    //   this.props.onSearch({dataKey: this.props.dataKey, value: '', dataType: this.props.dataType});
-    // }
   }
 
   sort(direction) {
@@ -24,13 +21,10 @@ class ColumnActions extends React.Component {
     }
   }
 
-
   render() {
 
     let dialogStyles = {
       position: 'absolute',
-      top: '35px',
-      right: '0',
       width: '200px',
       height: '300px',
       padding: '10px',
@@ -47,7 +41,7 @@ class ColumnActions extends React.Component {
     }
 
     return (
-      <div onClick={(e) => e.stopPropagation()} style={dialogStyles}>
+      <div className='pwt-actions' onClick={(e) => e.stopPropagation()} style={{...dialogStyles, ...this.props.style}}>
         <p>
           <button className='sv-button default small marged' onClick={() => this.sort('ASC')}><i className='fa fa-sort-amount-asc'/></button>
           <button className='sv-button default small' onClick={() => this.sort('DESC')}><i className='fa fa-sort-amount-desc'/></button>
@@ -73,6 +67,7 @@ ColumnActions.propTypes = {
   onSearch: React.PropTypes.func,
   onSort: React.PropTypes.func,
   position: React.PropTypes.object,
+  style: React.PropTypes.object,
 };
 
 export default ColumnActions;
