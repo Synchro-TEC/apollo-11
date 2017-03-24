@@ -8,6 +8,7 @@ const worker = function () {
   this.offSet = 0;
   this.sort = null;
   this.sortDesc = false;
+  this.distinctsLimited = {};
   this.distincts = {};
   this.filters = {};
   this.sorts = {};
@@ -54,12 +55,13 @@ const worker = function () {
         for (let i = 0; i < e.data.cols.length; i++) {
           let col = e.data.cols[i];
           if(col && col.searchable) {
-            this.distincts[col.key] = this.collection.query().limit(0, 100).distinct(col.key);
+            this.distinctsLimited[col.key] = this.collection.query().limit(0, 100).distinct(col.key);
+            this.distincts[col.key] = this.collection.query().distinct(col.key);
           }
         }
 
         setTimeout(() => {
-          this.postMessage(decoratedReturn('DISTINCT', '', this.distincts));
+          this.postMessage(decoratedReturn('DISTINCT', '', this.distinctsLimited));
         }, 100);
 
       };
@@ -127,6 +129,11 @@ const worker = function () {
 
       this.postMessage(decoratedReturn('FILTER', '', itens.limit(this.offSet, this.perPage).values(), itens.count()));
     }
+
+    if(e.data.action === 'FILTER_DISTINCT') {
+      debugger;
+    }
+
 
   }, false);
 

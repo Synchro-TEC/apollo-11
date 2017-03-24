@@ -4,7 +4,7 @@ import worker from './fetch.worker';
 import update from 'immutability-helper';
 import ScrollArea from './ScrollArea';
 import Paginate from '../paginate/Paginate';
-// import ColumnActions from './ColumnActions';
+
 
 class PowerTable extends React.Component {
 
@@ -18,6 +18,7 @@ class PowerTable extends React.Component {
 
     this.paginate = this.paginate.bind(this);
     this.filter = this.filter.bind(this);
+    this.filterDistinct = this.filterDistinct.bind(this);
     this.sort = this.sort.bind(this);
     this.selectColumn = this.selectColumn.bind(this);
 
@@ -34,13 +35,13 @@ class PowerTable extends React.Component {
     });
 
     this.state = {
+      activeColumn: null,
       collection: [],
       message: '',
       count: 0,
       filters: {},
       loading: true,
       sorts: {},
-      style: {},
     };
 
   }
@@ -66,16 +67,6 @@ class PowerTable extends React.Component {
       }
     );
 
-    // let ths = [].slice.call(findDOMNode(this).querySelectorAll('.PWT-TableHeader th'));
-    //
-    // for (let i = 0; i < ths.length; i++) {
-    //   ths[i].addEventListener('click', () => {
-    //     if(ths[i].dataset.key) {
-    //       this.showOptions(ths[i].dataset.key);
-    //     }
-    //   });
-    // }
-
     this.node = findDOMNode(this);
   }
 
@@ -91,14 +82,15 @@ class PowerTable extends React.Component {
     };
 
     const refreshState = () => {
-      this.setState({
-        collection: e.data.itens,
-        message: e.data.message,
-        count: e.data.count,
-        filters: e.data.filters,
-        loading: false,
-        sorts: e.data.sorts
+      const newState = update(this.state, {
+        collection: {$set: e.data.itens},
+        message: {$set: e.data.message},
+        count: {$set: e.data.count},
+        filters: {$set: e.data.filters},
+        loading: {$set: false},
+        sorts: {$set: e.data.sorts},
       });
+      this.setState(newState);
     };
 
     switch (e.data.type) {
@@ -125,12 +117,11 @@ class PowerTable extends React.Component {
         refreshState.call(this);
         break;
       case 'DISTINCT':
-        var newState = update(this.state, {distincts: {$set: e.data.itens}});
-        console.log(e.data.itens);
-        this.setState(newState);
+        this.setState(update(this.state, {distincts: {$set: e.data.itens}}));
         break;
     }
   }
+
 
   paginate(pagerObject) {
     const { currentPage, offset } = pagerObject;
@@ -145,13 +136,14 @@ class PowerTable extends React.Component {
     this.worker.postMessage({ action: 'SORT', direction, dataKey});
   }
 
-  selectColumn(event, dataKey) {
-    if(dataKey) {
-      // let x = event.nativeEvent.pageX;
-      // let y = event.nativeEvent.pageY;
+  selectColumn(dataKey) {
+    let activeColumn = dataKey === this.state.activeColumn ? null : dataKey;
+    const newState = update(this.state, {activeColumn: {$set: activeColumn}});
+    this.setState(newState);
+  }
 
-
-    }
+  filterDistinct(filterProps) {
+    this.worker.postMessage({ action: 'FILTER_DISTINCT', filterProps});
   }
 
   render() {
@@ -176,6 +168,9 @@ class PowerTable extends React.Component {
         newProps.sorts = this.state.sorts;
         newProps.container = this.node;
         newProps.onSelect = this.selectColumn;
+        newProps.onFilterDistinct = this.filterDistinct;
+        newProps.uniqueValues = this.state.distincts;
+        newProps.activeColumn = this.state.activeColumn;
       }
       let props = {...chield.props, ...newProps};
 

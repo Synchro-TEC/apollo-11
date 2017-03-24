@@ -1,4 +1,5 @@
 import React from 'react';
+import ColumnActions from './ColumnActions';
 
 class PowerColumn extends React.Component {
 
@@ -7,22 +8,12 @@ class PowerColumn extends React.Component {
 
     this.renderFilter = this.renderFilter.bind(this);
     this.renderSort = this.renderSort.bind(this);
-    this.state = {actionIsVisible: false};
+    this.setColumn = this.setColumn.bind(this);
+
   }
 
-  toggle(e) {
-    this.props.onSelect(e, this.props.dataKey);
-    // let otherActions = [].slice.call(
-    //                       this
-    //                       .props
-    //                       .container
-    //                       .querySelectorAll(`th:not([data-title="${this.props.columnTitle}"]) .pwt-actions`));
-    //
-    // for (let i = 0; i < otherActions.length; i++ ) {
-    //   otherActions[i].style.display = 'none';
-    // }
-    //
-    // this.setState({actionIsVisible: !this.state.actionIsVisible});
+  setColumn() {
+    this.props.onSelect(this.props.dataKey);
   }
 
   renderFilter() {
@@ -37,19 +28,45 @@ class PowerColumn extends React.Component {
   renderSort() {
     let cssClass = 'fa fa-fw';
     if(this.props.dataKey && this.props.sorts.hasOwnProperty(this.props.dataKey)){
-      cssClass += this.props.sorts[this.props.dataKey] ? ' fa-sort-amount-desc' : ' fa-sort-amount-asc';
+      cssClass += this.props.sorts[this.props.dataKey] ? ' fa-sort-alpha-desc' : ' fa-sort-alpha-asc';
     }
     return (<div className='sv-pull-right'><i className={cssClass} /></div>);
   }
 
   render() {
-    return (
-      <th data-key={this.props.dataKey} data-title={this.props.columnTitle} onClick={(e) => this.toggle(e)}>
-        {this.props.columnTitle}
-        {this.renderFilter()}
-        {this.renderSort()}
-      </th>
-    );
+
+    let result;
+
+    if(this.props.dataKey) {
+      result = (
+        <th>
+          {this.props.columnTitle}
+          <div className='sv-pull-right' >
+            <i className='fa fa-fw fa-caret-square-o-down' onClick={() => this.setColumn()} style={{cursor: 'pointer'}} />
+          </div>
+          {this.renderSort()}
+          <ColumnActions
+            columnTitle={this.props.columnTitle}
+            dataKey={this.props.dataKey}
+            isVisible={this.props.dataKey === this.props.activeColumn}
+
+            onClose={this.props.onSelect}
+            onFilterDistinct={this.props.onFilterDistinct}
+            onSort={this.props.onSort}
+            searchable={this.props.searchable}
+            uniqueValues={this.props.uniqueValues}
+          />
+        </th>
+      );
+    } else {
+      result = (
+        <th>
+          {this.props.columnTitle}
+        </th>
+      );
+    }
+
+    return result;
   }
 
 }
@@ -62,19 +79,20 @@ PowerColumn.defaultProps = {
 };
 
 PowerColumn.propTypes = {
+  activeColumn: React.PropTypes.string,
   columnTitle: React.PropTypes.string.isRequired,
-  container: React.PropTypes.any,
   dataKey: React.PropTypes.string,
   dataType: React.PropTypes.oneOf(['numeric', 'text', 'date']),
   filters: React.PropTypes.object,
   formatter: React.PropTypes.func,
+  onFilterDistinct: React.PropTypes.func,
   onSearch: React.PropTypes.func,
   onSelect: React.PropTypes.func,
+  onSetColumn: React.PropTypes.func,
   onSort: React.PropTypes.func,
   searchable: React.PropTypes.bool,
   sorts: React.PropTypes.object,
   uniqueValues: React.PropTypes.any,
-
 };
 
 export default PowerColumn;
