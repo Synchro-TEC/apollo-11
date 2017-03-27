@@ -5,7 +5,9 @@ class ColumnActions extends React.Component {
     super(props);
 
     this.filterChange = this.filterChange.bind(this);
+    this.addToDistinctFilter = this.addToDistinctFilter.bind(this);
     this.sort = this.sort.bind(this);
+
 
     this.styles = {
       box: {
@@ -89,6 +91,11 @@ class ColumnActions extends React.Component {
     this.props.onFilterDistinct({dataKey: this.props.dataKey, value: queryText, dataType: this.props.dataType});
   }
 
+  addToDistinctFilter(e) {
+    let queryText = e.target.value.trim();
+    debugger;
+  }
+
   renderFilter() {
 
     let uniques = this.props.uniqueValues[this.props.dataKey];
@@ -99,7 +106,7 @@ class ColumnActions extends React.Component {
         return (
           <li key={`${uniq}__${i}`}>
             <label className='sv-no-margins'>
-              <input type='checkbox' value={uniq}/> {uniq}
+              <input onChange={(e) => this.addToDistinctFilter(e)} type='checkbox' value={uniq}/> {uniq}
             </label>
           </li>
         );

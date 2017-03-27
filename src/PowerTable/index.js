@@ -40,6 +40,7 @@ class PowerTable extends React.Component {
       message: '',
       count: 0,
       filters: {},
+      distinctFilters: {},
       loading: true,
       sorts: {},
     };
@@ -119,6 +120,17 @@ class PowerTable extends React.Component {
       case 'DISTINCT':
         this.setState(update(this.state, {distincts: {$set: e.data.itens}}));
         break;
+      case 'FILTER_DISTINCT':
+        if(!e.data.dataKey) {
+          this.setState(update(this.state, {distincts: {$set: e.data.itens}}));
+        } else {
+          var oldState = JSON.stringify(this.state.distincts);
+          var newState = JSON.parse(oldState);
+          newState[e.data.dataKey] = e.data.itens;
+          this.setState(update(this.state, {distincts: {$set: newState}}));
+        }
+        break;
+
     }
   }
 
@@ -144,6 +156,14 @@ class PowerTable extends React.Component {
 
   filterDistinct(filterProps) {
     this.worker.postMessage({ action: 'FILTER_DISTINCT', filterProps});
+  }
+
+  handlerDistinctFilters(dataKey, value) {
+    var oldState = JSON.stringify(this.state.distinctFilters);
+    var newState = JSON.parse(oldState);
+    //CRIAR OU limpar?? COMO TOGGLE?
+    newState[dataKey] = [];
+    this.setState(update(this.state, {distincts: {$set: newState}}));
   }
 
   render() {
