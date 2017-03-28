@@ -23,6 +23,10 @@ class Filter extends React.Component {
   }
 
   toggleClearField(e) {
+    debugger;
+    if(e.keyCode === 13) {
+      e.preventDefault();
+    }
     this.setState({clearFieldIsVisible: e.target.value !== ''});
   }
 
@@ -111,7 +115,7 @@ class Filter extends React.Component {
           <input
             className='on-center'
             name={name}
-            onChange={(e) => {this.toggleClearField(e); this.doFilterBySearchField(e);}}
+            onKeyUp={(e) => {this.toggleClearField(e); this.doFilterBySearchField(e);}}
             placeholder={placeholder}
             ref='searchField'
             type='search'/>

@@ -115,11 +115,6 @@ class FilterOptions extends React.Component {
       filterButtonLabel,
     } = this.props;
 
-    let filterOptionsStyles = _assign(
-      {width: '100%'},
-      {display: this.state.isOpen ? 'block': 'none'}
-    );
-
     let filterSpanStyles = _assign(
       {display: this.props.hasFilterOptions ? 'block': 'none'},
       {color: this.state.isOpen ? '#2196f3': '#455a64'}
@@ -134,7 +129,7 @@ class FilterOptions extends React.Component {
           {filterButtonLabel}
           <i className='fa fa-sliders fa-fw'/>
         </span>
-        <section className='action-container' style={filterOptionsStyles}>
+        <section className='action-container' style={{display: this.state.isOpen ? 'block': 'none'}}>
           <div className='sv-triangle on-right'/>
           <section className='action-container--content'>
             {this.renderChildren(this.props.children)}
