@@ -23,10 +23,6 @@ class Filter extends React.Component {
   }
 
   toggleClearField(e) {
-    debugger;
-    if(e.keyCode === 13) {
-      e.preventDefault();
-    }
     this.setState({clearFieldIsVisible: e.target.value !== ''});
   }
 
@@ -39,9 +35,7 @@ class Filter extends React.Component {
    */
   addSearchValueToFilterValues(filterValues) {
     let searchFieldValue = document.getElementsByName(this.props.name)[0].value;
-    if(searchFieldValue !== '') {
-      filterValues[this.props.name] = searchFieldValue;
-    }
+    filterValues[this.props.name] = searchFieldValue;
     this.props.onFilter(filterValues);
   }
 
@@ -59,7 +53,7 @@ class Filter extends React.Component {
   doFilterBySearchField(e) {
     let isFilterWithOptions = this.refs.filterOptions.props.children;
     if(isFilterWithOptions) {
-      this.refs.filterOptions.applyFilter();
+      this.refs.filterOptions.mountFilterOptionsObject();
     } else {
       this.props.onFilter(e.target.value);
     }
@@ -70,8 +64,9 @@ class Filter extends React.Component {
     let isFilterWithOptions = this.refs.filterOptions.props.children;
 
     this.setState({clearFieldIsVisible: false}, () => {
+      //A função que aplica o filtro é chamada para não perder os possiveis filtros ja feitos
       if(isFilterWithOptions) {
-        this.refs.filterOptions.applyFilter();
+        this.refs.filterOptions.mountFilterOptionsObject();
       } else {
         this.props.onFilter('');
       }

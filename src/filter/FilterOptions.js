@@ -13,7 +13,7 @@ class FilterOptions extends React.Component {
     this.namesOfFields = [];
     this.fields = [];
     this.filterValues = {};
-    this.applyFilter = this.applyFilter.bind(this);
+    this.mountFilterOptionsObject = this.mountFilterOptionsObject.bind(this);
   }
 
   componentDidMount() {
@@ -29,12 +29,14 @@ class FilterOptions extends React.Component {
 
   clearAll() {
     if(this.props.onClearAll) {
-      this.props.onClearAll();
+      this.setState({isOpen: false}, this.props.onClearAll());
     } else {
       for(let i = 0; i<this.fields.length; i++) {
         if(this.fields[i].type === 'radio' || this.fields[i].type === 'checkbox') {
-          this.fields[i].checked = false;
-        } else {
+          if(this.fields[i].checked) {
+            this.fields[i].checked = false;
+          }
+        } else if(this.fields[i] !== '') {
           this.fields[i].value = '';
         }
       }
@@ -44,7 +46,7 @@ class FilterOptions extends React.Component {
     }
   }
 
-  applyFilter() {
+  mountFilterOptionsObject() {
     this.fields.map((field) => {
       if(field.type === 'text' || field.type === 'select-one') {
         if(field.value !== '') {
@@ -60,9 +62,7 @@ class FilterOptions extends React.Component {
         }
       }
     });
-    this.setState({isOpen: false},
-      this.props.addSearchValueToFilterValues(this.filterValues)
-    );
+    this.setState({isOpen: false}, this.props.addSearchValueToFilterValues(this.filterValues));
     this.filterValues = {};
   }
 
@@ -141,7 +141,7 @@ class FilterOptions extends React.Component {
               </button>
               <button
                 className='sv-button link link-info sv-pull-right'
-                onClick={(e) => { e.preventDefault(); this.applyFilter(); }}>
+                onClick={(e) => { e.preventDefault(); this.mountFilterOptionsObject(); }}>
                 {applyFilterButtonLabel}
               </button>
               <button
