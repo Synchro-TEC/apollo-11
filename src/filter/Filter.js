@@ -102,7 +102,7 @@ class Filter extends React.Component {
     }
 
     return (
-      <form className='sv-form' onSubmit={(e) => e.preventDefault()}>
+      <form className='sv-form'>
         <div className='sv-input-group'>
           <span className='label at-first'>
             <i className='fa fa-search fa-fw'/>

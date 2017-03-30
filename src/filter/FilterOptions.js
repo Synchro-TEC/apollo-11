@@ -134,21 +134,24 @@ class FilterOptions extends React.Component {
           <section className='action-container--content'>
             {this.renderChildren(this.props.children)}
             <footer>
-              <button
-                className='sv-button link link-danger sv-pull-left'
-                onClick={(e) => { e.preventDefault(); this.clearAll(); }}>
-                {clearFilterOptionsButtonLabel} {filterButtonLabel}
-              </button>
-              <button
+              <input
+                className='sv-button link link-danger'
+                onClick={() => this.clearAll()}
+                type='button'
+                value={clearFilterOptionsButtonLabel + ' ' + filterButtonLabel}
+              />
+              <input
                 className='sv-button link link-info sv-pull-right'
-                onClick={(e) => { e.preventDefault(); this.mountFilterOptionsObject(); }}>
-                {applyFilterButtonLabel}
-              </button>
-              <button
+                onClick={() => this.mountFilterOptionsObject()}
+                type='button'
+                value={applyFilterButtonLabel}
+              />
+              <input
                 className='sv-button link link-cancel sv-pull-right'
-                onClick={(e) => { e.preventDefault(); this.close(); }}>
-                {cancelButtonLabel}
-              </button>
+                onClick={() => this.close()}
+                type='button'
+                value={cancelButtonLabel}
+              />
             </footer>
           </section>
         </section>
