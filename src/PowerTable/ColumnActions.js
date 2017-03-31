@@ -1,4 +1,5 @@
 import React from 'react';
+import update from 'immutability-helper';
 
 class ColumnActions extends React.Component {
   constructor(props){
@@ -6,7 +7,29 @@ class ColumnActions extends React.Component {
 
     this.filterChange = this.filterChange.bind(this);
     this.addToDistinctFilter = this.addToDistinctFilter.bind(this);
+    this._hasInFilter = this._hasInFilter.bind(this);
+    this._onChangeCondition = this._onChangeCondition.bind(this);
+
     this.sort = this.sort.bind(this);
+
+    this.conditions = {
+      numeric: [
+        {label: 'Maior que', value: 'gt'},
+        {label: 'Menor que', value: 'lt'},
+        {label: 'Igual', value: 'eq'},
+        {label: 'Entre', value: 'bet'},
+      ],
+      text: [
+        {label: 'Contém', value: 'contain'},
+        {label: 'Começa com', value: 'sw'},
+      ],
+      date: [
+        {label: 'Igual', value: 'eq'},
+        {label: 'Entre', value: 'bet'},
+        {label: 'Maior que', value: 'gt'},
+        {label: 'Menor que', value: 'lt'},
+      ],
+    };
 
 
     this.styles = {
@@ -73,6 +96,17 @@ class ColumnActions extends React.Component {
       }
     };
 
+    this.state = {condition: this.conditions[this.props.dataType][0], filter: {value: {}}};
+    this.filterValues = {value: {}};
+
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    if(nextProps.distinctFilters !== this.props.distinctFilters || nextProps.isVisible !== this.props.distinctFilters) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
   filterChange(e) {
@@ -91,9 +125,106 @@ class ColumnActions extends React.Component {
     this.props.onFilterDistinct({dataKey: this.props.dataKey, value: queryText, dataType: this.props.dataType});
   }
 
-  addToDistinctFilter(e) {
-    let queryText = e.target.value.trim();
-    debugger;
+  addToDistinctFilter(value) {
+    this.props.onAddToFilterDistinct({dataKey: this.props.dataKey, value: value, dataType: this.props.dataType});
+  }
+
+  _setValueInFilter(e){
+    // this.setState(update(this.state, {filter: {$set: e.data.itens}}));
+    this.filterValues.value[e.target.name] = e.target.value;
+    this.setState(update(this.state, {filter: {$set: this.filterValues}}));
+  }
+
+  _hasInFilter(value) {
+
+    let hasInFilter = false;
+    if(this.props.distinctFilters.hasOwnProperty(this.props.dataKey)) {
+      hasInFilter = this.props.distinctFilters[this.props.dataKey].includes(value);
+    }
+    return hasInFilter;
+  }
+
+  _onChangeCondition(condition) {
+    this.filterValues = {value: {}};
+    this.setState({condition, filter: {value: {}}});
+  }
+
+  renderDistinctFilters() {
+    let items;
+    if(this.props.distinctFilters.hasOwnProperty(this.props.dataKey)) {
+      items = this.props.distinctFilters[this.props.dataKey].map((item, i) => {
+        return (
+          <div className='sv-tag info' key={`item-${item}-${i}`}>
+            <span className='sv-tag__close' onClick={() => this.addToDistinctFilter(item)}>×</span>
+            <span className='sv-tag__content'>{item}</span>
+          </div>
+        );
+      });
+    } else {
+      items = '';
+    }
+
+    return (<div>{items}</div>);
+  }
+
+  renderConditionsByDataType() {
+    let options = this.conditions[this.props.dataType].map((opt, i) => {
+      return (<option key={`${this.props.dataType}-${opt.value}-${i}`} value={JSON.stringify(opt)}>{opt.label}</option>);
+    });
+
+    return (
+      <label>
+        <span>Condição</span>
+        <div className='sv-select'>
+          <select onChange={(e) => this._onChangeCondition(JSON.parse(e.target.value))}>
+            {options}
+          </select>
+          <label>
+            <i className='fa fa-angle-down fa-fw' />
+          </label>
+        </div>
+      </label>
+    );
+  }
+
+  renderConditionValue() {
+
+    let valueFild = (
+      <input
+        name='only'
+        onChange={(e) => this._setValueInFilter(e)}
+        placeholder='Valor desejado'
+        type='text'
+        value={this.state.filter.value['only'] || ''}
+      />
+    );
+
+    if(this.props.dataType === 'numeric' && this.state.condition.value === 'bet') {
+      valueFild = (
+        <div className='sv-row--with-gutter'>
+          <div className='sv-column'>
+            <input
+              name='start'
+              onChange={(e) => this._setValueInFilter(e)}
+              placeholder='Valor inicial'
+              type='text'
+              value={this.state.filter.value['start'] || ''}
+            />
+          </div>
+          <div className='sv-column'>
+            <input
+              name='end'
+              onChange={(e) => this._setValueInFilter(e)}
+              placeholder='Valor final'
+              type='text'
+              value={this.state.filter.value['end'] || ''}
+            />
+          </div>
+        </div>
+      );
+    }
+
+    return valueFild;
   }
 
   renderFilter() {
@@ -103,13 +234,23 @@ class ColumnActions extends React.Component {
 
     if(uniques) {
       uniqueValues = uniques.map((uniq, i) => {
-        return (
-          <li key={`${uniq}__${i}`}>
-            <label className='sv-no-margins'>
-              <input onChange={(e) => this.addToDistinctFilter(e)} type='checkbox' value={uniq}/> {uniq}
-            </label>
-          </li>
-        );
+        if(!this._hasInFilter(uniq)) {
+          return (
+            <li key={`${uniq}__${i}`}>
+              <label className='sv-no-margins' onClick={() => this.addToDistinctFilter(uniq)}>
+                <i className='fa fa-square-o fa-fw'/> {uniq}
+              </label>
+            </li>
+          );
+        } else {
+          return (
+            <li key={`${uniq}__${i}`}>
+              <label className='sv-no-margins' onClick={() => this.addToDistinctFilter(uniq)}>
+                <i className='fa fa-check-square-o fa-fw'/> {uniq}
+              </label>
+            </li>
+          );
+        }
       });
     }
 
@@ -127,26 +268,14 @@ class ColumnActions extends React.Component {
               </ul>
             </div>
           </form>
+          {this.renderDistinctFilters()}
         </div>
 
         <h6 style={this.styles.h6}>Filtro por condição</h6>
         <hr style={this.styles.hr} />
         <form className='sv-form' onSubmit={(e) => e.preventDefault()}>
-          <label>
-            <span>Condição</span>
-            <div className='sv-select'>
-              <select>
-                <option value=''>Selecione</option>
-                <option value='C'>Contém</option>
-                <option value='N'>Começa com</option>
-                <option value='N'>Termina com</option>
-              </select>
-              <label>
-                <i className='fa fa-angle-down fa-fw' />
-              </label>
-            </div>
-          </label>
-          <input onChange={(e) => this.filterChange(e)} placeholder='Filtrar por' type='text' />
+          {this.renderConditionsByDataType()}
+          {this.renderConditionValue()}
         </form>
       </div>
     );
@@ -155,20 +284,35 @@ class ColumnActions extends React.Component {
   renderButtons() {
     return (
       <div style={this.styles.containerBottom}>
-        {this.props.searchable ? (<button className='sv-button primary small sv-horizontal-marged-15'>Aplicar</button>) : null}
-        <button className='sv-button default small sv-horizontal-marged-15' onClick={() => this.props.onClose(this.props.dataKey)}>Cancelar</button>
+        {this.props.searchable ? (
+          <button
+            className='sv-button primary small sv-horizontal-marged-15'
+            onClick={()=>console.log(this.props.distinctFilters[this.props.dataKey], this.filterValues)}
+            type='button'>Aplicar</button>) : null}
+        <button
+          className='sv-button default small sv-horizontal-marged-15'
+          onClick={() => this.props.onClose(this.props.dataKey)}
+          type='button'
+        >
+          Cancelar
+        </button>
       </div>
     );
   }
 
   render() {
 
-
-
     if (this.props.isVisible) {
       this.styles.box.display = 'block';
     } else {
       this.styles.box.display = 'none';
+    }
+
+    let sortClasses = {asc: 'fa-sort-alpha-asc fa-fw', desc: 'fa-sort-alpha-desc'};
+
+    if(this.props.dataType !== 'text') {
+      sortClasses.asc = 'fa-sort-numeric-asc';
+      sortClasses.desc = 'fa-sort-numeric-desc';
     }
 
     return (
@@ -178,11 +322,21 @@ class ColumnActions extends React.Component {
           <h6 style={this.styles.h6}>{this.props.columnTitle}</h6>
         </div>
         <div style={this.styles.containerOrder}>
-          <button className='sv-button link link-default sv-pull-left' onClick={() => this.sort('ASC')} style={this.styles.sortButtons}>
-            Ordenar <i className='fa fa-sort-alpha-asc'/>
+          <button
+            className='sv-button link link-default sv-pull-left'
+            onClick={() => this.sort('ASC')}
+            style={this.styles.sortButtons}
+            type='button'
+          >
+            Ordenar <i className={`fa fa-fw ${sortClasses.asc}`} />
           </button>
-          <button className='sv-button link link-default sv-pull-right' onClick={() => this.sort('DESC')} style={this.styles.sortButtons}>
-            Ordenar <i className='fa fa-sort-alpha-desc'/>
+          <button
+            className='sv-button link link-default sv-pull-right'
+            onClick={() => this.sort('DESC')}
+            style={this.styles.sortButtons}
+            type='button'
+          >
+            Ordenar <i className={`fa fa-fw ${sortClasses.desc}`} />
           </button>
         </div>
 
@@ -205,7 +359,9 @@ ColumnActions.propTypes = {
   columnTitle: React.PropTypes.string,
   dataKey: React.PropTypes.string,
   dataType: React.PropTypes.string,
+  distinctFilters: React.PropTypes.object,
   isVisible: React.PropTypes.bool,
+  onAddToFilterDistinct: React.PropTypes.func,
   onClose: React.PropTypes.func,
   onFilterDistinct: React.PropTypes.func,
   onSearch: React.PropTypes.func,

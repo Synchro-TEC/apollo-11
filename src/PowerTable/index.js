@@ -19,6 +19,7 @@ class PowerTable extends React.Component {
     this.paginate = this.paginate.bind(this);
     this.filter = this.filter.bind(this);
     this.filterDistinct = this.filterDistinct.bind(this);
+    this.handlerDistinctFilters = this.handlerDistinctFilters.bind(this);
     this.sort = this.sort.bind(this);
     this.selectColumn = this.selectColumn.bind(this);
 
@@ -158,12 +159,25 @@ class PowerTable extends React.Component {
     this.worker.postMessage({ action: 'FILTER_DISTINCT', filterProps});
   }
 
-  handlerDistinctFilters(dataKey, value) {
-    var oldState = JSON.stringify(this.state.distinctFilters);
-    var newState = JSON.parse(oldState);
-    //CRIAR OU limpar?? COMO TOGGLE?
-    newState[dataKey] = [];
-    this.setState(update(this.state, {distincts: {$set: newState}}));
+  handlerDistinctFilters(filterProps) {
+
+    const {value, dataKey} = filterProps;
+
+    let oldState = JSON.stringify(this.state.distinctFilters);
+    let newState = JSON.parse(oldState);
+
+    if(newState.hasOwnProperty(dataKey)) {
+      if(!newState[dataKey].includes(value)) {
+        newState[dataKey].push(value);
+      } else {
+        let index = newState[dataKey].indexOf(value);
+        newState[dataKey].splice(index, 1);
+      }
+    } else {
+      newState[dataKey] = [value];
+    }
+
+    this.setState(update(this.state, {distinctFilters: {$set: newState}}));
   }
 
   render() {
@@ -189,8 +203,10 @@ class PowerTable extends React.Component {
         newProps.container = this.node;
         newProps.onSelect = this.selectColumn;
         newProps.onFilterDistinct = this.filterDistinct;
+        newProps.onAddToFilterDistinct = this.handlerDistinctFilters;
         newProps.uniqueValues = this.state.distincts;
         newProps.activeColumn = this.state.activeColumn;
+        newProps.distinctFilters = this.state.distinctFilters;
       }
       let props = {...chield.props, ...newProps};
 

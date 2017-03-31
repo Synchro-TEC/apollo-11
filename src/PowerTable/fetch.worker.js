@@ -131,13 +131,14 @@ const worker = function () {
     }
 
     if(e.data.action === 'FILTER_DISTINCT') {
+      // debugger;
 
       if(!e.data.filterProps.value) {
         this.postMessage(decoratedReturn('FILTER_DISTINCT', '', this.distinctsLimited));
       } else {
 
         function contains(value) {
-          return value.toLowerCase().indexOf(e.data.filterProps.value.toLowerCase()) > -1;
+          return value.toString().toLowerCase().indexOf(e.data.filterProps.value.toLowerCase()) > -1;
         }
 
         let itens = this.distincts[e.data.filterProps.dataKey].filter(contains);

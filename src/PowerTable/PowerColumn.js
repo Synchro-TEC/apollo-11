@@ -28,7 +28,11 @@ class PowerColumn extends React.Component {
   renderSort() {
     let cssClass = 'fa fa-fw';
     if(this.props.dataKey && this.props.sorts.hasOwnProperty(this.props.dataKey)){
-      cssClass += this.props.sorts[this.props.dataKey] ? ' fa-sort-alpha-desc' : ' fa-sort-alpha-asc';
+      if(this.props.dataType === 'text') {
+        cssClass += this.props.sorts[this.props.dataKey] ? ' fa-sort-alpha-desc' : ' fa-sort-alpha-asc';
+      } else {
+        cssClass += this.props.sorts[this.props.dataKey] ? ' fa-sort-numeric-desc' : ' fa-sort-numeric-asc';
+      }
     }
     return (<div className='sv-pull-right'><i className={cssClass} /></div>);
   }
@@ -48,8 +52,10 @@ class PowerColumn extends React.Component {
           <ColumnActions
             columnTitle={this.props.columnTitle}
             dataKey={this.props.dataKey}
+            dataType={this.props.dataType}
+            distinctFilters={this.props.distinctFilters}
             isVisible={this.props.dataKey === this.props.activeColumn}
-
+            onAddToFilterDistinct={this.props.onAddToFilterDistinct}
             onClose={this.props.onSelect}
             onFilterDistinct={this.props.onFilterDistinct}
             onSort={this.props.onSort}
@@ -83,8 +89,10 @@ PowerColumn.propTypes = {
   columnTitle: React.PropTypes.string.isRequired,
   dataKey: React.PropTypes.string,
   dataType: React.PropTypes.oneOf(['numeric', 'text', 'date']),
+  distinctFilters: React.PropTypes.object,
   filters: React.PropTypes.object,
   formatter: React.PropTypes.func,
+  onAddToFilterDistinct: React.PropTypes.func,
   onFilterDistinct: React.PropTypes.func,
   onSearch: React.PropTypes.func,
   onSelect: React.PropTypes.func,
