@@ -138,7 +138,7 @@ class FilterOptions extends React.Component {
                 className='sv-button link link-danger'
                 onClick={() => this.clearAll()}
                 type='button'
-                value={clearFilterOptionsButtonLabel + ' ' + filterButtonLabel}
+                value={clearFilterOptionsButtonLabel}
               />
               <input
                 className='sv-button link link-info sv-pull-right'
