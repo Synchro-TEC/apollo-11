@@ -14,7 +14,7 @@ e esse projeto adere ao [Semantic Versioning](http://semver.org/).
 - No filtro, a propriedade principal que executa um callback quando usuário faz a busca teve seu nome alterado de onSearch para onFilter.
 - No filtro, o valor padrão das labels dos botões de ação, foram colocadas em português.
 
-### Consertado
+### Corrigido
 - Ao pressionar o enter nas opções do filtro, elas continuarão abertas.
 - Ao aplicar o filtro, as opções do filtro serão fechadas.
 - Ao limpar o filtro, as opções do filtro serão fechadas.
