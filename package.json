@@ -55,6 +55,7 @@
     "lodash.takeright": "^4.1.1",
     "lodash.throttle": "^4.1.1",
     "lodash.times": "^4.3.2",
+    "sift": "^3.2.7",
     "uuid": "^3.0.1"
   }
 }

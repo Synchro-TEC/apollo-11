@@ -103,7 +103,7 @@ class ColumnActions extends React.Component {
 
   }
 
-  shouldComponentUpdate(nextProps, nextState) {
+  shouldComponentUpdate(nextProps) {
     if(nextProps.distinctFilters !== this.props.distinctFilters || nextProps.isVisible !== this.props.distinctFilters) {
       return true;
     } else {
