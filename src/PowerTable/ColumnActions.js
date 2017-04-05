@@ -14,20 +14,22 @@ class ColumnActions extends React.Component {
 
     this.conditions = {
       numeric: [
-        {label: 'Maior que', value: 'gt'},
-        {label: 'Menor que', value: 'lt'},
-        {label: 'Igual', value: 'eq'},
-        {label: 'Entre', value: 'bet'},
+        {label: 'Maior que', value: '$gt'},
+        {label: 'Maior igual que', value: '$gte'},
+        {label: 'Menor que', value: '$lt'},
+        {label: 'Menor igual que', value: '$lte'},
+        {label: 'Entre', value: '$bet'},
       ],
       text: [
-        {label: 'Contém', value: 'contain'},
-        {label: 'Começa com', value: 'sw'},
+        {label: 'Contém', value: '$in'},
+        {label: 'Não Contém', value: '$nin'},
       ],
       date: [
-        {label: 'Igual', value: 'eq'},
-        {label: 'Entre', value: 'bet'},
-        {label: 'Maior que', value: 'gt'},
-        {label: 'Menor que', value: 'lt'},
+        {label: 'Maior que', value: '$gt'},
+        {label: 'Maior igual que', value: '$gte'},
+        {label: 'Menor que', value: '$lt'},
+        {label: 'Menor igual que', value: '$lte'},
+        {label: 'Entre', value: '$bet'},
       ],
     };
 
@@ -199,7 +201,7 @@ class ColumnActions extends React.Component {
       />
     );
 
-    if(this.props.dataType === 'numeric' && this.state.condition.value === 'bet') {
+    if(this.props.dataType === 'numeric' && this.state.condition.value === '$bet') {
       valueFild = (
         <div className='sv-row--with-gutter'>
           <div className='sv-column'>
@@ -207,7 +209,7 @@ class ColumnActions extends React.Component {
               name='start'
               onChange={(e) => this._setValueInFilter(e)}
               placeholder='Valor inicial'
-              type='text'
+              type='number'
               value={this.state.filter.value['start'] || ''}
             />
           </div>
@@ -216,7 +218,7 @@ class ColumnActions extends React.Component {
               name='end'
               onChange={(e) => this._setValueInFilter(e)}
               placeholder='Valor final'
-              type='text'
+              type='number'
               value={this.state.filter.value['end'] || ''}
             />
           </div>
@@ -287,7 +289,13 @@ class ColumnActions extends React.Component {
         {this.props.searchable ? (
           <button
             className='sv-button primary small sv-horizontal-marged-15'
-            onClick={()=>console.log(this.props.distinctFilters[this.props.dataKey], this.filterValues)}
+            onClick={
+              ()=> this.props.onApplyFilter(
+                this.props.distinctFilters[this.props.dataKey],
+                {condition: this.state.condition.value, filter: this.state.filter.value},
+                {dataKey: this.props.dataKey, dataType: this.props.dataType}
+                )
+            }
             type='button'>Aplicar</button>) : null}
         <button
           className='sv-button default small sv-horizontal-marged-15'
@@ -362,6 +370,7 @@ ColumnActions.propTypes = {
   distinctFilters: React.PropTypes.object,
   isVisible: React.PropTypes.bool,
   onAddToFilterDistinct: React.PropTypes.func,
+  onApplyFilter: React.PropTypes.func,
   onClose: React.PropTypes.func,
   onFilterDistinct: React.PropTypes.func,
   onSearch: React.PropTypes.func,

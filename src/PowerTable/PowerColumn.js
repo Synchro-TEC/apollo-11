@@ -18,14 +18,19 @@ class PowerColumn extends React.Component {
 
   renderFilter() {
     let result = '';
-    let colName = this.props.dataType === 'numeric' ? this.props.dataKey : `${this.props.dataKey}__icontains`;
-    if(this.props.dataKey && this.props.filters[colName]) {
-      result = (<div className='sv-pull-right'><i className='fa fa-filter fa-fw' title={this.props.filters[colName]} /></div>);
+
+    if(this.props.dataKey ) {
+      if(this.props.filters[this.props.dataKey] || this.props.filtersByConditions[this.props.dataKey]){
+        result = (<div className='sv-pull-right'><i className='fa fa-filter fa-fw' title={this.props.filters[this.props.dataKey]} /></div>);
+      }
     }
+
     return result;
   }
 
   renderSort() {
+    let rendered = '';
+
     let cssClass = 'fa fa-fw';
     if(this.props.dataKey && this.props.sorts.hasOwnProperty(this.props.dataKey)){
       if(this.props.dataType === 'text') {
@@ -33,8 +38,9 @@ class PowerColumn extends React.Component {
       } else {
         cssClass += this.props.sorts[this.props.dataKey] ? ' fa-sort-numeric-desc' : ' fa-sort-numeric-asc';
       }
+      rendered = (<div className='sv-pull-right'><i className={cssClass} /></div>);
     }
-    return (<div className='sv-pull-right'><i className={cssClass} /></div>);
+    return rendered;
   }
 
   render() {
@@ -45,10 +51,11 @@ class PowerColumn extends React.Component {
       result = (
         <th>
           {this.props.columnTitle}
-          <div className='sv-pull-right' >
+          <div className='sv-pull-right'>
             <i className='fa fa-fw fa-caret-square-o-down' onClick={() => this.setColumn()} style={{cursor: 'pointer'}} />
           </div>
           {this.renderSort()}
+          {this.renderFilter()}
           <ColumnActions
             columnTitle={this.props.columnTitle}
             dataKey={this.props.dataKey}
@@ -56,6 +63,7 @@ class PowerColumn extends React.Component {
             distinctFilters={this.props.distinctFilters}
             isVisible={this.props.dataKey === this.props.activeColumn}
             onAddToFilterDistinct={this.props.onAddToFilterDistinct}
+            onApplyFilter={this.props.onApplyFilter}
             onClose={this.props.onSelect}
             onFilterDistinct={this.props.onFilterDistinct}
             onSort={this.props.onSort}
@@ -91,8 +99,10 @@ PowerColumn.propTypes = {
   dataType: React.PropTypes.oneOf(['numeric', 'text', 'date']),
   distinctFilters: React.PropTypes.object,
   filters: React.PropTypes.object,
+  filtersByConditions: React.PropTypes.object,
   formatter: React.PropTypes.func,
   onAddToFilterDistinct: React.PropTypes.func,
+  onApplyFilter: React.PropTypes.func,
   onFilterDistinct: React.PropTypes.func,
   onSearch: React.PropTypes.func,
   onSelect: React.PropTypes.func,

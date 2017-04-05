@@ -1,19 +1,22 @@
 import React from 'react';
 import { findDOMNode } from 'react-dom';
-import worker from './fetch.worker';
+// import worker from './fetch.worker';
 import update from 'immutability-helper';
 import ScrollArea from './ScrollArea';
 import Paginate from '../paginate/Paginate';
 
+const Worker = require('worker-loader?name=powerTableWorker.js&inline!./fetch.worker.js');
+// var worker = new Worker;
 
 class PowerTable extends React.Component {
 
   constructor(props){
     super(props);
-    this.worker = null;
-    this.workerInstace = new Blob(['(' + worker.toString() + ')()'], {
-      type: 'text/javascript'
-    });
+    this.worker = new Worker;
+    // this.workerInstace = new Worker;
+    // this.workerInstace = new Blob(['(' + worker.toString() + ')()'], {
+    //   type: 'text/javascript'
+    // });
     this.workerReturn = this.workerReturn.bind(this);
 
     this.paginate = this.paginate.bind(this);
@@ -22,6 +25,7 @@ class PowerTable extends React.Component {
     this.handlerDistinctFilters = this.handlerDistinctFilters.bind(this);
     this.sort = this.sort.bind(this);
     this.selectColumn = this.selectColumn.bind(this);
+    this._onApplyFilter = this._onApplyFilter.bind(this);
 
     this.node = null;
     this.offset = 0;
@@ -41,6 +45,7 @@ class PowerTable extends React.Component {
       message: '',
       count: 0,
       filters: {},
+      filtersByConditions: {},
       distinctFilters: {},
       loading: true,
       sorts: {},
@@ -49,7 +54,7 @@ class PowerTable extends React.Component {
   }
 
   componentDidMount() {
-    this.worker = new Worker(window.URL.createObjectURL(this.workerInstace));
+    // this.worker = new Worker;
 
     this.worker.addEventListener('message', (e) => {
       this.workerReturn(e);
@@ -89,6 +94,7 @@ class PowerTable extends React.Component {
         message: {$set: e.data.message},
         count: {$set: e.data.count},
         filters: {$set: e.data.filters},
+        filtersByConditions: {$set: e.data.filtersByConditions},
         loading: {$set: false},
         sorts: {$set: e.data.sorts},
       });
@@ -180,6 +186,10 @@ class PowerTable extends React.Component {
     this.setState(update(this.state, {distinctFilters: {$set: newState}}));
   }
 
+  _onApplyFilter(perValue, perConditions, dataInfo) {
+    this.worker.postMessage({ action: 'FILTER', perValue, perConditions, dataInfo});
+  }
+
   render() {
 
     let opts = {
@@ -199,6 +209,7 @@ class PowerTable extends React.Component {
         newProps.onSearch = this.filter;
         newProps.onSort = this.sort;
         newProps.filters = this.state.filters;
+        newProps.filtersByConditions = this.state.filtersByConditions;
         newProps.sorts = this.state.sorts;
         newProps.container = this.node;
         newProps.onSelect = this.selectColumn;
@@ -207,6 +218,7 @@ class PowerTable extends React.Component {
         newProps.uniqueValues = this.state.distincts;
         newProps.activeColumn = this.state.activeColumn;
         newProps.distinctFilters = this.state.distinctFilters;
+        newProps.onApplyFilter = this._onApplyFilter;
       }
       let props = {...chield.props, ...newProps};
 

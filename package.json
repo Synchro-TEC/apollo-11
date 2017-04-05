@@ -42,13 +42,14 @@
     "react-addons-update": "^15.4.2",
     "react-dom": "^15.4.2",
     "webpack": "^2.2.1",
-    "worker-loader": "^0.7.1"
+    "worker-loader": "^0.8.0"
   },
   "dependencies": {
     "classnames": "^2.2.5",
     "data-collection": "^1.1.6",
     "immutability-helper": "^2.1.2",
     "lodash.debounce": "^4.0.8",
+    "lodash.find": "^4.6.0",
     "lodash.max": "^4.0.1",
     "lodash.take": "^4.1.1",
     "lodash.takeright": "^4.1.1",
