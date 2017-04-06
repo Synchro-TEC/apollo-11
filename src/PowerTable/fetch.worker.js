@@ -1,3 +1,5 @@
+/*eslint no-unused-vars: 0, no-undef: 0, no-inner-declarations: 0, no-console: 0 */
+
 import sift from 'sift';
 
 let collection = null;
@@ -80,6 +82,7 @@ const applyFilter = () => {
   let itens = sift(perValueFilter, collection);
 
   let perConditionsFilter = {};
+  let $andConditions = [];
 
   Object.keys(filtersByConditions).forEach(key => {
     let conditions = {};
@@ -107,15 +110,20 @@ const applyFilter = () => {
       let startCondition = {};
       let endCondition = {};
 
+      debugger;
       startCondition[key] = {$gte: parseInt(start, 10)};
       endCondition[key] = {$lte: parseInt(end, 10)};
 
-      perConditionsFilter = { $and: [ startCondition, endCondition ]};
+      if(start.length > 0 && end.length > 0) {
+        $andConditions.push(startCondition, endCondition);
+      }
+
+      perConditionsFilter = { $and: $andConditions};
     }
   });
 
   itens = sift(perConditionsFilter, itens);
-  
+
   if(sorts) {
     let key = Object.keys(sorts)[0];
     itens = itens.sort(sortBy(key, sorts[key]));
@@ -179,8 +187,6 @@ self.addEventListener('message', (e) => {
 
     let direction = newOffset > offSet ? 'NEXT' : 'PREV';
     offSet = newOffset;
-
-    debugger;
 
     let decoreateReturn = decoratedReturn('PAGINATE', '', currentCollection.slice(offSet, (offSet + perPage)), currentCollection.length);
     decoreateReturn.direction = direction;
