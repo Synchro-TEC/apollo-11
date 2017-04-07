@@ -61,6 +61,7 @@ class PowerColumn extends React.Component {
             dataKey={this.props.dataKey}
             dataType={this.props.dataType}
             distinctFilters={this.props.distinctFilters}
+            formatterOnFilter={this.props.formatterOnFilter}
             isVisible={this.props.dataKey === this.props.activeColumn}
             onAddToFilterDistinct={this.props.onAddToFilterDistinct}
             onApplyFilter={this.props.onApplyFilter}
@@ -101,6 +102,7 @@ PowerColumn.propTypes = {
   filters: React.PropTypes.object,
   filtersByConditions: React.PropTypes.object,
   formatter: React.PropTypes.func,
+  formatterOnFilter: React.PropTypes.func,
   onAddToFilterDistinct: React.PropTypes.func,
   onApplyFilter: React.PropTypes.func,
   onFilterDistinct: React.PropTypes.func,

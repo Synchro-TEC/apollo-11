@@ -155,10 +155,11 @@ class ColumnActions extends React.Component {
     let items;
     if(this.props.distinctFilters.hasOwnProperty(this.props.dataKey)) {
       items = this.props.distinctFilters[this.props.dataKey].map((item, i) => {
+        let rendered = this.props.formatterOnFilter ? this.props.formatterOnFilter(item) : item;
         return (
           <div className='sv-tag info' key={`item-${item}-${i}`}>
             <span className='sv-tag__close' onClick={() => this.addToDistinctFilter(item)}>×</span>
-            <span className='sv-tag__content'>{item}</span>
+            <span className='sv-tag__content'>{rendered}</span>
           </div>
         );
       });
@@ -236,23 +237,15 @@ class ColumnActions extends React.Component {
 
     if(uniques) {
       uniqueValues = uniques.map((uniq, i) => {
-        if(!this._hasInFilter(uniq)) {
-          return (
-            <li key={`${uniq}__${i}`}>
-              <label className='sv-no-margins' onClick={() => this.addToDistinctFilter(uniq)}>
-                <i className='fa fa-square-o fa-fw'/> {uniq}
-              </label>
-            </li>
-          );
-        } else {
-          return (
-            <li key={`${uniq}__${i}`}>
-              <label className='sv-no-margins' onClick={() => this.addToDistinctFilter(uniq)}>
-                <i className='fa fa-check-square-o fa-fw'/> {uniq}
-              </label>
-            </li>
-          );
-        }
+        let rendered = this.props.formatterOnFilter ? this.props.formatterOnFilter(uniq) : uniq;
+        let cssClass = !this._hasInFilter(uniq) ? 'fa fa-square-o fa-fw' : 'fa fa-check-square-o fa-fw';
+        return (
+          <li key={`${uniq}__${i}`}>
+            <label className='sv-no-margins' onClick={() => this.addToDistinctFilter(uniq)}>
+              <i className={cssClass} /> {rendered}
+            </label>
+          </li>
+        );
       });
     }
 
@@ -368,6 +361,7 @@ ColumnActions.propTypes = {
   dataKey: React.PropTypes.string,
   dataType: React.PropTypes.string,
   distinctFilters: React.PropTypes.object,
+  formatterOnFilter: React.PropTypes.func,
   isVisible: React.PropTypes.bool,
   onAddToFilterDistinct: React.PropTypes.func,
   onApplyFilter: React.PropTypes.func,
