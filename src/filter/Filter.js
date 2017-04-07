@@ -35,7 +35,9 @@ class Filter extends React.Component {
    */
   addSearchValueToFilterValues(filterValues) {
     let searchFieldValue = document.getElementsByName(this.props.name)[0].value;
-    filterValues[this.props.name] = searchFieldValue;
+    if(searchFieldValue !== '') {
+      filterValues[this.props.name] = searchFieldValue;
+    }
     this.props.onFilter(filterValues);
   }
 
