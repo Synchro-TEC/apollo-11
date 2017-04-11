@@ -1,44 +1,26 @@
 import React from 'react';
-import { findDOMNode } from 'react-dom';
-// import worker from './fetch.worker';
 import update from 'immutability-helper';
 import ScrollArea from './ScrollArea';
 import Paginate from '../paginate/Paginate';
 
 const Worker = require('worker-loader?name=powerTableWorker.js&inline!./fetch.worker.js');
-// var worker = new Worker;
 
 class PowerTable extends React.Component {
 
   constructor(props){
     super(props);
-    this.worker = new Worker;
-    // this.workerInstace = new Worker;
-    // this.workerInstace = new Blob(['(' + worker.toString() + ')()'], {
-    //   type: 'text/javascript'
-    // });
-    this.workerReturn = this.workerReturn.bind(this);
 
-    this.paginate = this.paginate.bind(this);
-    this.filter = this.filter.bind(this);
-    this.filterDistinct = this.filterDistinct.bind(this);
-    this.handlerDistinctFilters = this.handlerDistinctFilters.bind(this);
-    this.sort = this.sort.bind(this);
-    this.selectColumn = this.selectColumn.bind(this);
+    this._filter = this._filter.bind(this);
+    this._filterDistinct = this._filterDistinct.bind(this);
+    this._handlerDistinctFilters = this._handlerDistinctFilters.bind(this);
+    this._handlerWorkerReturn = this._handlerWorkerReturn.bind(this);
     this._onApplyFilter = this._onApplyFilter.bind(this);
+    this._paginate = this._paginate.bind(this);
+    this._selectColumn = this._selectColumn.bind(this);
+    this._sort = this._sort.bind(this);
 
-    this.node = null;
-    this.offset = 0;
-
-    this.columns = React.Children.map(props.children, (child) => {
-      return {
-        title: child.props.columnTitle,
-        key: child.props.dataKey,
-        formatter: child.props.formatter,
-        searchable: child.props.searchable,
-      };
-    });
-
+    this.worker = new Worker;
+    this.columns = this._extractColumns(props);
     this.state = {
       activeColumn: null,
       collection: [],
@@ -54,34 +36,110 @@ class PowerTable extends React.Component {
   }
 
   componentDidMount() {
-    // this.worker = new Worker;
 
     this.worker.addEventListener('message', (e) => {
-      this.workerReturn(e);
+      this._handlerWorkerReturn(e);
     }, false);
 
+    let _message = {
+      action: 'LOAD',
+      url: 'http://localhost:9000/data_collection-1.1.6.js',
+      dataUrl: this.props.dataUrl,
+      fetchMethod: this.props.fetchMethod,
+      pageSize: this.props.itensInViewPort,
+      cols: this.columns.map((col) => {
+        if(col.key) {
+          return {key: col.key, searchable: col.searchable};
+        }
+      }),
+    };
+
+    if(this.props.groupBy && this.props.groupBy.length > 0) {
+      _message.groupBy = this.props.groupBy.split(',');
+    }
+
     this.worker.postMessage(
-      {
-        action: 'LOAD',
-        url: 'http://localhost:9000/data_collection-1.1.6.js',
-        dataUrl: this.props.dataUrl,
-        fetchMethod: this.props.fetchMethod,
-        cols: this.columns.map((col) => {
-          if(col.key) {
-            return {key: col.key, searchable: col.searchable};
-          }
-        }),
-      }
+      _message
     );
 
-    this.node = findDOMNode(this);
   }
 
   componentWillUnmount() {
     this.worker.terminate();
   }
 
-  workerReturn(e) {
+  /**
+   * Extrai as informações das colunas.
+   *
+   * @param props
+   * @return {*}
+   * @private
+   */
+  _extractColumns(props) {
+    return React.Children.map(props.children, (child) => {
+      return {
+        title: child.props.columnTitle,
+        key: child.props.dataKey,
+        formatter: child.props.formatter,
+        searchable: child.props.searchable,
+      };
+    });
+  }
+
+  /**
+   * Envia ao worker a mensagem solicitando o filtro.
+   * @param filterProps
+   * @private
+   */
+  _filter(filterProps) {
+    this.worker.postMessage({ action: 'FILTER', filterProps});
+  }
+
+  /**
+   * Envia ao worker a mensagem solicitando o filtro nos valores Distincts.
+   *
+   * @param filterProps
+   * @private
+   */
+  _filterDistinct(filterProps) {
+    this.worker.postMessage({ action: 'FILTER_DISTINCT', filterProps});
+  }
+
+  /**
+   * Manipula o retorno do filtro nos valores distinct.
+   *
+   * @param filterProps
+   * @private
+   */
+  _handlerDistinctFilters(filterProps) {
+
+    const {value, dataKey} = filterProps;
+
+    let oldState = JSON.stringify(this.state.distinctFilters);
+    let newState = JSON.parse(oldState);
+
+    if(newState.hasOwnProperty(dataKey)) {
+      if(!newState[dataKey].includes(value)) {
+        newState[dataKey].push(value);
+      } else {
+        let index = newState[dataKey].indexOf(value);
+        newState[dataKey].splice(index, 1);
+      }
+    } else {
+      newState[dataKey] = [value];
+    }
+
+    this.setState(update(this.state, {distinctFilters: {$set: newState}}));
+  }
+
+
+  /**
+   * Metodo que manipula o retorno dos processos realizado pelo Worker.
+   *
+   * @param e
+   * @private
+   */
+  _handlerWorkerReturn(e) {
 
     const updateMessage = (message) => {
       const newState = update(this.state, {message: {$set: message}});
@@ -131,64 +189,63 @@ class PowerTable extends React.Component {
         if(!e.data.dataKey) {
           this.setState(update(this.state, {distincts: {$set: e.data.itens}}));
         } else {
-          var oldState = JSON.stringify(this.state.distincts);
-          var newState = JSON.parse(oldState);
+          let oldState = JSON.stringify(this.state.distincts);
+          let newState = JSON.parse(oldState);
           newState[e.data.dataKey] = e.data.itens;
           this.setState(update(this.state, {distincts: {$set: newState}}));
         }
         break;
-
     }
   }
 
+  /**
+   * Envia ao worker a mensagem solicitando que o filtro seja aplicado.
+   *
+   * @param perValue
+   * @param perConditions
+   * @param dataInfo
+   * @private
+   */
+  _onApplyFilter(perValue, perConditions, dataInfo) {
+    this.worker.postMessage({ action: 'FILTER', perValue, perConditions, dataInfo});
+  }
 
-  paginate(pagerObject) {
+  /**
+   * Envia ao worker a mensagem solicitando a paginação.
+   *
+   * @param pagerObject
+   * @private
+   */
+  _paginate(pagerObject) {
     const { currentPage, offset } = pagerObject;
     this.worker.postMessage({ action: 'PAGINATE', currentPage, offset });
   }
 
-  filter(filterProps) {
-    this.worker.postMessage({ action: 'FILTER', filterProps});
-  }
 
-  sort(direction, dataKey) {
-    this.worker.postMessage({ action: 'SORT', direction, dataKey});
-  }
-
-  selectColumn(dataKey) {
+  /**
+   * Seta qual é a coluna ativa (que terá as opções de filtro e sort aberto)
+   *
+   * @param dataKey
+   * @private
+   */
+  _selectColumn(dataKey) {
     let activeColumn = dataKey === this.state.activeColumn ? null : dataKey;
     const newState = update(this.state, {activeColumn: {$set: activeColumn}});
     this.setState(newState);
   }
 
-  filterDistinct(filterProps) {
-    this.worker.postMessage({ action: 'FILTER_DISTINCT', filterProps});
+
+  /**
+   * Envia ao worker a mensagem solicitando o sort.
+   *
+   * @param direction
+   * @param dataKey
+   * @private
+   */
+  _sort(direction, dataKey) {
+    this.worker.postMessage({ action: 'SORT', direction, dataKey});
   }
 
-  handlerDistinctFilters(filterProps) {
-
-    const {value, dataKey} = filterProps;
-
-    let oldState = JSON.stringify(this.state.distinctFilters);
-    let newState = JSON.parse(oldState);
-
-    if(newState.hasOwnProperty(dataKey)) {
-      if(!newState[dataKey].includes(value)) {
-        newState[dataKey].push(value);
-      } else {
-        let index = newState[dataKey].indexOf(value);
-        newState[dataKey].splice(index, 1);
-      }
-    } else {
-      newState[dataKey] = [value];
-    }
-
-    this.setState(update(this.state, {distinctFilters: {$set: newState}}));
-  }
-
-  _onApplyFilter(perValue, perConditions, dataInfo) {
-    this.worker.postMessage({ action: 'FILTER', perValue, perConditions, dataInfo});
-  }
 
   render() {
 
@@ -197,7 +254,7 @@ class PowerTable extends React.Component {
       columns: this.columns,
       container: this.node,
       itensInViewPort: this.props.itensInViewPort,
-      onScroll: this.paginate,
+      onScroll: this._paginate,
       rowHeight: this.props.rowHeight,
       totalRecords: this.state.count,
     };
@@ -206,15 +263,14 @@ class PowerTable extends React.Component {
 
       let newProps = {key: i};
       if(chield.props.dataKey){
-        newProps.onSearch = this.filter;
-        newProps.onSort = this.sort;
+        newProps.onSearch = this._filter;
+        newProps.onSort = this._sort;
         newProps.filters = this.state.filters;
         newProps.filtersByConditions = this.state.filtersByConditions;
         newProps.sorts = this.state.sorts;
-        newProps.container = this.node;
-        newProps.onSelect = this.selectColumn;
-        newProps.onFilterDistinct = this.filterDistinct;
-        newProps.onAddToFilterDistinct = this.handlerDistinctFilters;
+        newProps.onSelect = this._selectColumn;
+        newProps.onFilterDistinct = this._filterDistinct;
+        newProps.onAddToFilterDistinct = this._handlerDistinctFilters;
         newProps.uniqueValues = this.state.distincts;
         newProps.activeColumn = this.state.activeColumn;
         newProps.distinctFilters = this.state.distinctFilters;
@@ -243,9 +299,9 @@ class PowerTable extends React.Component {
         {scrollableArea}
         <div className='sv-padd-25'>
           <Paginate
-            onNextPage={this.paginate}
-            onPreviousPage={this.paginate}
-            onSelectASpecifPage={this.paginate}
+            onNextPage={this._paginate}
+            onPreviousPage={this._paginate}
+            onSelectASpecifPage={this._paginate}
             recordsByPage={16}
             ref='paginate'
             totalSizeOfData={this.state.count}
@@ -255,7 +311,6 @@ class PowerTable extends React.Component {
       </div>
     );
   }
-
 }
 
 PowerTable.displayName = 'PowerTable';
@@ -268,6 +323,7 @@ PowerTable.propTypes = {
   dataUrl: React.PropTypes.string.isRequired,
   fetchMethod: React.PropTypes.oneOf(['GET', 'POST']),
   fetchParams: React.PropTypes.object,
+  groupBy: React.PropTypes.string,
   itensInViewPort: React.PropTypes.number.isRequired,
   rowHeight: React.PropTypes.number.isRequired,
 };

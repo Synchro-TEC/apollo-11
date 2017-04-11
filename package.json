@@ -50,6 +50,7 @@
     "immutability-helper": "^2.1.2",
     "lodash.debounce": "^4.0.8",
     "lodash.find": "^4.6.0",
+    "lodash.groupby": "^4.6.0",
     "lodash.max": "^4.0.1",
     "lodash.take": "^4.1.1",
     "lodash.takeright": "^4.1.1",

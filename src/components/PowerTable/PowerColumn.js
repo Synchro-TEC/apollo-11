@@ -10,6 +10,11 @@ class PowerColumn extends React.Component {
     this.renderSort = this.renderSort.bind(this);
     this.setColumn = this.setColumn.bind(this);
 
+    this.propsToSend = this._preparePropsToSend(props);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    this.propsToSend = this._preparePropsToSend(nextProps);
   }
 
   setColumn() {
@@ -43,6 +48,21 @@ class PowerColumn extends React.Component {
     return rendered;
   }
 
+  _preparePropsToSend(props) {
+    let theProps = Object.assign({}, props);
+
+    theProps.isVisible = props.dataKey === props.activeColumn;
+
+    delete theProps.activeColumn;
+    delete theProps.filters;
+    delete theProps.filtersByConditions;
+    delete theProps.formatter;
+    delete theProps.sorts;
+    delete theProps.onSetColumn;
+
+    return theProps;
+  }
+
   render() {
 
     let result;
@@ -56,21 +76,7 @@ class PowerColumn extends React.Component {
           </div>
           {this.renderSort()}
           {this.renderFilter()}
-          <ColumnActions
-            columnTitle={this.props.columnTitle}
-            dataKey={this.props.dataKey}
-            dataType={this.props.dataType}
-            distinctFilters={this.props.distinctFilters}
-            formatterOnFilter={this.props.formatterOnFilter}
-            isVisible={this.props.dataKey === this.props.activeColumn}
-            onAddToFilterDistinct={this.props.onAddToFilterDistinct}
-            onApplyFilter={this.props.onApplyFilter}
-            onClose={this.props.onSelect}
-            onFilterDistinct={this.props.onFilterDistinct}
-            onSort={this.props.onSort}
-            searchable={this.props.searchable}
-            uniqueValues={this.props.uniqueValues}
-          />
+          <ColumnActions {...this.propsToSend}  />
         </th>
       );
     } else {

@@ -11,33 +11,12 @@ class ScrollArea extends React.Component {
       textOverflow: 'ellipsis',
     };
 
-    this.recordsContainer = null;
-    this.before = null;
-    this.after = null;
-    this.totalHeight = null;
-    this.viewPortHeight = null;
-
-    this.scrollTimer = null;
-    this.scrollDuration = 150;
-    this.isScrolling= false;
-
-    this.fixScrollBarDiff = this.fixScrollBarDiff.bind(this);
   }
 
   componentDidMount() {
-    this.recordsContainer = this.props.container.querySelector('.PWT-Scroll');
-    this.totalHeight = this.props.rowHeight * this.props.totalRecords;
-    this.viewPortHeight = this.props.rowHeight * this.props.itensInViewPort;
 
-    this.fixScrollBarDiff();
   }
 
-  fixScrollBarDiff() {
-    let scrollAreaWidth = this.props.container.querySelector('.PWT-Scroll').offsetWidth;
-    let tableWidth = this.props.container.querySelector('.PWT-Scroll table').offsetWidth;
-    let header = this.props.container.querySelector('.PWT-TableHeader');
-    header.style.paddingRight = `${scrollAreaWidth - tableWidth}px`;
-  }
 
   render() {
 
@@ -81,12 +60,10 @@ ScrollArea.propTypes = {
   beforeHeight: React.PropTypes.number,
   collection: React.PropTypes.array.isRequired,
   columns: React.PropTypes.array.isRequired,
-  container: React.PropTypes.any,
   itensInViewPort: React.PropTypes.number.isRequired,
   onScroll: React.PropTypes.func,
   rowHeight: React.PropTypes.number.isRequired,
   totalRecords: React.PropTypes.number,
-
 };
 
 export default ScrollArea;

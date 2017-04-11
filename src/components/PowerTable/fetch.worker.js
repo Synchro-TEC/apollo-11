@@ -1,10 +1,13 @@
 /*eslint no-unused-vars: 0, no-undef: 0, no-inner-declarations: 0, no-console: 0 */
 
 import sift from 'sift';
+import _groupBy from 'lodash.groupby';
+
+const DEFAULT_PER_PAGE = 20;
 
 let collection = null;
 let currentCollection = null;
-let perPage = 16;
+let perPage = DEFAULT_PER_PAGE;
 let offSet = 0;
 let sort = null;
 let sortDesc = false;
@@ -26,6 +29,23 @@ const bytesToSize = (bytes) => {
   let i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)));
   return Math.round(bytes / Math.pow(1024, i), 2) + ' ' + sizes[i];
 };
+
+const groupByMulti = (list, values, context) => {
+
+  if (!values.length) {
+    return list;
+  }
+
+  let byFirst = _groupBy(list, values[0], context);
+  let rest = values.slice(1);
+
+  for (let prop in byFirst) {
+    byFirst[prop] = groupByMulti(byFirst[prop], rest, context);
+  }
+
+  return byFirst;
+};
+
 
 
 /**
@@ -110,7 +130,6 @@ const applyFilter = () => {
       let startCondition = {};
       let endCondition = {};
 
-      debugger;
       startCondition[key] = {$gte: parseInt(start, 10)};
       endCondition[key] = {$lte: parseInt(end, 10)};
 
@@ -150,6 +169,15 @@ self.addEventListener('message', (e) => {
 
     request.onload = () => {
       collection = request.response;
+
+      e.data.pageSize ? perPage = e.data.pageSize : null;
+
+      // TODO: EVOLUÇÃO DO GROUP BY
+      // if(e.data.groupBy) {
+      //   currentCollection = groupByMulti(request.response, e.data.groupBy);
+      // } else {
+      //   currentCollection = request.response;
+      // }
       currentCollection = request.response;
 
       self.postMessage(

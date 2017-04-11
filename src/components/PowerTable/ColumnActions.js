@@ -292,7 +292,7 @@ class ColumnActions extends React.Component {
             type='button'>Aplicar</button>) : null}
         <button
           className='sv-button default small sv-horizontal-marged-15'
-          onClick={() => this.props.onClose(this.props.dataKey)}
+          onClick={() => this.props.onSelect(this.props.dataKey)}
           type='button'
         >
           Cancelar
@@ -365,9 +365,9 @@ ColumnActions.propTypes = {
   isVisible: React.PropTypes.bool,
   onAddToFilterDistinct: React.PropTypes.func,
   onApplyFilter: React.PropTypes.func,
-  onClose: React.PropTypes.func,
   onFilterDistinct: React.PropTypes.func,
   onSearch: React.PropTypes.func,
+  onSelect: React.PropTypes.func,
   onSort: React.PropTypes.func,
   position: React.PropTypes.object,
   searchable: React.PropTypes.bool,
