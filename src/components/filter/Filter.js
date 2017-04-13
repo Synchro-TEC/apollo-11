@@ -139,7 +139,7 @@ Filter.defaultProps = {
   applyFilterButtonLabel: 'Aplicar Filtro',
   cancelButtonLabel: 'Cancelar',
   clearFilterOptionsButtonLabel: 'Limpar Filtro',
-  filterButtonLabel: 'Filtro',
+  filterButtonLabel: 'Opções',
   placeholder: 'Buscar',
 };
 
