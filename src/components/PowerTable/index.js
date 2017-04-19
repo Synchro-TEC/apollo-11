@@ -43,10 +43,11 @@ class PowerTable extends React.Component {
 
     let _message = {
       action: 'LOAD',
-      url: 'http://localhost:9000/data_collection-1.1.6.js',
-      dataUrl: this.props.dataUrl,
+      fetchUrl: this.props.fetchUrl,
       fetchMethod: this.props.fetchMethod,
-      pageSize: this.props.itensInViewPort,
+      fetchParams: this.props.fetchParams,
+      responseCollectionPath: this.props.responseCollectionPath,
+      pageSize: this.props.pageSize,
       cols: this.columns.map((col) => {
         if(col.key) {
           return {key: col.key, searchable: col.searchable};
@@ -255,7 +256,7 @@ class PowerTable extends React.Component {
       collection: this.state.collection,
       columns: this.columns,
       container: this.node,
-      itensInViewPort: this.props.itensInViewPort,
+      pageSize: this.props.pageSize,
       onScroll: this._paginate,
       rowHeight: this.props.rowHeight,
       totalRecords: this.state.count,
@@ -304,7 +305,7 @@ class PowerTable extends React.Component {
             onNextPage={this._paginate}
             onPreviousPage={this._paginate}
             onSelectASpecifPage={this._paginate}
-            recordsByPage={this.props.itensInViewPort}
+            recordsByPage={this.props.pageSize}
             ref='paginate'
             totalSizeOfData={this.state.count}
           />
@@ -322,11 +323,12 @@ PowerTable.defaultProps = {
 };
 
 PowerTable.propTypes = {
-  dataUrl: React.PropTypes.string.isRequired,
+  fetchUrl: React.PropTypes.string.isRequired,
   fetchMethod: React.PropTypes.oneOf(['GET', 'POST']),
   fetchParams: React.PropTypes.object,
+  responseCollectionPath: React.PropTypes.string,
   groupBy: React.PropTypes.string,
-  itensInViewPort: React.PropTypes.number.isRequired,
+  pageSize: React.PropTypes.number.isRequired,
   rowHeight: React.PropTypes.number.isRequired,
 };
 
