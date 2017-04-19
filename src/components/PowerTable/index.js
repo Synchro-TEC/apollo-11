@@ -208,6 +208,7 @@ class PowerTable extends React.Component {
    */
   _onApplyFilter(perValue, perConditions, dataInfo) {
     this.worker.postMessage({ action: 'FILTER', perValue, perConditions, dataInfo});
+    this._selectColumn(null);
   }
 
   /**
@@ -244,6 +245,7 @@ class PowerTable extends React.Component {
    */
   _sort(direction, dataKey) {
     this.worker.postMessage({ action: 'SORT', direction, dataKey});
+    this._selectColumn(null);
   }
 
 
@@ -288,7 +290,7 @@ class PowerTable extends React.Component {
       <div>
         <p>{this.state.message || ' '}</p>
         <div className='PWT-TableHeader' style={{backgroundColor: '#f3f3f3'}}>
-          <table className='sv-table with--hover with--grid' style={{tableLayout: 'fixed'}}>
+          <table className='sv-table with--borders' style={{tableLayout: 'fixed'}}>
             <thead>
             <tr>
               {headers}
@@ -302,7 +304,7 @@ class PowerTable extends React.Component {
             onNextPage={this._paginate}
             onPreviousPage={this._paginate}
             onSelectASpecifPage={this._paginate}
-            recordsByPage={16}
+            recordsByPage={this.props.itensInViewPort}
             ref='paginate'
             totalSizeOfData={this.state.count}
           />
