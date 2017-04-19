@@ -42,7 +42,7 @@ class ScrollArea extends React.Component {
             borderBottom: '1px solid #dadada',
           }}
         >
-          <table className='sv-table with--grid' style={{tableLayout: 'fixed', marginBottom: '0px'}}>
+          <table className='sv-table with--borders with--hover' style={{tableLayout: 'fixed', marginBottom: '0px'}}>
             <tbody>
             {result}
             </tbody>
@@ -60,7 +60,7 @@ ScrollArea.propTypes = {
   beforeHeight: React.PropTypes.number,
   collection: React.PropTypes.array.isRequired,
   columns: React.PropTypes.array.isRequired,
-  itensInViewPort: React.PropTypes.number.isRequired,
+  pageSize: React.PropTypes.number.isRequired,
   onScroll: React.PropTypes.func,
   rowHeight: React.PropTypes.number.isRequired,
   totalRecords: React.PropTypes.number,
