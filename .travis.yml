@@ -1,0 +1,10 @@
+language: node_js
+node_js:
+  - "node"
+  
+deploy:
+  provider: npm
+  email: "frontend@synchro.com.br"
+  api_key: "YOUR_API_KEY"
+  on:
+    tags: true
