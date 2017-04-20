@@ -1,13 +1,12 @@
 {
-  "name": "apollo-11",
-  "version": "0.3.5",
+  "name": "syntec-apollo-11",
+  "version": "0.4.0",
   "description": "Apollo-11 Project - Failure is not an option",
   "main": "lib/index.js",
   "scripts": {
     "build": "NODE_ENV=production webpack --progress --color --env.prod",
     "watch": "webpack --progress --color --watch --env.dev",
-    "lint": "./node_modules/.bin/eslint src",
-    "test": "echo Test"
+    "lint": "./node_modules/.bin/eslint src"
   },
   "repository": {
     "type": "git",
