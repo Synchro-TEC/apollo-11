@@ -6,7 +6,8 @@
   "scripts": {
     "build": "NODE_ENV=production webpack --progress --color --env.prod",
     "watch": "webpack --progress --color --watch --env.dev",
-    "lint": "./node_modules/.bin/eslint src"
+    "lint": "./node_modules/.bin/eslint src",
+    "test": "echo Test"
   },
   "repository": {
     "type": "git",
