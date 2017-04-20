@@ -375,3 +375,13 @@ pre {
   margin: 2em;
   flex: 1;
 }
+
+.with--grid th,
+.with--grid td {
+  border: 1px solid #dadada;
+}
+
+.with--grid th {
+  background-color: #f3f3f3 !important;
+  position: relative;
+}
