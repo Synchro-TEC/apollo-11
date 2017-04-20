@@ -1,10 +1,11 @@
 language: node_js
 node_js:
-  - "node"
-  
+- node
 deploy:
   provider: npm
-  email: "frontend@synchro.com.br"
-  api_key: "YOUR_API_KEY"
+  email: frontend@synchro.com.br
+  api_key:
+    secure: ZlMzMDX9eLSAAYTVSzvvj71pL64HedqeqYW4PEyKy9BBVI2m95Rnfr4JJEox+goAVQJD0/iTeHP0lk8uYiX+l/dQ3xJKJ7jE2SJ9C0h6dlkHK49qHt5Cw2fmkaL+SarIALCWDiLFjnkuUD4HEmkwm3qDfiaiw1GXC6aTX83CP5ufqvCc1I4cFjoSuZ7h1iXUgw8KyWWI4VQzUpZDrgjdjw10tkrWcJPyX4YSLTJ8v1bP+8IHXZzMtQXuzUZpELngnYZ7/NUJAx3gJ1XwKcv0tu+zKewAbw7/xTP66Uw00eqZl9KsE/mdAE3KhBwH3ipS9xGGlUSMSCgLIkzZDEzmhOjtMDNAGY68yc9w4o8unSOOOoD+B4GbrHPazEy4hlXkvzZOTiE7xJdjdnFXLwZE7pSF5MMO8uDeAYr1FaLAbhDj3qXfue1oWoItzQHfuZNd6ohXxGOUiiDODwHhy+xCNU2RVEKvyS/QrpV0kj3Uclzd+/Au92cP5Twsg4pz5iM5OLmMpKJKPYJknbatutENk5QzYqEIGpWYZkxpIWGz7Mhff5GxVerWvyryrkUE3q6xSQz6kRxk7Bi/84tMsKNmWcHV3MpQBxuSpUybDDZdLFzaGrdy8yv8LHYZ1pgLe8XPrqykfRuB/8h6gctrJ6eraS4XT6K2S1oKFw2WbEgn3FU=
   on:
     tags: true
+    repo: Synchro-TEC/apollo-11
