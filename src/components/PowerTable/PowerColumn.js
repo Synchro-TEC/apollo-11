@@ -26,7 +26,7 @@ class PowerColumn extends React.Component {
 
     if(this.props.dataKey ) {
       if(this.props.filters[this.props.dataKey] || this.props.filtersByConditions[this.props.dataKey]){
-        result = (<div className='sv-pull-right'><i className='fa fa-filter fa-fw' title={this.props.filters[this.props.dataKey]} /></div>);
+        result = (<i className='fa fa-filter fa-fw' title={this.props.filters[this.props.dataKey]} />);
       }
     }
 
@@ -43,7 +43,7 @@ class PowerColumn extends React.Component {
       } else {
         cssClass += this.props.sorts[this.props.dataKey] ? ' fa-sort-numeric-desc' : ' fa-sort-numeric-asc';
       }
-      rendered = (<div className='sv-pull-right'><i className={cssClass} /></div>);
+      rendered = (<i className={cssClass} />);
     }
     return rendered;
   }
@@ -71,11 +71,12 @@ class PowerColumn extends React.Component {
       result = (
         <th>
           {this.props.columnTitle}
-          <div className='sv-pull-right'>
-            <i className='fa fa-fw fa-caret-square-o-down' onClick={() => this.setColumn()} style={{cursor: 'pointer'}} />
-          </div>
           {this.renderSort()}
           {this.renderFilter()}
+
+          <i className='fa fa-fw fa-caret-square-o-down' onClick={() => this.setColumn()} style={{cursor: 'pointer', marginLeft: '8px'}} />
+
+          
           <ColumnActions {...this.propsToSend}  />
         </th>
       );

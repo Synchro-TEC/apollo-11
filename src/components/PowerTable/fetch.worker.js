@@ -2,6 +2,7 @@
 
 import sift from 'sift';
 import _groupBy from 'lodash.groupby';
+import _get from 'lodash.get';
 
 const DEFAULT_PER_PAGE = 20;
 
@@ -152,6 +153,14 @@ const applyFilter = () => {
   currentCollection = itens;
 };
 
+const responseExtractor = (responseCollectionPath, response) => {
+      if(responseCollectionPath){
+        return _get(response, responseCollectionPath)
+      } else {
+        return response;
+      }
+}
+
 self.addEventListener('message', (e) => {
 
   /**
@@ -160,7 +169,8 @@ self.addEventListener('message', (e) => {
   if (e.data.action === 'LOAD') {
 
     const request = new XMLHttpRequest();
-    request.open(e.data.fetchMethod, e.data.dataUrl);
+    request.open(e.data.fetchMethod, e.data.fetchUrl);
+    request.setRequestHeader("Content-Type", "application/json");
     request.responseType = 'json';
 
     request.onprogress = (progessEvent) => {
@@ -168,7 +178,7 @@ self.addEventListener('message', (e) => {
     };
 
     request.onload = () => {
-      collection = request.response;
+      collection = responseExtractor(e.data.responseCollectionPath, request.response);
 
       e.data.pageSize ? perPage = e.data.pageSize : null;
 
@@ -178,7 +188,7 @@ self.addEventListener('message', (e) => {
       // } else {
       //   currentCollection = request.response;
       // }
-      currentCollection = request.response;
+      currentCollection = responseExtractor(e.data.responseCollectionPath, request.response);
 
       self.postMessage(
         decoratedReturn('LOADED', 'Dados carregados', currentCollection.slice(offSet, perPage), currentCollection.length)
@@ -202,7 +212,8 @@ self.addEventListener('message', (e) => {
       self.postMessage(decoratedReturn('LOADING_ERROR', 'Erro ao carregar os dados'));
     };
 
-    request.send();
+    request.send(JSON.stringify(e.data.fetchParams || {}));
+
     self.postMessage(decoratedReturn('LOADING_INIT', 'Iniciando o carregamento dos registros...'));
   }
 
