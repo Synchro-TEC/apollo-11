@@ -10,6 +10,13 @@ class Filter extends React.Component {
     this.addSearchValueToFilterValues = this.addSearchValueToFilterValues.bind(this);
   }
 
+  componentDidMount() {
+    let isFilterWithOptions = this.refs.filterOptions.props.children;
+    if(isFilterWithOptions && !this.props.name) {
+      console.warn('Em um filtro com opções se faz necessário a passagem da propriedade name para o filtro');
+    }
+  }
+
   /**
    * shouldComponentUpdate - description
    * Componente não deve atualizar caso o estado clearFieldIsVisible
@@ -148,7 +155,7 @@ Filter.propTypes = {
   cancelButtonLabel: React.PropTypes.string,
   clearFilterOptionsButtonLabel: React.PropTypes.string,
   filterButtonLabel: React.PropTypes.string,
-  name: React.PropTypes.string.isRequired,
+  name: React.PropTypes.string,
   onClearAll: React.PropTypes.func,
   onFilter: React.PropTypes.func,
   placeholder: React.PropTypes.string,
