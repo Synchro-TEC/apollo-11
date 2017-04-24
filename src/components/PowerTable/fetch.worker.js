@@ -2,7 +2,7 @@
 
 import sift from 'sift';
 import _groupBy from 'lodash.groupby';
-import _get from 'lodash.get';
+import DataFetcher from './datafetcher.js';
 
 const DEFAULT_PER_PAGE = 20;
 
@@ -153,13 +153,24 @@ const applyFilter = () => {
   currentCollection = itens;
 };
 
-const responseExtractor = (responseCollectionPath, response) => {
-      if(responseCollectionPath){
-        return _get(response, responseCollectionPath)
-      } else {
-        return response;
-      }
+
+const _fillDistincts = (columns) => {
+    for (let i = 0; i < columns.length; i++) {
+        let col = columns[i];
+        if (col && col.searchable) {
+            distinctsLimited[col.key] = [...new Set(collection.slice(0, 100).map(item => item[col.key]))];
+            distincts[col.key] = [...new Set(collection.map(item => item[col.key]))];
+        }
+    }
+
+    setTimeout(() => {
+        self.postMessage(decoratedReturn('DISTINCT', '', distinctsLimited));
+    }, 100);
 }
+
+const _onProgress = (progessEvent) => {
+  self.postMessage(decoratedReturn('LOADING', `${bytesToSize(progessEvent.loaded)} carregados...`));
+};
 
 self.addEventListener('message', (e) => {
 
@@ -167,52 +178,19 @@ self.addEventListener('message', (e) => {
    * LOADING DATA ACTION
    */
   if (e.data.action === 'LOAD') {
+    let fetch = DataFetcher.fetch(e.data.fetch, _onProgress);
 
-    const request = new XMLHttpRequest();
-    request.open(e.data.fetchMethod, e.data.fetchUrl);
-    request.setRequestHeader("Content-Type", "application/json");
-    request.responseType = 'json';
+    fetch.then((data) => {
+        collection = currentCollection = data;
+        let sliced = currentCollection.slice(offSet, e.data.pageSize);
+        self.postMessage(decoratedReturn('LOADED', 'Dados carregados', sliced, collection.length));
 
-    request.onprogress = (progessEvent) => {
-      self.postMessage(decoratedReturn('LOADING', `${bytesToSize(progessEvent.loaded)} carregados...`));
-    };
+        _fillDistincts(e.data.cols);
+    });
 
-    request.onload = () => {
-      collection = responseExtractor(e.data.responseCollectionPath, request.response);
-
-      e.data.pageSize ? perPage = e.data.pageSize : null;
-
-      // TODO: EVOLUÇÃO DO GROUP BY
-      // if(e.data.groupBy) {
-      //   currentCollection = groupByMulti(request.response, e.data.groupBy);
-      // } else {
-      //   currentCollection = request.response;
-      // }
-      currentCollection = responseExtractor(e.data.responseCollectionPath, request.response);
-
-      self.postMessage(
-        decoratedReturn('LOADED', 'Dados carregados', currentCollection.slice(offSet, perPage), currentCollection.length)
-      );
-
-      for (let i = 0; i < e.data.cols.length; i++) {
-        let col = e.data.cols[i];
-        if (col && col.searchable) {
-          distinctsLimited[col.key] = [...new Set(collection.slice(0, 100).map(item => item[col.key]))];
-          distincts[col.key] = [...new Set(collection.map(item => item[col.key]))];
-        }
-      }
-
-      setTimeout(() => {
-        self.postMessage(decoratedReturn('DISTINCT', '', distinctsLimited));
-      }, 100);
-
-    };
-
-    request.onerror = () => {
-      self.postMessage(decoratedReturn('LOADING_ERROR', 'Erro ao carregar os dados'));
-    };
-
-    request.send(JSON.stringify(e.data.fetchParams || {}));
+    fetch.catch((message) => {
+        self.postMessage(decoratedReturn('LOADING_ERROR', message));
+    });
 
     self.postMessage(decoratedReturn('LOADING_INIT', 'Iniciando o carregamento dos registros...'));
   }
