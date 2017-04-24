@@ -36,17 +36,13 @@ class PowerTable extends React.Component {
   }
 
   componentDidMount() {
-
     this.worker.addEventListener('message', (e) => {
       this._handlerWorkerReturn(e);
     }, false);
 
     let _message = {
       action: 'LOAD',
-      fetchUrl: this.props.fetchUrl,
-      fetchMethod: this.props.fetchMethod,
-      fetchParams: this.props.fetchParams,
-      responseCollectionPath: this.props.responseCollectionPath,
+      fetch: this.props.fetch,
       pageSize: this.props.pageSize,
       cols: this.columns.map((col) => {
         if(col.key) {
@@ -62,7 +58,6 @@ class PowerTable extends React.Component {
     this.worker.postMessage(
       _message
     );
-
   }
 
   componentWillUnmount() {
@@ -254,7 +249,7 @@ class PowerTable extends React.Component {
 
     let opts = {
       collection: this.state.collection,
-      columns: this.columns,
+      columns: this._extractColumns(this.props),
       container: this.node,
       pageSize: this.props.pageSize,
       onScroll: this._paginate,
@@ -323,10 +318,7 @@ PowerTable.defaultProps = {
 };
 
 PowerTable.propTypes = {
-  fetchUrl: React.PropTypes.string.isRequired,
-  fetchMethod: React.PropTypes.oneOf(['GET', 'POST']),
-  fetchParams: React.PropTypes.object,
-  responseCollectionPath: React.PropTypes.string,
+  fetch: React.PropTypes.object,
   groupBy: React.PropTypes.string,
   pageSize: React.PropTypes.number.isRequired,
   rowHeight: React.PropTypes.number.isRequired,
