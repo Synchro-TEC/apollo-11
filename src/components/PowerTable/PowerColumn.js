@@ -64,7 +64,6 @@ class PowerColumn extends React.Component {
   }
 
   render() {
-
     let result;
 
     if(this.props.dataKey) {
@@ -75,7 +74,6 @@ class PowerColumn extends React.Component {
           {this.renderFilter()}
 
           <i className='fa fa-fw fa-caret-square-o-down' onClick={() => this.setColumn()} style={{cursor: 'pointer', marginLeft: '8px'}} />
-
           
           <ColumnActions {...this.propsToSend}  />
         </th>
@@ -98,6 +96,7 @@ PowerColumn.displayName = 'PowerColumn';
 PowerColumn.defaultProps = {
   dataType: 'text',
   searchable: false,
+  groupBy: false
 };
 
 PowerColumn.propTypes = {
@@ -120,6 +119,7 @@ PowerColumn.propTypes = {
   searchable: React.PropTypes.bool,
   sorts: React.PropTypes.object,
   uniqueValues: React.PropTypes.any,
+  groupBy: React.PropTypes.bool
 };
 
 export default PowerColumn;

@@ -1,52 +1,40 @@
 import React from 'react';
+import _ from 'lodash';
+import TableBody from './TableBody';
+import GroupedTableBody from './GroupedTableBody';
 
 class ScrollArea extends React.Component {
 
   constructor(props) {
     super(props);
-
-    this.style = {
-      whiteSpace: 'nowrap',
-      overflow: 'hidden',
-      textOverflow: 'ellipsis',
-    };
-
   }
-
-  componentDidMount() {
-
-  }
-
 
   render() {
+    let columns = this.props.columns;
+    let data = this.props.collection;
+    let groupedCols = _.filter(columns, { 'groupBy': true });
+    let isGrouped = groupedCols.length > 0;
 
-    let result = this.props.collection.map((row, i) => {
-      return (
-        <tr key={i} style={{height: '40px'}}>
-          { this.props.columns.map((col, j) => {
-            let rendered = col.formatter ? col.formatter(row) : row[col.key];
-            return (<td key={`${i}${j}`} style={this.style}>{rendered}</td>); })
-          }
-        </tr>
-      );
-    });
+
+    let tableBodyOpts = {
+      data: data,
+      columns: columns
+    }
 
     return (
       <div
-          className='PWT-Scroll'
-          style={{
-            display: 'block',
-            overflow: 'auto',
-            marginTop: '-31px',
-            position: 'relative',
-            borderBottom: '1px solid #dadada',
-          }}
-        >
-          <table className='sv-table with--borders with--hover' style={{tableLayout: 'fixed', marginBottom: '0px'}}>
-            <tbody>
-            {result}
-            </tbody>
-          </table>
+        className='PWT-Scroll'
+        style={{
+          display: 'block',
+          overflow: 'auto',
+          marginTop: '-31px',
+          position: 'relative',
+          borderBottom: '1px solid #dadada',
+        }}
+      >
+        <table className='sv-table with--borders with--hover' style={{ tableLayout: 'fixed', marginBottom: '0px' }}>
+          {isGrouped ? <GroupedTableBody {...tableBodyOpts} /> : <TableBody {...tableBodyOpts} />}
+        </table>
       </div>
 
     );
