@@ -51,10 +51,6 @@ class PowerTable extends React.Component {
       }),
     };
 
-    if(this.props.groupBy && this.props.groupBy.length > 0) {
-      _message.groupBy = this.props.groupBy.split(',');
-    }
-
     this.worker.postMessage(
       _message
     );
@@ -78,6 +74,7 @@ class PowerTable extends React.Component {
         key: child.props.dataKey,
         formatter: child.props.formatter,
         searchable: child.props.searchable,
+        groupBy: child.props.groupBy
       };
     });
   }
@@ -319,7 +316,6 @@ PowerTable.defaultProps = {
 
 PowerTable.propTypes = {
   fetch: React.PropTypes.object,
-  groupBy: React.PropTypes.string,
   pageSize: React.PropTypes.number.isRequired,
   rowHeight: React.PropTypes.number.isRequired,
 };

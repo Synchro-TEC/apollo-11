@@ -1,7 +1,6 @@
 /*eslint no-unused-vars: 0, no-undef: 0, no-inner-declarations: 0, no-console: 0 */
 
 import sift from 'sift';
-import _groupBy from 'lodash.groupby';
 import DataFetcher from './datafetcher.js';
 
 const DEFAULT_PER_PAGE = 20;
@@ -31,21 +30,7 @@ const bytesToSize = (bytes) => {
   return Math.round(bytes / Math.pow(1024, i), 2) + ' ' + sizes[i];
 };
 
-const groupByMulti = (list, values, context) => {
 
-  if (!values.length) {
-    return list;
-  }
-
-  let byFirst = _groupBy(list, values[0], context);
-  let rest = values.slice(1);
-
-  for (let prop in byFirst) {
-    byFirst[prop] = groupByMulti(byFirst[prop], rest, context);
-  }
-
-  return byFirst;
-};
 
 
 
