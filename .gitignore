@@ -117,3 +117,6 @@ sftp-config.json
 Session.vim
 .netrwhist
 *~
+
+### LIB ###
+lib/
