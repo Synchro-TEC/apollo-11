@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import _ from 'lodash';
 import TableBody from './TableBody';
 import GroupedTableBody from './GroupedTableBody';
@@ -44,14 +45,14 @@ class ScrollArea extends React.Component {
 ScrollArea.displayName = 'ScrollArea';
 
 ScrollArea.propTypes = {
-  afterHeight: React.PropTypes.number,
-  beforeHeight: React.PropTypes.number,
-  collection: React.PropTypes.array.isRequired,
-  columns: React.PropTypes.array.isRequired,
-  pageSize: React.PropTypes.number.isRequired,
-  onScroll: React.PropTypes.func,
-  rowHeight: React.PropTypes.number.isRequired,
-  totalRecords: React.PropTypes.number,
+  afterHeight: PropTypes.number,
+  beforeHeight: PropTypes.number,
+  collection: PropTypes.array.isRequired,
+  columns: PropTypes.array.isRequired,
+  pageSize: PropTypes.number.isRequired,
+  onScroll: PropTypes.func,
+  rowHeight: PropTypes.number.isRequired,
+  totalRecords: PropTypes.number,
 };
 
 export default ScrollArea;

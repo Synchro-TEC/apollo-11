@@ -2,6 +2,7 @@
  * Created by gnf on 11/01/17.
  */
 import React from 'react';
+import PropTypes from 'prop-types';
 import _isEmpty from 'lodash/isEmpty';
 import _assign from 'lodash/assign';
 
@@ -161,14 +162,14 @@ class FilterOptions extends React.Component {
 }
 
 FilterOptions.propTypes = {
-  addSearchValueToFilterValues: React.PropTypes.func,
-  applyFilterButtonLabel: React.PropTypes.string,
-  cancelButtonLabel: React.PropTypes.string,
-  clearFilterOptionsButtonLabel: React.PropTypes.string,
-  filterButtonLabel: React.PropTypes.string,
-  hasFilterOptions: React.PropTypes.bool,
-  onClearAll: React.PropTypes.func,
-  onFilter: React.PropTypes.func,
+  addSearchValueToFilterValues: PropTypes.func,
+  applyFilterButtonLabel: PropTypes.string,
+  cancelButtonLabel: PropTypes.string,
+  clearFilterOptionsButtonLabel: PropTypes.string,
+  filterButtonLabel: PropTypes.string,
+  hasFilterOptions: PropTypes.bool,
+  onClearAll: PropTypes.func,
+  onFilter: PropTypes.func,
 };
 
 FilterOptions.displayName = 'FilterOptions';

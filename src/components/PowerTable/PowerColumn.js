@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import ColumnActions from './ColumnActions';
 
 class PowerColumn extends React.Component {
@@ -74,7 +75,7 @@ class PowerColumn extends React.Component {
           {this.renderFilter()}
 
           <i className='fa fa-fw fa-caret-square-o-down' onClick={() => this.setColumn()} style={{cursor: 'pointer', marginLeft: '8px'}} />
-          
+
           <ColumnActions {...this.propsToSend}  />
         </th>
       );
@@ -100,26 +101,26 @@ PowerColumn.defaultProps = {
 };
 
 PowerColumn.propTypes = {
-  activeColumn: React.PropTypes.string,
-  columnTitle: React.PropTypes.string.isRequired,
-  dataKey: React.PropTypes.string,
-  dataType: React.PropTypes.oneOf(['numeric', 'text', 'date']),
-  distinctFilters: React.PropTypes.object,
-  filters: React.PropTypes.object,
-  filtersByConditions: React.PropTypes.object,
-  formatter: React.PropTypes.func,
-  formatterOnFilter: React.PropTypes.func,
-  onAddToFilterDistinct: React.PropTypes.func,
-  onApplyFilter: React.PropTypes.func,
-  onFilterDistinct: React.PropTypes.func,
-  onSearch: React.PropTypes.func,
-  onSelect: React.PropTypes.func,
-  onSetColumn: React.PropTypes.func,
-  onSort: React.PropTypes.func,
-  searchable: React.PropTypes.bool,
-  sorts: React.PropTypes.object,
-  uniqueValues: React.PropTypes.any,
-  groupBy: React.PropTypes.bool
+  activeColumn: PropTypes.string,
+  columnTitle: PropTypes.string.isRequired,
+  dataKey: PropTypes.string,
+  dataType: PropTypes.oneOf(['numeric', 'text', 'date']),
+  distinctFilters: PropTypes.object,
+  filters: PropTypes.object,
+  filtersByConditions: PropTypes.object,
+  formatter: PropTypes.func,
+  formatterOnFilter: PropTypes.func,
+  onAddToFilterDistinct: PropTypes.func,
+  onApplyFilter: PropTypes.func,
+  onFilterDistinct: PropTypes.func,
+  onSearch: PropTypes.func,
+  onSelect: PropTypes.func,
+  onSetColumn: PropTypes.func,
+  onSort: PropTypes.func,
+  searchable: PropTypes.bool,
+  sorts: PropTypes.object,
+  uniqueValues: PropTypes.any,
+  groupBy: PropTypes.bool
 };
 
 export default PowerColumn;

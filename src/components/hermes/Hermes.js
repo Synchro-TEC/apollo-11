@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import Update from 'react-addons-update';
 import HermesAPI from './HermesApi';
 import HermesMessageItem from './HermesMessageItem';
@@ -121,11 +122,11 @@ Hermes.defaultProps = {
 };
 
 Hermes.propTypes = {
-  autoClose: React.PropTypes.bool,
-  autoCloseInMiliseconds: React.PropTypes.number,
-  context: React.PropTypes.oneOf(HermesConstantes.allowedContexts).isRequired,
-  position: React.PropTypes.oneOf(HermesConstantes.allowedPositions),
-  title: React.PropTypes.string
+  autoClose: PropTypes.bool,
+  autoCloseInMiliseconds: PropTypes.number,
+  context: PropTypes.oneOf(HermesConstantes.allowedContexts).isRequired,
+  position: PropTypes.oneOf(HermesConstantes.allowedPositions),
+  title: PropTypes.string
 };
 
 Hermes.displayName = 'Hermes';

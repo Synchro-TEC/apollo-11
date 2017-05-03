@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import _ from 'lodash';
 
 const CellStyle = {
@@ -27,9 +28,9 @@ class GroupedTableBody extends React.Component {
                 return this.renderRow(nonGroupedColumns, _.groupBy(groupedCols, 'key'), nestedRow);
             });
         });
-        
+
         return (<tbody>{trs}</tbody>);;
-    }    
+    }
 
     groupByMulti = (list, values) => {
 
@@ -105,8 +106,8 @@ class GroupedTableBody extends React.Component {
 }
 
 GroupedTableBody.propTypes = {
-  data: React.PropTypes.array.isRequired,
-  columns: React.PropTypes.array.isRequired
+  data: PropTypes.array.isRequired,
+  columns: PropTypes.array.isRequired
 }
 
 export default GroupedTableBody;

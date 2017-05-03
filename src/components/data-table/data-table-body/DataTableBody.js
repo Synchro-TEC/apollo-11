@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import DataTableCell from './DataTableCell';
 import _uniqueId from 'lodash/uniqueId';
 
@@ -25,8 +26,8 @@ class DataTableBody extends React.Component {
 DataTableBody.displayName = 'DataTableBody';
 
 DataTableBody.propTypes = {
-  dataTableHeader: React.PropTypes.array.isRequired,
-  dataTableRows: React.PropTypes.array.isRequired,
+  dataTableHeader: PropTypes.array.isRequired,
+  dataTableRows: PropTypes.array.isRequired,
 };
 
 export default DataTableBody;

@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 class DataTableCell extends React.Component {
   render() {
@@ -15,7 +16,7 @@ class DataTableCell extends React.Component {
 DataTableCell.displayName = 'DataTableCell';
 
 DataTableCell.propTypes = {
-  valueOfCell: React.PropTypes.any
+  valueOfCell: PropTypes.any
 };
 
 export default DataTableCell;

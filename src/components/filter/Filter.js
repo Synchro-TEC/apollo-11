@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import FilterOptions from './FilterOptions';
 import _isUndefined from 'lodash/isUndefined';
 
@@ -151,14 +152,14 @@ Filter.defaultProps = {
 };
 
 Filter.propTypes = {
-  applyFilterButtonLabel: React.PropTypes.string,
-  cancelButtonLabel: React.PropTypes.string,
-  clearFilterOptionsButtonLabel: React.PropTypes.string,
-  filterButtonLabel: React.PropTypes.string,
-  name: React.PropTypes.string,
-  onClearAll: React.PropTypes.func,
-  onFilter: React.PropTypes.func,
-  placeholder: React.PropTypes.string,
+  applyFilterButtonLabel: PropTypes.string,
+  cancelButtonLabel: PropTypes.string,
+  clearFilterOptionsButtonLabel: PropTypes.string,
+  filterButtonLabel: PropTypes.string,
+  name: PropTypes.string,
+  onClearAll: PropTypes.func,
+  onFilter: PropTypes.func,
+  placeholder: PropTypes.string,
 };
 
 Filter.displayName = 'Filter';
