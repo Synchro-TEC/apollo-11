@@ -1,6 +1,12 @@
 import React from 'react';
 import _ from 'lodash';
 
+const CellStyle = {
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+};
+
 class GroupedTableBody extends React.Component {
 
     constructor(props) {
@@ -18,7 +24,7 @@ class GroupedTableBody extends React.Component {
 
         let trs = data.map((row) => {
             return row.nested.map((nestedRow) => {
-                return this.renderRow(nonGroupedColumns, nestedRow);
+                return this.renderRow(nonGroupedColumns, _.groupBy(groupedCols, 'key'), nestedRow);
             });
         });
         
@@ -60,12 +66,14 @@ class GroupedTableBody extends React.Component {
         }
     }
 
-    renderGroupedColumns(row) {
+    renderGroupedColumns(groupedCols, row) {
         let tds = [];
         let parent = row.parent;
         while (parent != null) {
             if (!parent.done) {
-                tds.push(<td key={_.uniqueId()} rowSpan={parent.rowSpan}>{parent.value}</td>);
+                let col = groupedCols[parent.name][0];
+                let rendered = col.formatter ? col.formatter({[parent.name]: parent.value}) : parent.value;
+                tds.push(<td key={_.uniqueId()} style={CellStyle} rowSpan={parent.rowSpan}>{rendered}</td>);
                 parent.done = true;
             }
             parent = parent.parent;
@@ -74,18 +82,19 @@ class GroupedTableBody extends React.Component {
     }
 
     renderNonGroupedColumns(nonGroupedColumns, row) {
-        return nonGroupedColumns.map((nonGroupedCol) => {
-            return (<td key={_.uniqueId()}>{row[nonGroupedCol.key]}</td>);
+        return nonGroupedColumns.map((col) => {
+            let rendered = col.formatter ? col.formatter(row) : row[col.key];
+            return (<td style={CellStyle} key={_.uniqueId()}>{rendered}</td>);
         });
     }
 
-    renderRow(nonGroupedColumns, row) {
+    renderRow(nonGroupedColumns, groupedCols, row) {
         if (_.has(row, 'nested')) {
             return row.nested.map((nestedRow) => {
-                return this.renderRow(nonGroupedColumns, nestedRow);
+                return this.renderRow(nonGroupedColumns, groupedCols, nestedRow);
             });
         } else {
-            let groupedTds = this.renderGroupedColumns(row);
+            let groupedTds = this.renderGroupedColumns(groupedCols, row);
             let nonGroupedTds = this.renderNonGroupedColumns(nonGroupedColumns, row);
             let tds = _.union(groupedTds, nonGroupedTds);
 
