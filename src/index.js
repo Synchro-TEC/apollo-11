@@ -10,6 +10,7 @@ import DataTableColumn from './components/data-table/data-table-header/DataTable
 import Paginate from './components/paginate/Paginate.js';
 import PowerTable from './components/PowerTable/index';
 import PowerColumn from './components/PowerTable/PowerColumn';
+import InputDate from './components/inputDate/inputDate';
 
 export {
   Hermes,
@@ -22,4 +23,5 @@ export {
   Paginate,
   PowerTable,
   PowerColumn,
+  InputDate,
 };
