@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import DataTableBody from './data-table-body/DataTableBody';
 import DataTableHeader from './data-table-header/DataTableHeader';
 
@@ -30,9 +31,9 @@ DataTable.defaultProps = {
 };
 
 DataTable.propTypes = {
-  className: React.PropTypes.string,
-  data: React.PropTypes.array.isRequired,
-  onSort: React.PropTypes.func,
+  className: PropTypes.string,
+  data: PropTypes.array.isRequired,
+  onSort: PropTypes.func,
 };
 
 DataTable.displayName = 'DataTable';

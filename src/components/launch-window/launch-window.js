@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import styles from './launch-window-styles';
 
 class LaunchWindow extends React.Component {
@@ -81,17 +82,17 @@ class LaunchWindow extends React.Component {
 LaunchWindow.displayName = 'LaunchWindow';
 
 LaunchWindow.propTypes = {
-  afterClose: React.PropTypes.func,
-  afterOpen: React.PropTypes.func,
-  beforeClose: React.PropTypes.func,
-  beforeOpen: React.PropTypes.func,
-  closeButtonStyle: React.PropTypes.object,
-  dialogStyles: React.PropTypes.object,
-  hideOnOverlayClicked: React.PropTypes.bool,
-  onOverlayClicked: React.PropTypes.func,
-  overlayStyles: React.PropTypes.object,
-  showOverlay: React.PropTypes.bool,
-  title: React.PropTypes.string
+  afterClose: PropTypes.func,
+  afterOpen: PropTypes.func,
+  beforeClose: PropTypes.func,
+  beforeOpen: PropTypes.func,
+  closeButtonStyle: PropTypes.object,
+  dialogStyles: PropTypes.object,
+  hideOnOverlayClicked: PropTypes.bool,
+  onOverlayClicked: PropTypes.func,
+  overlayStyles: PropTypes.object,
+  showOverlay: PropTypes.bool,
+  title: PropTypes.string
 };
 
 LaunchWindow.defaultProps = {

@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import _uniqueId from 'lodash/uniqueId';
 
 class DataTableHeader extends React.Component {
@@ -80,7 +81,7 @@ class DataTableHeader extends React.Component {
 DataTableHeader.displayName = 'DataTableHeader';
 
 DataTableHeader.propTypes = {
-  onSort: React.PropTypes.func,
+  onSort: PropTypes.func,
 };
 
 export default DataTableHeader;

@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 const Resizer = ({onMouseDown}) => {
   const classes = ['Resizer'];
@@ -7,7 +8,7 @@ const Resizer = ({onMouseDown}) => {
 };
 
 Resizer.propTypes = {
-  onMouseDown: React.PropTypes.func,
+  onMouseDown: PropTypes.func,
 };
 
 Resizer.displayName = 'Resizer';

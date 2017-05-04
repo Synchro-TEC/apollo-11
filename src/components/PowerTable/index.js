@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import update from 'immutability-helper';
 import ScrollArea from './ScrollArea';
 import Paginate from '../paginate/Paginate';
@@ -315,9 +316,9 @@ PowerTable.defaultProps = {
 };
 
 PowerTable.propTypes = {
-  fetch: React.PropTypes.object,
-  pageSize: React.PropTypes.number.isRequired,
-  rowHeight: React.PropTypes.number.isRequired,
+  fetch: PropTypes.object,
+  pageSize: PropTypes.number.isRequired,
+  rowHeight: PropTypes.number.isRequired,
 };
 
 export default PowerTable;

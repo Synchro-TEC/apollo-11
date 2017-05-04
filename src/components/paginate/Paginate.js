@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import _uniqueId from 'lodash/uniqueId';
 
 class Paginate extends React.Component {
@@ -182,11 +183,11 @@ Paginate.defaultProps = {
 };
 
 Paginate.propTypes = {
-  onNextPage: React.PropTypes.func,
-  onPreviousPage: React.PropTypes.func,
-  onSelectASpecifPage: React.PropTypes.func,
-  recordsByPage: React.PropTypes.number,
-  totalSizeOfData: React.PropTypes.number,
+  onNextPage: PropTypes.func,
+  onPreviousPage: PropTypes.func,
+  onSelectASpecifPage: PropTypes.func,
+  recordsByPage: PropTypes.number,
+  totalSizeOfData: PropTypes.number,
 };
 
 export default Paginate;

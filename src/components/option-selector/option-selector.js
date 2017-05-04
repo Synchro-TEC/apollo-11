@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 const optionSelectorStyles = {
   container: {
@@ -62,11 +63,11 @@ class OptionSelector extends React.Component {
 OptionSelector.displayName = 'OptionSelector';
 
 OptionSelector.propTypes = {
-  classes: React.PropTypes.string,
-  initialValue: React.PropTypes.string,
-  labelKey: React.PropTypes.string,
-  onSelectCallBack: React.PropTypes.func,
-  options: React.PropTypes.array.isRequired
+  classes: PropTypes.string,
+  initialValue: PropTypes.string,
+  labelKey: PropTypes.string,
+  onSelectCallBack: PropTypes.func,
+  options: PropTypes.array.isRequired
 };
 
 OptionSelector.defaultProps = {

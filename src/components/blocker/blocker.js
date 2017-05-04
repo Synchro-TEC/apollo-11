@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import uuid from 'uuid';
 import blockerDefaultStyles from './blocker-styles';
 import blockerStack from './blocker-stack';
@@ -107,16 +108,16 @@ class Blocker extends React.Component {
 }
 
 Blocker.propTypes = {
-  backgroundStyle: React.PropTypes.object,
-  children: React.PropTypes.node,
-  contentBlur: React.PropTypes.number,
-  disableDefaultStyles: React.PropTypes.bool,
-  foregroundStyle: React.PropTypes.object,
-  hideContentOnLoad: React.PropTypes.bool,
-  message: React.PropTypes.node,
-  priority: React.PropTypes.number,
-  show: React.PropTypes.bool.isRequired,
-  style: React.PropTypes.object
+  backgroundStyle: PropTypes.object,
+  children: PropTypes.node,
+  contentBlur: PropTypes.number,
+  disableDefaultStyles: PropTypes.bool,
+  foregroundStyle: PropTypes.object,
+  hideContentOnLoad: PropTypes.bool,
+  message: PropTypes.node,
+  priority: PropTypes.number,
+  show: PropTypes.bool.isRequired,
+  style: PropTypes.object
 };
 
 Blocker.defaultProps ={

@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import update from 'immutability-helper';
 
 class ColumnActions extends React.Component {
@@ -357,22 +358,22 @@ ColumnActions.defaultProps = {
 };
 
 ColumnActions.propTypes = {
-  columnTitle: React.PropTypes.string,
-  dataKey: React.PropTypes.string,
-  dataType: React.PropTypes.string,
-  distinctFilters: React.PropTypes.object,
-  formatterOnFilter: React.PropTypes.func,
-  isVisible: React.PropTypes.bool,
-  onAddToFilterDistinct: React.PropTypes.func,
-  onApplyFilter: React.PropTypes.func,
-  onFilterDistinct: React.PropTypes.func,
-  onSearch: React.PropTypes.func,
-  onSelect: React.PropTypes.func,
-  onSort: React.PropTypes.func,
-  position: React.PropTypes.object,
-  searchable: React.PropTypes.bool,
-  style: React.PropTypes.object,
-  uniqueValues: React.PropTypes.any,
+  columnTitle: PropTypes.string,
+  dataKey: PropTypes.string,
+  dataType: PropTypes.string,
+  distinctFilters: PropTypes.object,
+  formatterOnFilter: PropTypes.func,
+  isVisible: PropTypes.bool,
+  onAddToFilterDistinct: PropTypes.func,
+  onApplyFilter: PropTypes.func,
+  onFilterDistinct: PropTypes.func,
+  onSearch: PropTypes.func,
+  onSelect: PropTypes.func,
+  onSort: PropTypes.func,
+  position: PropTypes.object,
+  searchable: PropTypes.bool,
+  style: PropTypes.object,
+  uniqueValues: PropTypes.any,
 };
 
 export default ColumnActions;

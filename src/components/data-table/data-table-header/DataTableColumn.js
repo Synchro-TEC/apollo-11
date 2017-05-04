@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import _isObject from 'lodash/isObject';
 import _isUndefined from 'lodash/isUndefined';
 
@@ -57,10 +58,10 @@ class DataTableColumn extends React.Component {
 DataTableColumn.displayName = 'DataTableColumn';
 
 DataTableColumn.propTypes = {
-  dataKey: React.PropTypes.string.isRequired,
-  direction: React.PropTypes.string,
-  setSortColumn: React.PropTypes.func,
-  sortable: React.PropTypes.bool,
+  dataKey: PropTypes.string.isRequired,
+  direction: PropTypes.string,
+  setSortColumn: PropTypes.func,
+  sortable: PropTypes.bool,
 };
 
 export default DataTableColumn;

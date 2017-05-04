@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import _ from 'lodash';
 
 
@@ -12,8 +13,8 @@ class TableBody extends React.Component {
         let trs = this.props.data.map((row, i) => {
             return (
                 <tr key={i} style={{ height: '40px' }}>
-                    {this.props.columns.map((col) => { 
-                        return <Cell key={_.uniqueId()} col={col} row={row} /> 
+                    {this.props.columns.map((col) => {
+                        return <Cell key={_.uniqueId()} col={col} row={row} />
                     })}
                 </tr>
             );
@@ -37,8 +38,8 @@ const Cell = ({ col, row }) => {
 }
 
 TableBody.propTypes = {
-    data: React.PropTypes.array.isRequired,
-    columns: React.PropTypes.array.isRequired
+    data: PropTypes.array.isRequired,
+    columns: PropTypes.array.isRequired
 }
 
 export default TableBody;

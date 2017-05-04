@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import HermesAPI from './HermesApi';
 import HermesStyles from './HermesStyles';
 import classNames from 'classnames';
@@ -27,7 +28,7 @@ const HermesMessageItem = ({message}) => {
 };
 
 HermesMessageItem.propTypes = {
-  message: React.PropTypes.object,
+  message: PropTypes.object,
 };
 
 HermesMessageItem.displayName = 'HermesMessageItem';
