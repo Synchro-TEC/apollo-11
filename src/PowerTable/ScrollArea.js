@@ -20,7 +20,7 @@ class ScrollArea extends React.Component {
     let tableBodyOpts = {
       data: data,
       columns: columns
-    }
+    };
 
     return (
       <div
@@ -49,8 +49,8 @@ ScrollArea.propTypes = {
   beforeHeight: PropTypes.number,
   collection: PropTypes.array.isRequired,
   columns: PropTypes.array.isRequired,
-  pageSize: PropTypes.number.isRequired,
   onScroll: PropTypes.func,
+  pageSize: PropTypes.number.isRequired,
   rowHeight: PropTypes.number.isRequired,
   totalRecords: PropTypes.number,
 };

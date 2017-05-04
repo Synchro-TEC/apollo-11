@@ -1,4 +1,4 @@
-import findMax from 'lodash.max';
+import findMax from 'lodash/max';
 import { EventEmitter } from 'events';
 
 const blockerStack = {...EventEmitter.prototype,

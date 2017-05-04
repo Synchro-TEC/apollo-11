@@ -110,6 +110,7 @@ PowerColumn.propTypes = {
   filtersByConditions: PropTypes.object,
   formatter: PropTypes.func,
   formatterOnFilter: PropTypes.func,
+  groupBy: PropTypes.bool,
   onAddToFilterDistinct: PropTypes.func,
   onApplyFilter: PropTypes.func,
   onFilterDistinct: PropTypes.func,
@@ -120,7 +121,6 @@ PowerColumn.propTypes = {
   searchable: PropTypes.bool,
   sorts: PropTypes.object,
   uniqueValues: PropTypes.any,
-  groupBy: PropTypes.bool
 };
 
 export default PowerColumn;

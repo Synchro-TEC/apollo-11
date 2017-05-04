@@ -1,6 +1,5 @@
 const webpack = require('webpack');
 var CompressionPlugin = require('compression-webpack-plugin');
-// var CopyWebpackPlugin = require('copy-webpack-plugin');
 var path = require('path');
 
 const ENV = process.env.NODE_ENV || 'development';
@@ -20,10 +19,10 @@ module.exports = env => {
     },
     output: {
       path: path.join(__dirname, 'lib'),
-      filename: 'index.js',
+      filename: '[name].js',
       publicPath: '/lib/',
-      library: 'apollo-11',
-      libraryTarget: 'umd'
+      library: 'syntec-apollo-11',
+      libraryTarget: 'umd',
     },
     externals: {
       react: {
@@ -56,10 +55,6 @@ module.exports = env => {
       ],
     },
     plugins: removeEmpty([
-      // new CopyWebpackPlugin([
-      //   { from: './src/PowerTable/data-collection.js', to:  './lib/PowerTable/data-collection.js'}
-      // ]),
-      ifProd(new webpack.optimize.DedupePlugin()),
       ifProd(new webpack.LoaderOptionsPlugin({
         minimize: true,
         debug: false,

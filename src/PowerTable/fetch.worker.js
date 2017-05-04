@@ -2,6 +2,7 @@
 
 import sift from 'sift';
 import DataFetcher from './datafetcher.js';
+import '../helpers/polyfills';
 
 const DEFAULT_PER_PAGE = 20;
 
@@ -140,18 +141,18 @@ const applyFilter = () => {
 
 
 const _fillDistincts = (columns) => {
-    for (let i = 0; i < columns.length; i++) {
-        let col = columns[i];
-        if (col && col.searchable) {
-            distinctsLimited[col.key] = [...new Set(collection.slice(0, 100).map(item => item[col.key]))];
-            distincts[col.key] = [...new Set(collection.map(item => item[col.key]))];
-        }
+  for (let i = 0; i < columns.length; i++) {
+    let col = columns[i];
+    if (col && col.searchable) {
+      distinctsLimited[col.key] = [...new Set(collection.slice(0, 100).map(item => item[col.key]))];
+      distincts[col.key] = [...new Set(collection.map(item => item[col.key]))];
     }
+  }
 
-    setTimeout(() => {
-        self.postMessage(decoratedReturn('DISTINCT', '', distinctsLimited));
-    }, 100);
-}
+  setTimeout(() => {
+    self.postMessage(decoratedReturn('DISTINCT', '', distinctsLimited));
+  }, 100);
+};
 
 const _onProgress = (progessEvent) => {
   self.postMessage(decoratedReturn('LOADING', `${bytesToSize(progessEvent.loaded)} carregados...`));
@@ -166,15 +167,15 @@ self.addEventListener('message', (e) => {
     let fetch = DataFetcher.fetch(e.data.fetch, _onProgress);
 
     fetch.then((data) => {
-        collection = currentCollection = data;
-        let sliced = currentCollection.slice(offSet, e.data.pageSize);
-        self.postMessage(decoratedReturn('LOADED', 'Dados carregados', sliced, collection.length));
+      collection = currentCollection = data;
+      let sliced = currentCollection.slice(offSet, e.data.pageSize);
+      self.postMessage(decoratedReturn('LOADED', 'Dados carregados', sliced, collection.length));
 
-        _fillDistincts(e.data.cols);
+      _fillDistincts(e.data.cols);
     });
 
     fetch.catch((message) => {
-        self.postMessage(decoratedReturn('LOADING_ERROR', message));
+      self.postMessage(decoratedReturn('LOADING_ERROR', message));
     });
 
     self.postMessage(decoratedReturn('LOADING_INIT', 'Iniciando o carregamento dos registros...'));
