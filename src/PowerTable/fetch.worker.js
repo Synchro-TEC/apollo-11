@@ -4,6 +4,7 @@ import sift from 'sift';
 import DataFetcher from './datafetcher.js';
 import '../helpers/polyfills';
 
+
 const DEFAULT_PER_PAGE = 20;
 
 let collection = null;
@@ -30,9 +31,6 @@ const bytesToSize = (bytes) => {
   let i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)));
   return Math.round(bytes / Math.pow(1024, i), 2) + ' ' + sizes[i];
 };
-
-
-
 
 
 /**

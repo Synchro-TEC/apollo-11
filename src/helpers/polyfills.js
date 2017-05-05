@@ -1,4 +1,5 @@
-/*eslint no-unused-vars: 0, no-undef: 0, no-inner-declarations: 0, no-console: 0 */
+/*eslint-disable*/
+
 //
 // if (typeof Object.assign !== 'function') {
 //   Object.assign = function(target, varArgs) { // .length of function is 2
