@@ -4,6 +4,10 @@ Todas as mudanças consideráveis serão documentadas neste arquivo.
 Este formato de changelog foi baseado em [Keep a Changelog](http://keepachangelog.com/)
 e esse projeto adere ao [Semantic Versioning](http://semver.org/).
 
+## [0.4.8] - 2017-5-5
+### Corrigido
+- Fix prop-types dependency
+
 ## [0.4.7] - 2017-5-5
 ### Corrigido
 - Fix files on package.json

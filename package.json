@@ -1,6 +1,6 @@
 {
   "name": "syntec-apollo-11",
-  "version": "0.4.7",
+  "version": "0.4.8",
   "description": "Apollo-11 Project - Failure is not an option",
   "main": "./distribution/index.js",
   "files": [
@@ -58,6 +58,7 @@
     "date-fns": "^1.28.4",
     "immutability-helper": "^2.2.0",
     "lodash": "^4.17.4",
+    "prop-types": "^15.5.8",
     "sift": "^3.3.5",
     "uuid": "^3.0.1"
   }
