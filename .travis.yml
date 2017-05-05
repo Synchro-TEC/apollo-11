@@ -3,6 +3,7 @@ node_js:
 - node
 
 install:
+  - npm install -g babel-cli
   - yarn
 script:
   - yarn run build
