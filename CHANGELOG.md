@@ -4,6 +4,10 @@ Todas as mudanças consideráveis serão documentadas neste arquivo.
 Este formato de changelog foi baseado em [Keep a Changelog](http://keepachangelog.com/)
 e esse projeto adere ao [Semantic Versioning](http://semver.org/).
 
+## [0.4.6] - 2017-5-5
+### Modificado
+- Melhorias no processo de build, mudado da pasta lib para distribution e ajustes no npm ignore.
+
 ## [0.4.5] - 2017-5-5
 ### Modificado
 - Melhorias no processo de build, agora limpamos a pasta lib antes de uma nova build.
