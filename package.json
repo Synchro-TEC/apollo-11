@@ -1,15 +1,14 @@
 {
   "name": "syntec-apollo-11",
-  "version": "0.4.8",
+  "version": "0.4.9",
   "description": "Apollo-11 Project - Failure is not an option",
   "main": "./distribution/index.js",
   "files": [
     "distribution"
   ],
   "scripts": {
-    "build": "yarn run clean && NODE_ENV=production babel src -d distribution --env.prod",
-    "dev": "NODE_ENV=development babel src -d distribution  --env.dev",
-    "watch": "./node_modules/.bin/watch-run -p 'src/**/*.js' npm run dev",
+    "build": "yarn run clean && NODE_ENV=production webpack --progress --color --env.prod",
+    "watch": "webpack --progress --color --watch --env.dev",
     "lint": "./node_modules/.bin/eslint src",
     "clean": "rimraf distribution"
   },
@@ -28,8 +27,8 @@
   },
   "homepage": "https://github.com/Synchro-OSS/apollo#readme",
   "peerDependencies": {
-    "react": "^15.4.2",
-    "react-dom": "^15.4.2"
+    "react": "^15.5.0",
+    "react-dom": "^15.5.0"
   },
   "devDependencies": {
     "babel-core": "^6.24.1",
@@ -48,7 +47,7 @@
     "react-dom": "^15.5.4",
     "rimraf": "^2.6.1",
     "watch-run": "^1.2.5",
-    "webpack": "^2.4.1",
+    "webpack": "^2.5.0",
     "worker-loader": "^0.8.0"
   },
   "dependencies": {

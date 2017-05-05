@@ -18,9 +18,9 @@ module.exports = env => {
       index: './src/index.js',
     },
     output: {
-      path: path.join(__dirname, 'lib'),
+      path: path.join(__dirname, 'distribution'),
       filename: '[name].js',
-      publicPath: '/lib/',
+      publicPath: '/distribution/',
       library: 'syntec-apollo-11',
       libraryTarget: 'umd',
     },
@@ -65,19 +65,19 @@ module.exports = env => {
           NODE_ENV: '"production"',
         },
       })),
-      ifProd(new webpack.optimize.UglifyJsPlugin({
-        compress: {
-          screw_ie8: true, // eslint-disable-line
-          warnings: false,
-        },
-      })),
-      ifProd(new CompressionPlugin({
-        asset: '[path].gz[query]',
-        algorithm: 'gzip',
-        test: /\.js$|\.css$/,
-        threshold: 10240,
-        minRatio: 0.8,
-      })),
+      // ifProd(new webpack.optimize.UglifyJsPlugin({
+      //   compress: {
+      //     screw_ie8: true, // eslint-disable-line
+      //     warnings: false,
+      //   },
+      // })),
+      // ifProd(new CompressionPlugin({
+      //   asset: '[path].gz[query]',
+      //   algorithm: 'gzip',
+      //   test: /\.js$|\.css$/,
+      //   threshold: 10240,
+      //   minRatio: 0.8,
+      // })),
     ]),
   };
 };

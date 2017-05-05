@@ -166,7 +166,8 @@ self.addEventListener('message', (e) => {
 
     fetch.then((data) => {
       collection = currentCollection = data;
-      let sliced = currentCollection.slice(offSet, e.data.pageSize);
+      perPage = e.data.pageSize;
+      let sliced = currentCollection.slice(offSet, perPage);
       self.postMessage(decoratedReturn('LOADED', 'Dados carregados', sliced, collection.length));
 
       _fillDistincts(e.data.cols);
