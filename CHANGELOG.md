@@ -4,6 +4,23 @@ Todas as mudanças consideráveis serão documentadas neste arquivo.
 Este formato de changelog foi baseado em [Keep a Changelog](http://keepachangelog.com/)
 e esse projeto adere ao [Semantic Versioning](http://semver.org/).
 
+## [0.4.5] - 2017-5-5
+### Modificado
+- Melhorias no processo de build, agora limpamos a pasta lib antes de uma nova build.
+
+### Corrigido
+- Correção da issue #18
+- Correção da paginação, que não estava mantendo o número de registro por página corretamente.
+
+## [0.4.4] - 2017-5-5
+### Adicionado
+- Adicionado o componente inputDate
+
+### Modificado
+- Novo processo de build, usando o babel.
+- Ajustes no travel CI.
+
+
 ## [0.3.5] - 2017-4-3
 ### Adicionado
 - O filtro agora possui uma propriedade chamada onClearAll para executar callbacks.

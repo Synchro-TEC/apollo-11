@@ -1,6 +1,6 @@
 {
   "name": "syntec-apollo-11",
-  "version": "0.4.4",
+  "version": "0.4.5",
   "description": "Apollo-11 Project - Failure is not an option",
   "main": "lib/index.js",
   "files": [
@@ -8,10 +8,11 @@
     "lib"
   ],
   "scripts": {
-    "build": "NODE_ENV=production babel src -d lib  --env.prod",
+    "build": "yarn run clean && NODE_ENV=production babel src -d lib --env.prod",
     "dev": "NODE_ENV=development babel src -d lib  --env.dev",
     "watch": "./node_modules/.bin/watch-run -p 'src/**/*.js' npm run dev",
-    "lint": "./node_modules/.bin/eslint src"
+    "lint": "./node_modules/.bin/eslint src",
+    "clean": "rimraf lib"
   },
   "repository": {
     "type": "git",
@@ -46,6 +47,7 @@
     "react": "^15.5.4",
     "react-addons-update": "^15.5.2",
     "react-dom": "^15.5.4",
+    "rimraf": "^2.6.1",
     "watch-run": "^1.2.5",
     "webpack": "^2.4.1",
     "worker-loader": "^0.8.0"
