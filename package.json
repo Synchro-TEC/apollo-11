@@ -1,11 +1,10 @@
 {
   "name": "syntec-apollo-11",
-  "version": "0.4.6",
+  "version": "0.4.7",
   "description": "Apollo-11 Project - Failure is not an option",
   "main": "./distribution/index.js",
   "files": [
-    "src",
-    "lib"
+    "distribution"
   ],
   "scripts": {
     "build": "yarn run clean && NODE_ENV=production babel src -d distribution --env.prod",
