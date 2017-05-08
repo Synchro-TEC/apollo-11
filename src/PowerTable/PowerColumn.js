@@ -68,8 +68,14 @@ class PowerColumn extends React.Component {
     let result;
 
     if(this.props.dataKey) {
+      let style = {};
+
+      if(this.props.width) {
+        style.width = this.props.width
+      }
+
       result = (
-        <th>
+        <th style={style}>
           {this.props.columnTitle}
           {this.renderSort()}
           {this.renderFilter()}
@@ -121,6 +127,7 @@ PowerColumn.propTypes = {
   searchable: PropTypes.bool,
   sorts: PropTypes.object,
   uniqueValues: PropTypes.any,
+  width: PropTypes.string,
 };
 
 export default PowerColumn;

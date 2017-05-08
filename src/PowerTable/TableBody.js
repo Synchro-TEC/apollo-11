@@ -12,9 +12,9 @@ class TableBody extends React.Component {
   render() {
     let trs = this.props.data.map((row, i) => {
       return (
-        <tr key={i} style={{ height: '40px' }}>
-          {this.props.columns.map((col) => {
-            return (<Cell col={col} key={v4()} row={row} />);
+        <tr key={i} style={{ height: '40px'}}>
+          {this.props.columns.map((col , index) => {
+            return (<Cell col={col} key={v4()} row={row} width={this.props.columnsWidth[index]} />);
           })}
         </tr>
       );

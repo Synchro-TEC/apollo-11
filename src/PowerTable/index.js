@@ -81,6 +81,19 @@ class PowerTable extends React.Component {
   }
 
   /**
+   * Extrai a prop widh das colunas.
+   *
+   * @param props
+   * @return {*}
+   * @private
+   */
+  _extractColumnsWidth(props) {
+    let widths = [];
+    React.Children.forEach(props.children, (child) => widths.push(child.props.width));
+    return widths;
+  }
+
+  /**
    * Envia ao worker a mensagem solicitando o filtro.
    * @param filterProps
    * @private
@@ -248,6 +261,7 @@ class PowerTable extends React.Component {
     let opts = {
       collection: this.state.collection,
       columns: this._extractColumns(this.props),
+      columnsWidth: this._extractColumnsWidth(this.props),
       container: this.node,
       pageSize: this.props.pageSize,
       onScroll: this._paginate,
@@ -284,7 +298,7 @@ class PowerTable extends React.Component {
       <div>
         <p>{this.state.message || ' '}</p>
         <div className='PWT-TableHeader' style={{backgroundColor: '#f3f3f3', position: 'relative'}}>
-          <table className='sv-table with--borders' style={{tableLayout: 'fixed'}}>
+          <table className='sv-table with--grid' style={{tableLayout: 'fixed'}}>
             <thead>
             <tr>
               {headers}

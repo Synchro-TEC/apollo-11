@@ -19,7 +19,8 @@ class ScrollArea extends React.Component {
 
     let tableBodyOpts = {
       data: data,
-      columns: columns
+      columns: columns,
+      columnsWidth: this.props.columnsWidth
     };
 
     return (
@@ -33,7 +34,7 @@ class ScrollArea extends React.Component {
           borderBottom: '1px solid #dadada',
         }}
       >
-        <table className='sv-table with--borders with--hover' style={{ tableLayout: 'fixed', marginBottom: '0px' }}>
+        <table className='sv-table with--grid with--hover' style={{ tableLayout: 'fixed', marginBottom: '0px' }}>
           {isGrouped ? <GroupedTableBody {...tableBodyOpts} /> : <TableBody {...tableBodyOpts} />}
         </table>
       </div>
@@ -49,6 +50,7 @@ ScrollArea.propTypes = {
   beforeHeight: PropTypes.number,
   collection: PropTypes.array.isRequired,
   columns: PropTypes.array.isRequired,
+  columnsWidth: PropTypes.array,
   onScroll: PropTypes.func,
   pageSize: PropTypes.number.isRequired,
   rowHeight: PropTypes.number.isRequired,
