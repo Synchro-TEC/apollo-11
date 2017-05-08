@@ -283,7 +283,7 @@ class PowerTable extends React.Component {
     return (
       <div>
         <p>{this.state.message || ' '}</p>
-        <div className='PWT-TableHeader' style={{backgroundColor: '#f3f3f3'}}>
+        <div className='PWT-TableHeader' style={{backgroundColor: '#f3f3f3', position: 'relative'}}>
           <table className='sv-table with--borders' style={{tableLayout: 'fixed'}}>
             <thead>
             <tr>

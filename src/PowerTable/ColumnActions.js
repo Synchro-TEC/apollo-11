@@ -39,7 +39,7 @@ class ColumnActions extends React.Component {
       box: {
         position: 'absolute',
         width: '250px',
-        top: '34px',
+        top: '37px',
         padding: '0px',
         fontFamily: 'Arial, "sans serif"',
         fontSize: '13px',
