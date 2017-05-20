@@ -1,0 +1,87 @@
+.pw-table {
+    font-size: .9em;
+}
+
+.pw-table-info {
+    text-align: center;
+    font-weight: 500;
+    padding: 5px;
+}
+.pw-table-info.active {
+    background: #f5f9fd;
+    border: 1px solid #d4d7da;
+}
+
+.pw-table-action {
+    background: #EEF2F7;
+    border-top: 2px solid #c9d0d5;
+    border-bottom: 1px solid #c9d0d5;
+}
+
+.pw-table-header {
+    background: #EEF2F7;
+    border-bottom: 2px solid #c9d0d5;
+}
+
+.pw-table-tbody {
+    overflow: auto;
+    border-bottom: 2px solid #c9d0d5;
+}
+
+
+.pw-table-header-row,
+.pw-table-action-row,
+.pw-table-tbody-row {
+    display: flex;
+}
+
+.pw-table-tbody-row {
+    border-bottom: 1px solid #c9d0d5;
+}
+
+.pw-table-tbody-row:hover {
+    background: #f6f8fa;
+}
+
+.pw-table-header-cell,
+.pw-table-action-cell,
+.pw-table-tbody-cell {
+    flex: 1;
+    padding: 5px;
+}
+
+.pw-table-header-cell {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-weight: 500;
+    text-transform: uppercase;
+    color: #607d8b;
+    border-right: 1px solid #c9d0d5;
+}
+
+.pw-table-action-cell {
+    color: #98b0bd;
+    text-align: right;
+    border-right: 1px solid #c9d0d5;
+}
+
+.pw-table-tbody-cell {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    border-right: 1px solid #c9d0d5;
+}
+
+.pw-table-header-cell:last-child,
+.pw-table-action-cell:last-child,
+.pw-table-tbody-cell:last-child {
+    border-right: 2px solid #c9d0d5;
+}
+.pw-table-header-cell:first-child,
+.pw-table-action-cell:first-child,
+.pw-table-tbody-cell:first-child {
+    border-left: 2px solid #c9d0d5;
+}
+
+
