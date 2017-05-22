@@ -1,4 +1,5 @@
 import React from 'react';
+import ReactDOM from 'react-dom';
 import Proptypes from 'prop-types';
 import update from 'immutability-helper';
 import { bytesToSize } from './utils.js';
@@ -13,6 +14,8 @@ class PowerSheet extends React.Component {
 
     this.originalData = [];
     this.columns = this._extractColumns(props);
+    this.renderItem = this.renderItem.bind(this);
+    this.fixScrollBarDiff = this.fixScrollBarDiff.bind(this);
 
     this.state = {
       message: 'Iniciando o carregamento dos dados',
@@ -38,7 +41,7 @@ class PowerSheet extends React.Component {
       .get(this.props.fetch.url, requestConfig)
       .then((response) => {
         this.originalData = response.data;
-        this.setState({message: '', currentData: response.data});
+        this.setState({message: '', currentData: response.data}, () => this.fixScrollBarDiff());
       })
       .catch((error) => {
         console.error(error);
@@ -49,6 +52,27 @@ class PowerSheet extends React.Component {
 
   componentWillUnmount() {
   }
+
+  fixScrollBarDiff() {
+    const container = ReactDOM.findDOMNode(this);
+    const bordersSize = 5;
+
+    let scrollAreaWidth = container.offsetWidth;
+    let tableWidth = container.querySelector('.pw-table-tbody .pw-table-tbody-row').offsetWidth;
+    let actionContainer = container.querySelector('.pw-table-action');
+    let headerContainer = container.querySelector('.pw-table-header');
+    const scrollDiffInPixels = `${scrollAreaWidth + bordersSize - tableWidth}px`;
+
+    const actions = actionContainer.querySelectorAll('.pw-table-action-cell');
+    const headers = headerContainer.querySelectorAll('.pw-table-header-cell');
+
+    const lastActionCell = actions[actions.length - 1];
+    const lastHeaderCell = headers[headers.length - 1];
+
+    lastActionCell.style.paddingRight = scrollDiffInPixels;
+    lastHeaderCell.style.paddingRight = scrollDiffInPixels;
+  }
+
 
   /**
    * Extrai as informações das colunas.
@@ -82,7 +106,7 @@ class PowerSheet extends React.Component {
     return widths;
   }
 
-  renderItem = (index, key) => {
+  renderItem(index, key) {
     let row = this.state.currentData[index];
     return (
       <div className='pw-table-tbody-row' key={key}>
@@ -95,7 +119,7 @@ class PowerSheet extends React.Component {
         <div className='pw-table-tbody-cell'>{row.text}</div>
       </div>
     );
-  };
+  }
 
 
   render() {
