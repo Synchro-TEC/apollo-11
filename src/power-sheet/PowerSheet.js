@@ -55,22 +55,24 @@ class PowerSheet extends React.Component {
 
   fixScrollBarDiff() {
     const container = ReactDOM.findDOMNode(this);
-    const bordersSize = 5;
-
     let scrollAreaWidth = container.offsetWidth;
     let tableWidth = container.querySelector('.pw-table-tbody .pw-table-tbody-row').offsetWidth;
-    let actionContainer = container.querySelector('.pw-table-action');
-    let headerContainer = container.querySelector('.pw-table-header');
-    const scrollDiffInPixels = `${scrollAreaWidth + bordersSize - tableWidth}px`;
 
-    const actions = actionContainer.querySelectorAll('.pw-table-action-cell');
-    const headers = headerContainer.querySelectorAll('.pw-table-header-cell');
+    if(scrollAreaWidth !== tableWidth) {
+      let actionContainer = container.querySelector('.pw-table-action');
+      let headerContainer = container.querySelector('.pw-table-header');
+      const bordersSize = 5;
+      const scrollDiffInPixels = `${scrollAreaWidth + bordersSize - tableWidth}px`;
 
-    const lastActionCell = actions[actions.length - 1];
-    const lastHeaderCell = headers[headers.length - 1];
+      const actions = actionContainer.querySelectorAll('.pw-table-action-cell');
+      const headers = headerContainer.querySelectorAll('.pw-table-header-cell');
 
-    lastActionCell.style.paddingRight = scrollDiffInPixels;
-    lastHeaderCell.style.paddingRight = scrollDiffInPixels;
+      const lastActionCell = actions[actions.length - 1];
+      const lastHeaderCell = headers[headers.length - 1];
+
+      lastActionCell.style.paddingRight = scrollDiffInPixels;
+      lastHeaderCell.style.paddingRight = scrollDiffInPixels;
+    }
   }
 
 
