@@ -5,6 +5,8 @@ import update from 'immutability-helper';
 import { bytesToSize } from './utils.js';
 import WindowedList from 'react-windowed-list';
 import axios from 'axios';
+import _get from 'lodash/get';
+import {v4} from 'uuid'
 import style from './styles.css';
 
 
@@ -13,13 +15,26 @@ class PowerSheet extends React.Component {
     super(props);
 
     this.originalData = [];
+    this.distinctsLimited = {};
+    this.distincts = {};
     this.columns = this._extractColumns(props);
+    this.columnsWidths = this._extractColumnsWidth(props);
+
     this.renderItem = this.renderItem.bind(this);
     this.fixScrollBarDiff = this.fixScrollBarDiff.bind(this);
+    this._fillDistincts = this._fillDistincts.bind(this);
 
     this.state = {
-      message: 'Iniciando o carregamento dos dados',
+      activeColumn: null,
+      collection: [],
       currentData: [],
+      message: 'Iniciando o carregamento dos dados',
+      count: 0,
+      filters: {},
+      filtersByConditions: {},
+      distinctFilters: {},
+      loading: true,
+      sorts: {},
     };
 
   }
@@ -41,7 +56,12 @@ class PowerSheet extends React.Component {
       .get(this.props.fetch.url, requestConfig)
       .then((response) => {
         this.originalData = response.data;
-        this.setState({message: '', currentData: response.data}, () => this.fixScrollBarDiff());
+        this.setState(
+          {message: '', currentData: response.data},
+          () => {
+            this.fixScrollBarDiff();
+            this._fillDistincts();
+          });
       })
       .catch((error) => {
         console.error(error);
@@ -108,8 +128,86 @@ class PowerSheet extends React.Component {
     return widths;
   }
 
+  /**
+   * Seta qual é a coluna ativa (que terá as opções de filtro e sort aberto)
+   *
+   * @param dataKey
+   * @private
+   */
+  _selectColumn(dataKey) {
+    let activeColumn = dataKey === this.state.activeColumn ? null : dataKey;
+    const newState = update(this.state, {activeColumn: {$set: activeColumn}});
+    this.setState(newState);
+  }
+
+  _fillDistincts() {
+    for (let i = 0; i < this.columns.length; i++) {
+      let col = this.columns[i];
+      if (col && col.searchable) {
+        this.distinctsLimited[col.key] = [...new Set(this.originalData.slice(0, 100).map(item => _get(item, col.key)))];
+        this.distincts[col.key] = [...new Set(this.originalData.map(item => _get(item, col.key)))];
+      }
+    }
+  }
+
+  _filter() {
+    debugger;
+  }
+
+  _filterDistinct(filterProps) {
+    debugger;
+    // this.worker.postMessage({ action: 'FILTER_DISTINCT', filterProps});
+  }
+
+  /**
+   * Manipula o retorno do filtro nos valores distinct.
+   *
+   * @param filterProps
+   * @private
+   */
+  _handlerDistinctFilters(filterProps) {
+    debugger;
+    // const {value, dataKey} = filterProps;
+    //
+    // let oldState = JSON.stringify(this.state.distinctFilters);
+    // let newState = JSON.parse(oldState);
+    //
+    // if(newState.hasOwnProperty(dataKey)) {
+    //   if(!newState[dataKey].includes(value)) {
+    //     newState[dataKey].push(value);
+    //   } else {
+    //     let index = newState[dataKey].indexOf(value);
+    //     newState[dataKey].splice(index, 1);
+    //   }
+    // } else {
+    //   newState[dataKey] = [value];
+    // }
+    //
+    // this.setState(update(this.state, {distinctFilters: {$set: newState}}));
+  }
+
+  _sort() {
+    debugger;
+  }
+
+  _onApplyFilter(perValue, perConditions, dataInfo) {
+    debugger;
+    // this.worker.postMessage({ action: 'FILTER', perValue, perConditions, dataInfo});
+    // this._selectColumn(null);
+  }
+
+
   renderItem(index, key) {
     let row = this.state.currentData[index];
+
+    let cols = this.columns.map((col, i) => {
+      let style = {};
+      if(this.columnsWidths[i]) {
+        
+      }
+      return  <div className='pw-table-tbody-cell' style={style}>{_get(row, col.key)}</div>
+    });
+
     return (
       <div className='pw-table-tbody-row' key={key}>
         <div className='pw-table-tbody-cell' style={{flex: `0 0 ${80}px`}}>{row.id}</div>
@@ -125,6 +223,32 @@ class PowerSheet extends React.Component {
 
 
   render() {
+
+
+
+
+    let headers = this.props.children.map((chield) => {
+
+      let newProps = {key: v4()};
+      if(chield.props.dataKey){
+        newProps.onSearch = this._filter;
+        newProps.onSort = this._sort;
+        newProps.filters = this.state.filters;
+        newProps.filtersByConditions = this.state.filtersByConditions;
+        newProps.sorts = this.state.sorts;
+        newProps.onSelect = this._selectColumn;
+        newProps.onFilterDistinct = this._filterDistinct;
+        newProps.onAddToFilterDistinct = this._handlerDistinctFilters;
+        newProps.uniqueValues = this.state.distincts;
+        newProps.activeColumn = this.state.activeColumn;
+        newProps.distinctFilters = this.state.distinctFilters;
+        newProps.onApplyFilter = this._onApplyFilter;
+      }
+      let props = {...chield.props, ...newProps};
+
+      return React.cloneElement(chield, props);
+    });
+
     let infoClasses = 'pw-table-info';
     if(this.originalData.length === 0) {
       infoClasses += ' active';
@@ -154,13 +278,14 @@ class PowerSheet extends React.Component {
         {this.originalData.length > 0 &&
           <div className='pw-table-header'>
             <div className='pw-table-header-row'>
-              <div className='pw-table-header-cell' style={{flex: `0 0 ${80}px`}}>ID</div>
-              <div className='pw-table-header-cell'>Nome</div>
-              <div className='pw-table-header-cell'>Sobrenome</div>
-              <div className='pw-table-header-cell'>Papel</div>
-              <div className='pw-table-header-cell'>Time</div>
-              <div className='pw-table-header-cell'>E-mail</div>
-              <div className='pw-table-header-cell'>Texto</div>
+              {headers}
+              {/*<div className='pw-table-header-cell' style={{flex: `0 0 ${80}px`}}>ID</div>*/}
+              {/*<div className='pw-table-header-cell'>Nome</div>*/}
+              {/*<div className='pw-table-header-cell'>Sobrenome</div>*/}
+              {/*<div className='pw-table-header-cell'>Papel</div>*/}
+              {/*<div className='pw-table-header-cell'>Time</div>*/}
+              {/*<div className='pw-table-header-cell'>E-mail</div>*/}
+              {/*<div className='pw-table-header-cell'>Texto</div>*/}
             </div>
           </div>
         }
@@ -170,7 +295,6 @@ class PowerSheet extends React.Component {
             itemRenderer={this.renderItem}
             length={this.originalData.length}
             pageSize={this.props.pageSize}
-            threshold={this.props.rowHeight}
             type='uniform'
             />
           </div>

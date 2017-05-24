@@ -71,25 +71,29 @@ class SheetColumn extends React.Component {
       let style = {};
 
       if(this.props.width) {
-        style.width = this.props.width
+        style.width = this.props.width;
       }
 
       result = (
-        <th style={style}>
+        <div className='pw-table-header-cell' style={style}>
           {this.props.columnTitle}
           {this.renderSort()}
           {this.renderFilter()}
 
-          <i className='fa fa-fw fa-caret-square-o-down' onClick={() => this.setColumn()} style={{cursor: 'pointer', marginLeft: '8px'}} />
+          <i
+            className='fa fa-fw fa-caret-square-o-down'
+            onClick={() => this.setColumn()}
+            style={{cursor: 'pointer', marginLeft: '8px'}}
+          />
 
           <ColumnActions {...this.propsToSend}  />
-        </th>
+        </div>
       );
     } else {
       result = (
-        <th>
+        <div className='pw-table-header-cell'>
           {this.props.columnTitle}
-        </th>
+        </div>
       );
     }
 
