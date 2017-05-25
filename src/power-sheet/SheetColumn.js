@@ -66,14 +66,13 @@ class SheetColumn extends React.Component {
 
   render() {
     let result;
+    let style = {};
+
+    if(this.props.width) {
+      style.flex = `0 0 ${this.props.width}px`;
+    }
 
     if(this.props.dataKey) {
-      let style = {};
-
-      if(this.props.width) {
-        style.width = this.props.width;
-      }
-
       result = (
         <div className='pw-table-header-cell' style={style}>
           {this.props.columnTitle}
@@ -91,7 +90,7 @@ class SheetColumn extends React.Component {
       );
     } else {
       result = (
-        <div className='pw-table-header-cell'>
+        <div className='pw-table-header-cell' style={style}>
           {this.props.columnTitle}
         </div>
       );
@@ -131,7 +130,7 @@ SheetColumn.propTypes = {
   searchable: PropTypes.bool,
   sorts: PropTypes.object,
   uniqueValues: PropTypes.any,
-  width: PropTypes.string,
+  width: PropTypes.number,
 };
 
 export default SheetColumn;

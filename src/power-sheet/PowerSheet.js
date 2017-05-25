@@ -79,18 +79,18 @@ class PowerSheet extends React.Component {
     let tableWidth = container.querySelector('.pw-table-tbody .pw-table-tbody-row').offsetWidth;
 
     if(scrollAreaWidth !== tableWidth) {
-      let actionContainer = container.querySelector('.pw-table-action');
+      // let actionContainer = container.querySelector('.pw-table-action');
       let headerContainer = container.querySelector('.pw-table-header');
       const bordersSize = 5;
       const scrollDiffInPixels = `${scrollAreaWidth + bordersSize - tableWidth}px`;
 
-      const actions = actionContainer.querySelectorAll('.pw-table-action-cell');
+      // const actions = actionContainer.querySelectorAll('.pw-table-action-cell');
       const headers = headerContainer.querySelectorAll('.pw-table-header-cell');
 
-      const lastActionCell = actions[actions.length - 1];
+      // const lastActionCell = actions[actions.length - 1];
       const lastHeaderCell = headers[headers.length - 1];
 
-      lastActionCell.style.paddingRight = scrollDiffInPixels;
+      // lastActionCell.style.paddingRight = scrollDiffInPixels;
       lastHeaderCell.style.paddingRight = scrollDiffInPixels;
     }
   }
@@ -203,20 +203,14 @@ class PowerSheet extends React.Component {
     let cols = this.columns.map((col, i) => {
       let style = {};
       if(this.columnsWidths[i]) {
-        
+        style.flex = `0 0 ${this.columnsWidths[i]}px`
       }
-      return  <div className='pw-table-tbody-cell' style={style}>{_get(row, col.key)}</div>
+      return  <div className='pw-table-tbody-cell' key={v4()} style={style}>{_get(row, col.key)}</div>
     });
 
     return (
       <div className='pw-table-tbody-row' key={key}>
-        <div className='pw-table-tbody-cell' style={{flex: `0 0 ${80}px`}}>{row.id}</div>
-        <div className='pw-table-tbody-cell'>{row.name.first}</div>
-        <div className='pw-table-tbody-cell'>{row.name.last}</div>
-        <div className='pw-table-tbody-cell'>{row.papel}</div>
-        <div className='pw-table-tbody-cell'>{row.time}</div>
-        <div className='pw-table-tbody-cell'>{row.email}</div>
-        <div className='pw-table-tbody-cell'>{row.text}</div>
+        {cols}
       </div>
     );
   }
@@ -262,19 +256,19 @@ class PowerSheet extends React.Component {
           }
           { this.state.message }
         </div>
-        {this.originalData.length > 0 &&
-          <div className='pw-table-action'>
-            <div className='pw-table-action-row'>
-              <div className='pw-table-action-cell' style={{flex: `0 0 ${80}px`}}><i className='fa fa-fw fa-caret-square-o-down'/></div>
-              <div className='pw-table-action-cell'><i className='fa fa-fw fa-caret-square-o-down'/></div>
-              <div className='pw-table-action-cell'><i className='fa fa-fw fa-caret-square-o-down'/></div>
-              <div className='pw-table-action-cell'><i className='fa fa-fw fa-caret-square-o-down'/></div>
-              <div className='pw-table-action-cell'><i className='fa fa-fw fa-caret-square-o-down'/></div>
-              <div className='pw-table-action-cell'><i className='fa fa-fw fa-caret-square-o-down'/></div>
-              <div className='pw-table-action-cell'><i className='fa fa-fw fa-caret-square-o-down'/></div>
-            </div>
-          </div>
-        }
+        {/*{this.originalData.length > 0 &&*/}
+          {/*<div className='pw-table-action'>*/}
+            {/*<div className='pw-table-action-row'>*/}
+              {/*<div className='pw-table-action-cell' style={{flex: `0 0 ${80}px`}}><i className='fa fa-fw fa-caret-square-o-down'/></div>*/}
+              {/*<div className='pw-table-action-cell'><i className='fa fa-fw fa-caret-square-o-down'/></div>*/}
+              {/*<div className='pw-table-action-cell'><i className='fa fa-fw fa-caret-square-o-down'/></div>*/}
+              {/*<div className='pw-table-action-cell'><i className='fa fa-fw fa-caret-square-o-down'/></div>*/}
+              {/*<div className='pw-table-action-cell'><i className='fa fa-fw fa-caret-square-o-down'/></div>*/}
+              {/*<div className='pw-table-action-cell'><i className='fa fa-fw fa-caret-square-o-down'/></div>*/}
+              {/*<div className='pw-table-action-cell'><i className='fa fa-fw fa-caret-square-o-down'/></div>*/}
+            {/*</div>*/}
+          {/*</div>*/}
+        {/*}*/}
         {this.originalData.length > 0 &&
           <div className='pw-table-header'>
             <div className='pw-table-header-row'>
