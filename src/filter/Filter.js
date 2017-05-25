@@ -7,83 +7,37 @@ class Filter extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = {clearFieldIsVisible: false};
-    this.addSearchValueToFilterValues = this.addSearchValueToFilterValues.bind(this);
-  }
-
-  componentDidMount() {
-    let isFilterWithOptions = this.refs.filterOptions.props.children;
-    if(isFilterWithOptions && !this.props.name) {
-      console.warn('Em um filtro com opções se faz necessário a passagem da propriedade name para o filtro');
-    }
-  }
-
-  /**
-   * shouldComponentUpdate - description
-   * Componente não deve atualizar caso o estado clearFieldIsVisible
-   * seja o mesmo do próximo estado
-   * @param  {type} nextProps description
-   * @param  {type} nextState description
-   * @return {boolean}
-   */
-  shouldComponentUpdate(nextProps, nextState) {
-    return this.state.clearFieldIsVisible !== nextState.clearFieldIsVisible;
-  }
+    this.state = {clearFieldIsVisible: false};   
+    this.doFilterBySearchField = this.doFilterBySearchField.bind(this);
+  }  
 
   toggleClearField(e) {
-    this.setState({clearFieldIsVisible: e.target.value !== ''});
+    this.setState({ clearFieldIsVisible: e.target.value !== ''});
   }
 
-  /**
-   * addSearchValueToFilterValues - description
-   * Função executada pelo filho FilterOptions. Recebe o objeto com os valores do
-   * filtro e adiciona o valor do campo de busca a este objeto.
-   * @param  {type} filterValues description
-   * @return {void}
-   */
-  addSearchValueToFilterValues(filterValues) {
-    let searchFieldValue = document.getElementsByName(this.props.name)[0].value;
-    if(searchFieldValue !== '') {
-      filterValues[this.props.name] = searchFieldValue;
-    }
-    this.props.onFilter(filterValues);
-  }
-
-
-  /**
-   * doFilterBySearchField - description
-   * Função executada quando o usuario usa o enter para realizar o filtro.
-   * Se o filtro é um filtro com opções, uma função do filho FilterOptions é
-   * chamada para recuperar os valores das opções, em seguida é chamada
-   * a função doFilterByApplyFilter do pai para acrescentar a este objeto o valor
-   * do campo de busca
-   * @param  {type} e description
-   * @return {void}
-   */
-  doFilterBySearchField(e) {
-    let isFilterWithOptions = this.refs.filterOptions.props.children;
-    if(isFilterWithOptions) {
-      this.refs.filterOptions.mountFilterOptionsObject();
-    } else {
-      this.props.onFilter(e.target.value);
+  doFilterBySearchField() {              
+    if(this.props.onFilter) {
+      this.props.onFilter(this.refs.searchValue.value);
     }
   }
 
-  clearSearchField() {
-    document.getElementsByName(this.props.name)[0].value = '';
-    let isFilterWithOptions = this.refs.filterOptions.props.children;
-
-    this.setState({clearFieldIsVisible: false}, () => {
-      //A função que aplica o filtro é chamada para não perder os possiveis filtros ja feitos
-      if(isFilterWithOptions) {
-        this.refs.filterOptions.mountFilterOptionsObject();
-      } else {
-        this.props.onFilter('');
-      }
-    });
+  clearSearchField() {          
+    if(this.props.onFilter) {      
+      this.refs.searchValue.value = '';
+      this.setState(
+        {clearFieldIsVisible: false}, 
+        this.props.onFilter(this.refs.searchValue.value)
+      );
+    }    
   }
 
-  render() {
+  render() { 
+
+    const timesIconStyle = {
+      'lineHeight': '34px',
+      'marginLeft': '-25px',
+      'cursor': 'pointer',
+    };
 
     const {
       applyFilterButtonLabel,
@@ -104,9 +58,7 @@ class Filter extends React.Component {
         <span>
           <i className='fa fa-times'
             onClick={() => this.clearSearchField()}
-            style={{'lineHeight': '34px',
-              'marginLeft': '-25px',
-              'cursor': 'pointer'}}/>
+            style={timesIconStyle}/>
         </span>
       );
     }
@@ -120,21 +72,21 @@ class Filter extends React.Component {
           <input
             className='on-center'
             name={name}
-            onKeyUp={(e) => {this.toggleClearField(e); this.doFilterBySearchField(e);}}
-            placeholder={placeholder}
-            ref='searchField'
-            type='search'/>
-            {clearFieldIcon}
-          <FilterOptions
-            addSearchValueToFilterValues={this.addSearchValueToFilterValues}
+            onKeyUp={(e) => {this.toggleClearField(e); this.doFilterBySearchField();}}
+            placeholder={placeholder}            
+            ref='searchValue'
+            type='search'
+          />
+          {clearFieldIcon}
+          <FilterOptions            
             applyFilterButtonLabel={applyFilterButtonLabel}
             cancelButtonLabel={cancelButtonLabel}
-            clearFilterOptionsButtonLabel={clearFilterOptionsButtonLabel}
+            clearFilterOptionsButtonLabel={clearFilterOptionsButtonLabel}  
+            doFilterBySearchField={this.doFilterBySearchField}          
             filterButtonLabel={filterButtonLabel}
             hasFilterOptions={!_isUndefined(children)}
-            onClearAll={onClearAll}
-            onFilter={onFilter}
-            ref='filterOptions'>
+            onClearAll={onClearAll} 
+            onFilter={onFilter}>
             {this.props.children}
           </FilterOptions>
         </div>
