@@ -9,6 +9,27 @@ import _get from 'lodash/get';
 import {v4} from 'uuid'
 import style from './styles.css';
 
+import sift from 'sift';
+
+/**
+ * Sort
+ *
+ * @param field
+ * @param reverse
+ * @param primer
+ * @return {function(*=, *=)}
+ */
+const sortBy = (field, reverse, primer) => {
+  let key = primer ?
+    (x) => primer(x[field]) :
+    (x) => x[field];
+
+  reverse = !reverse ? 1 : -1;
+
+  return (a, b) => {
+    return a = key(a), b = key(b), reverse * ((a > b) - (b > a));
+  };
+};
 
 class PowerSheet extends React.Component {
   constructor(props){
@@ -23,6 +44,14 @@ class PowerSheet extends React.Component {
     this.renderItem = this.renderItem.bind(this);
     this.fixScrollBarDiff = this.fixScrollBarDiff.bind(this);
     this._fillDistincts = this._fillDistincts.bind(this);
+    this._selectColumn = this._selectColumn.bind(this);
+
+    this._sort = this._sort.bind(this);
+    this._onApplyFilter = this._onApplyFilter.bind(this);
+
+    this.sort = null;
+    this.sortDesc = false;
+    this.sorts = {};
 
     this.state = {
       activeColumn: null,
@@ -73,24 +102,27 @@ class PowerSheet extends React.Component {
   componentWillUnmount() {
   }
 
+  componentDidUpdate(){
+    this.fixScrollBarDiff();
+  }
+
   fixScrollBarDiff() {
     const container = ReactDOM.findDOMNode(this);
     let scrollAreaWidth = container.offsetWidth;
-    let tableWidth = container.querySelector('.pw-table-tbody .pw-table-tbody-row').offsetWidth;
+    let tableContainer = container.querySelector('.pw-table-tbody .pw-table-tbody-row');
+    let tableWidth = null;
 
-    if(scrollAreaWidth !== tableWidth) {
-      // let actionContainer = container.querySelector('.pw-table-action');
+    if (tableContainer){
+      tableWidth = tableContainer.offsetWidth;
+    }
+
+    if(tableWidth !== null && scrollAreaWidth !== tableWidth) {
       let headerContainer = container.querySelector('.pw-table-header');
       const bordersSize = 5;
       const scrollDiffInPixels = `${scrollAreaWidth + bordersSize - tableWidth}px`;
-
-      // const actions = actionContainer.querySelectorAll('.pw-table-action-cell');
       const headers = headerContainer.querySelectorAll('.pw-table-header-cell');
-
-      // const lastActionCell = actions[actions.length - 1];
       const lastHeaderCell = headers[headers.length - 1];
 
-      // lastActionCell.style.paddingRight = scrollDiffInPixels;
       lastHeaderCell.style.paddingRight = scrollDiffInPixels;
     }
   }
@@ -186,14 +218,34 @@ class PowerSheet extends React.Component {
     // this.setState(update(this.state, {distinctFilters: {$set: newState}}));
   }
 
-  _sort() {
+  _sort(direction, datakey) {
     debugger;
+    //TODO: Sort com datakey composta (name.first)
+    this.sortDesc = direction !== 'ASC';
+    this.sort = datakey;
+    this.sorts = {};
+    this.sorts[datakey] = this.sortDesc;
+
+    this._onApplyFilter();
   }
 
   _onApplyFilter(perValue, perConditions, dataInfo) {
     debugger;
     // this.worker.postMessage({ action: 'FILTER', perValue, perConditions, dataInfo});
     // this._selectColumn(null);
+
+    let perValueFilter = {};
+    let itens = sift(perValueFilter, this.originalData);
+
+    //TODO: Sort com datakey composta (name.first)
+    if(this.sorts) {
+      let key = Object.keys(this.sorts)[0];
+      itens = itens.sort(sortBy(key, this.sorts[key]));
+    }
+
+    const newState = update(this.state, {currentData: {$set: itens}});
+    this.setState(newState);
+
   }
 
 
@@ -217,9 +269,6 @@ class PowerSheet extends React.Component {
 
 
   render() {
-
-
-
 
     let headers = this.props.children.map((chield) => {
 

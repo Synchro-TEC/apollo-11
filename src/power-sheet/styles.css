@@ -51,6 +51,11 @@
     padding: 5px;
 }
 
+.pw-table-header-row {
+    position: relative;
+}
+
+
 .pw-table-header-cell {
     white-space: nowrap;
     overflow: hidden;
