@@ -38,11 +38,13 @@ class PowerSheet extends React.Component {
     this._onFilter = this._onFilter.bind(this);
     this._onApplyFilter = this._onApplyFilter.bind(this);
     this._onCancel = this._onCancel.bind(this);
+    this._handlerDistinctFilters = this._handlerDistinctFilters.bind(this);
 
     this._filterDistinct = this._filterDistinct.bind(this);
 
 
     this._getCurrentDistinctValues = this._getCurrentDistinctValues.bind(this);
+    this._getCurrentSelectedDistinctValues = this._getCurrentSelectedDistinctValues.bind(this);
 
     this.sort = null;
     this.sortDesc = false;
@@ -59,7 +61,7 @@ class PowerSheet extends React.Component {
       count: 0,
       filters: {},
       filtersByConditions: {},
-      distinctFilters: {},
+      selectedDistinctFilters: {},
       distinctFiltersValue: {},
       loading: true,
       sorts: {},
@@ -110,21 +112,20 @@ class PowerSheet extends React.Component {
   _fixScrollBarDiff() {
     const container = ReactDOM.findDOMNode(this);
     let scrollAreaWidth = container.offsetWidth;
-    let tableContainer = container.querySelector('.pw-table-tbody .pw-table-tbody-row');
+    let tableContainer = container.querySelector('.pw-table-tbody');
+    let tableRow = container.querySelector('.pw-table-tbody .pw-table-tbody-row');
     let tableWidth = null;
 
-    if (tableContainer){
-      tableWidth = tableContainer.offsetWidth;
+    if(tableRow){
+      tableWidth = tableRow.offsetWidth;
     }
 
     if(tableWidth !== null && scrollAreaWidth !== tableWidth) {
       let headerContainer = container.querySelector('.pw-table-header');
-      const bordersSize = 5;
-      const scrollDiffInPixels = `${scrollAreaWidth + bordersSize - tableWidth}px`;
-      const headers = headerContainer.querySelectorAll('.pw-table-header-cell');
-      const lastHeaderCell = headers[headers.length - 1];
-
-      lastHeaderCell.style.paddingRight = scrollDiffInPixels;
+      let styles = window.getComputedStyle(tableContainer);
+      let border = styles.borderRight.split(' ')[0];
+      const borderSize = parseInt(border.match(/(?:\d*\.)?\d+/g)[0], 10);
+      headerContainer.style.paddingRight = `${scrollAreaWidth - borderSize - tableWidth}px`;
     }
   }
 
@@ -222,7 +223,7 @@ class PowerSheet extends React.Component {
       let newDistinctState = JSON.parse(oldDistinctState);
       newDistinctState[dataKey] = distincts;
 
-      let oldState = JSON.stringify(this.state.distinctFilters);
+      let oldState = JSON.stringify(this.state.selectedDistinctFilters);
       let newState = JSON.parse(oldState);
 
       if(newState.hasOwnProperty(dataKey)) {
@@ -252,23 +253,25 @@ class PowerSheet extends React.Component {
    */
   _handlerDistinctFilters(filterProps) {
     debugger;
-    // const {value, dataKey} = filterProps;
-    //
-    // let oldState = JSON.stringify(this.state.distinctFilters);
-    // let newState = JSON.parse(oldState);
-    //
-    // if(newState.hasOwnProperty(dataKey)) {
-    //   if(!newState[dataKey].includes(value)) {
-    //     newState[dataKey].push(value);
-    //   } else {
-    //     let index = newState[dataKey].indexOf(value);
-    //     newState[dataKey].splice(index, 1);
-    //   }
-    // } else {
-    //   newState[dataKey] = [value];
-    // }
-    //
-    // this.setState(update(this.state, {distinctFilters: {$set: newState}}));
+    const { value } = filterProps;
+    const dataKey = this.state.activeColumn;
+
+    let oldState = JSON.stringify(this.state.selectedDistinctFilters);
+    let newState = JSON.parse(oldState);
+
+    if(newState.hasOwnProperty(dataKey)) {
+      if(!newState[dataKey].includes(value)) {
+        newState[dataKey].push(value);
+      } else {
+        let index = newState[dataKey].indexOf(value);
+        newState[dataKey].splice(index, 1);
+      }
+    } else {
+      debugger;
+      newState[dataKey] = [value];
+    }
+
+    this.setState(update(this.state, {selectedDistinctFilters: {$set: newState}}));
   }
 
   _onSort(direction) {
@@ -333,13 +336,18 @@ class PowerSheet extends React.Component {
     return (activeColumn &&  distinctValues[activeColumn]) ? distinctValues[activeColumn] : [];
   }
 
+  _getCurrentSelectedDistinctValues() {
+    const {activeColumn, selectedDistinctFilters} = this.state;
+    return (activeColumn &&  selectedDistinctFilters[activeColumn]) ? selectedDistinctFilters[activeColumn] : [];
+  }
+
   _getSearchable() {
     let isSearchable = false;
 
     if(this.state.activeColumn) {
       isSearchable = _find(this.columns, { key: this.state.activeColumn }).searchable;
     }
-    debugger;
+
     return isSearchable;
   }
 
@@ -404,6 +412,7 @@ class PowerSheet extends React.Component {
           columnTitle={this.state.activeColumnTitle}
           onSort={this._onSort}
           onCancel={this._onCancel}
+          onSelectValueOnFilter={this._handlerDistinctFilters}
           sorts={this.sorts}
           dataType={this.state.activeColumnType}
           isVisible={this.state.activeColumn !== null}
@@ -412,18 +421,18 @@ class PowerSheet extends React.Component {
             left: `${this.state.columnPosition.x + 10}px`,
           }}
           distinctValues={this._getCurrentDistinctValues()}
-          selectedDistinctValues={[]}
+          selectedDistinctValues={this._getCurrentSelectedDistinctValues()}
           searchable={this._getSearchable()}
           onFilter={this._onFilter}
           filters={this.state.filters}
           filtersByConditions={this.state.filtersByConditions}
           onSelect={this._selectColumn}
           onFilterDistinct={this._filterDistinct}
-          onAddToFilterDistinct={this._handlerDistinctFilters}
+          // onAddToFilterDistinct={this._handlerDistinctFilters}
           // distinctsLimited={this.state.distinctsLimited}
-          distinctFiltersValue={this.state.distinctFiltersValue}
+
           activeColumn={this.state.activeColumn}
-          distinctFilters={this.state.distinctFilters}
+
           onApplyFilters={this._onApplyFilter}
         />
 

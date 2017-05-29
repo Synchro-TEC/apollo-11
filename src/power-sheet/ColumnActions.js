@@ -136,7 +136,7 @@ class ColumnActions extends React.Component {
   }
 
   addValueOnFilter(value) {
-    this.props.onSelectValueOnFilter({dataKey: this.props.dataKey, value: value, dataType: this.props.dataType});
+    this.props.onSelectValueOnFilter({value: value, dataType: this.props.dataType});
   }
 
   _setValueInFilter(e){

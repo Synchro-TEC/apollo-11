@@ -129,7 +129,7 @@ class ColumnActions extends React.Component {
   }
 
   addToDistinctFilter(value) {
-    this.props.onAddToFilterDistinct({dataKey: this.props.dataKey, value: value, dataType: this.props.dataType});
+    this.props.onSelectValueOnFilter({value: value, dataType: this.props.dataType});
   }
 
   _setValueInFilter(e){
