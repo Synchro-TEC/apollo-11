@@ -18,18 +18,18 @@ class SheetColumn extends React.Component {
     this.propsToSend = this._preparePropsToSend(nextProps);
   }
 
-  setColumn() {
-    this.props.onSelect(this.props.dataKey);
+  setColumn(e) {
+    this.props.onSelect(this.props.dataKey, this.props.dataType, this.props.columnTitle, e);
   }
 
   renderFilter() {
     let result = '';
 
-    if(this.props.dataKey ) {
-      if(this.props.filters[this.props.dataKey] || this.props.filtersByConditions[this.props.dataKey]){
-        result = (<i className='fa fa-filter fa-fw' title={this.props.filters[this.props.dataKey]} />);
-      }
-    }
+    // if(this.props.dataKey ) {
+    //   if(this.props.filters[this.props.dataKey] || this.props.filtersByConditions[this.props.dataKey]){
+    //     result = (<i className='fa fa-filter fa-fw' title={this.props.filters[this.props.dataKey]} />);
+    //   }
+    // }
 
     return result;
   }
@@ -81,11 +81,11 @@ class SheetColumn extends React.Component {
 
           <i
             className='fa fa-fw fa-caret-square-o-down'
-            onClick={() => this.setColumn()}
+            onClick={(e) => this.setColumn(e)}
             style={{cursor: 'pointer', marginLeft: '8px'}}
           />
 
-          <ColumnActions {...this.propsToSend}  />
+          {/*<ColumnActions {...this.propsToSend}  />*/}
         </div>
       );
     } else {
@@ -129,7 +129,8 @@ SheetColumn.propTypes = {
   onSort: PropTypes.func,
   searchable: PropTypes.bool,
   sorts: PropTypes.object,
-  uniqueValues: PropTypes.any,
+  distinctsLimited: PropTypes.any,
+  distinctFiltersValue: PropTypes.any,
   width: PropTypes.number,
 };
 

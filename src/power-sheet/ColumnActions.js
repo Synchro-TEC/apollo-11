@@ -1,13 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import update from 'immutability-helper';
+import { v4 } from 'uuid';
 
 class ColumnActions extends React.Component {
   constructor(props){
     super(props);
 
     this.filterChange = this.filterChange.bind(this);
-    this.addToDistinctFilter = this.addToDistinctFilter.bind(this);
+    this.addValueOnFilter = this.addValueOnFilter.bind(this);
     this._hasInFilter = this._hasInFilter.bind(this);
     this._onChangeCondition = this._onChangeCondition.bind(this);
 
@@ -39,14 +40,13 @@ class ColumnActions extends React.Component {
       box: {
         position: 'absolute',
         width: '250px',
-        top: '37px',
         padding: '0px',
         fontFamily: 'Arial, "sans serif"',
         fontSize: '13px',
         backgroundColor: 'rgba(255, 255, 255, .99)',
         border: '1px solid rgba(0,0,0,.2)',
         boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
-        zIndex: '99',
+        zIndex: '990',
         textTransform: 'none',
       },
       h6: {
@@ -104,11 +104,20 @@ class ColumnActions extends React.Component {
 
   }
 
+  componentWillMount() {
+    document.addEventListener('keydown', this.handleKeyDown.bind(this));
+  }
+  componentWillUnmount() {
+    document.removeEventListener('keydown', this.handleKeyDown.bind(this));
+  }
+
   shouldComponentUpdate(nextProps) {
-    if(nextProps.distinctFilters !== this.props.distinctFilters || nextProps.isVisible !== this.props.distinctFilters) {
-      return true;
-    } else {
-      return false;
+    return nextProps.distinctFilters !== this.props.distinctFilters || nextProps.isVisible !== this.props.distinctFilters;
+  }
+
+  handleKeyDown(e) {
+    if (e.keyCode === 27) {
+      this.props.onCancel();
     }
   }
 
@@ -118,9 +127,7 @@ class ColumnActions extends React.Component {
   }
 
   sort(direction) {
-    if(this.props.dataKey) {
-      this.props.onSort(direction, this.props.dataKey);
-    }
+    this.props.onSort(direction);
   }
 
   filterDistinct(e) {
@@ -128,12 +135,11 @@ class ColumnActions extends React.Component {
     this.props.onFilterDistinct({dataKey: this.props.dataKey, value: queryText, dataType: this.props.dataType});
   }
 
-  addToDistinctFilter(value) {
-    this.props.onAddToFilterDistinct({dataKey: this.props.dataKey, value: value, dataType: this.props.dataType});
+  addValueOnFilter(value) {
+    this.props.onSelectValueOnFilter({dataKey: this.props.dataKey, value: value, dataType: this.props.dataType});
   }
 
   _setValueInFilter(e){
-    // this.setState(update(this.state, {filter: {$set: e.data.itens}}));
     this.filterValues.value[e.target.name] = e.target.value;
     this.setState(update(this.state, {filter: {$set: this.filterValues}}));
   }
@@ -152,26 +158,24 @@ class ColumnActions extends React.Component {
     this.setState({condition, filter: {value: {}}});
   }
 
-  renderDistinctFilters() {
-    let items;
-    if(this.props.distinctFilters.hasOwnProperty(this.props.dataKey)) {
-      items = this.props.distinctFilters[this.props.dataKey].map((item, i) => {
-        let rendered = this.props.formatterOnFilter ? this.props.formatterOnFilter(item) : item;
-        return (
-          <div className='sv-tag info' key={`item-${item}-${i}`}>
-            <span className='sv-tag__close' onClick={() => this.addToDistinctFilter(item)}>×</span>
-            <span className='sv-tag__content'>{rendered}</span>
-          </div>
-        );
-      });
-    } else {
-      items = '';
-    }
+  renderSelectedsDistinctValues() {
+
+    let items = this.props.selectedDistinctValues.map((item, i) => {
+      let rendered = this.props.formatterOnFilter ? this.props.formatterOnFilter(item) : item;
+      return (
+        <div className='sv-tag info' key={`item-${item}-${i}`}>
+          <span className='sv-tag__close' onClick={() => this.addValueOnFilter(item)}>×</span>
+          <span className='sv-tag__content'>{rendered}</span>
+        </div>
+      );
+    });
+
 
     return (<div>{items}</div>);
   }
 
   renderConditionsByDataType() {
+    // debugger;
     let options = this.conditions[this.props.dataType].map((opt, i) => {
       return (<option key={`${this.props.dataType}-${opt.value}-${i}`} value={JSON.stringify(opt)}>{opt.label}</option>);
     });
@@ -233,22 +237,18 @@ class ColumnActions extends React.Component {
 
   renderFilter() {
 
-    let uniques = this.props.uniqueValues[this.props.dataKey];
-    let uniqueValues = '';
 
-    if(uniques) {
-      uniqueValues = uniques.map((uniq, i) => {
+    let distinctsValues = this.props.distinctValues.map((uniq, i) => {
         let rendered = this.props.formatterOnFilter ? this.props.formatterOnFilter(uniq) : uniq;
         let cssClass = !this._hasInFilter(uniq) ? 'fa fa-square-o fa-fw' : 'fa fa-check-square-o fa-fw';
         return (
           <li key={`${uniq}__${i}`}>
-            <label className='sv-no-margins' onClick={() => this.addToDistinctFilter(uniq)}>
+            <label className='sv-no-margins' onClick={() => this.addValueOnFilter(uniq)}>
               <i className={cssClass} /> {rendered}
             </label>
           </li>
         );
       });
-    }
 
     return (
       <div style={this.styles.container}>
@@ -256,15 +256,19 @@ class ColumnActions extends React.Component {
         <hr style={this.styles.hr} />
         <div>
           <form className='sv-form' onSubmit={(e) => e.preventDefault()}>
-            <input onChange={(e) => this.filterDistinct(e)} placeholder='Filtrar por' type='text' />
+            <input
+              onChange={(e) => this.filterDistinct(e)}
+              placeholder='Filtrar por'
+              type='text'
+            />
 
             <div style={this.styles.filterValues}>
               <ul>
-                {uniqueValues}
+                {distinctsValues}
               </ul>
             </div>
           </form>
-          {this.renderDistinctFilters()}
+          {this.renderSelectedsDistinctValues()}
         </div>
 
         <h6 style={this.styles.h6}>Filtro por condição</h6>
@@ -279,12 +283,12 @@ class ColumnActions extends React.Component {
 
   renderButtons() {
     return (
-      <div style={this.styles.containerBottom}>
+      <div key={v4()} style={this.styles.containerBottom}>
         {this.props.searchable ? (
           <button
             className='sv-button primary small sv-horizontal-marged-15'
             onClick={
-              ()=> this.props.onApplyFilter(
+              ()=> this.props.onApplyFilters(
                 this.props.distinctFilters[this.props.dataKey],
                 {condition: this.state.condition.value, filter: this.state.filter.value},
                 {dataKey: this.props.dataKey, dataType: this.props.dataType}
@@ -293,7 +297,7 @@ class ColumnActions extends React.Component {
             type='button'>Aplicar</button>) : null}
         <button
           className='sv-button default small sv-horizontal-marged-15'
-          onClick={() => this.props.onSelect(this.props.dataKey)}
+          onClick={() => this.props.onCancel()}
           type='button'
         >
           Cancelar
@@ -318,7 +322,11 @@ class ColumnActions extends React.Component {
     }
 
     return (
-      <div className='pwt-actions' onClick={(e) => e.stopPropagation()} style={{...this.styles.box, ...this.props.style}}>
+      <div
+        className='pwt-actions'
+        onClick={(e) => e.stopPropagation()}
+        style={{...this.styles.box, ...this.props.style}}
+      >
 
         <div style={this.styles.containerTop}>
           <h6 style={this.styles.h6}>{this.props.columnTitle}</h6>
@@ -354,26 +362,35 @@ class ColumnActions extends React.Component {
 ColumnActions.displayName = 'ColumnActions';
 
 ColumnActions.defaultProps = {
-  uniqueValues: {},
+  distinctsLimited: {},
 };
 
 ColumnActions.propTypes = {
   columnTitle: PropTypes.string,
   dataKey: PropTypes.string,
-  dataType: PropTypes.string,
-  distinctFilters: PropTypes.object,
-  formatterOnFilter: PropTypes.func,
-  isVisible: PropTypes.bool,
-  onAddToFilterDistinct: PropTypes.func,
-  onApplyFilter: PropTypes.func,
-  onFilterDistinct: PropTypes.func,
-  onSearch: PropTypes.func,
-  onSelect: PropTypes.func,
-  onSort: PropTypes.func,
-  position: PropTypes.object,
+  dataType: PropTypes.oneOf(['numeric', 'text', 'date']).isRequired,
+  selectedDistinctValues: PropTypes.array,
+  onCancel: PropTypes.func, //OK
+  onFilterDistinct: PropTypes.func, //OK
+  onSort: PropTypes.func, //OK
   searchable: PropTypes.bool,
   style: PropTypes.object,
-  uniqueValues: PropTypes.any,
+  formatterOnFilter: PropTypes.func,
+  isVisible: PropTypes.bool,
+  onSelectValueOnFilter: PropTypes.func,
+  distinctValues: PropTypes.array,
+  onApplyFilters: PropTypes.func,
+
+  distinctFilters: PropTypes.object,
+
+  onFilter: PropTypes.func,
+  onSelect: PropTypes.func,
+
+
+
+
+  distinctsLimited: PropTypes.any,
+  distinctFiltersValue: PropTypes.any,
 };
 
 export default ColumnActions;
