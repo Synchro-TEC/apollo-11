@@ -9,6 +9,7 @@ class Filter extends React.Component {
     super(props);
     this.state = {clearFieldIsVisible: false};   
     this.doFilterBySearchField = this.doFilterBySearchField.bind(this);
+    this.clearAllFields = this.clearAllFields.bind(this);
   }  
 
   toggleClearField(e) {
@@ -18,6 +19,12 @@ class Filter extends React.Component {
   doFilterBySearchField() {              
     if(this.props.onFilter) {
       this.props.onFilter(this.refs.searchValue.value);
+    }
+  }
+
+  clearAllFields() {    
+    if(this.props.onClearAll) {
+      this.props.onClearAll(this.refs.searchValue.value);
     }
   }
 
@@ -81,12 +88,14 @@ class Filter extends React.Component {
           <FilterOptions            
             applyFilterButtonLabel={applyFilterButtonLabel}
             cancelButtonLabel={cancelButtonLabel}
+            clearAllFields={this.clearAllFields}
             clearFilterOptionsButtonLabel={clearFilterOptionsButtonLabel}  
             doFilterBySearchField={this.doFilterBySearchField}          
             filterButtonLabel={filterButtonLabel}
             hasFilterOptions={!_isUndefined(children)}
             onClearAll={onClearAll} 
-            onFilter={onFilter}>
+            onFilter={onFilter}
+            >
             {this.props.children}
           </FilterOptions>
         </div>

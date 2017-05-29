@@ -13,10 +13,8 @@ class FilterOptions extends React.Component {
     this.onFilter = this.onFilter.bind(this);
   }
 
-  onClearAll() {
-    if(this.props.onClearAll) {
-      this.setState({ isOpen: false }, this.props.onClearAll());
-    }
+  onClearAll() {    
+    this.setState({ isOpen: false }, this.props.clearAllFields());    
   }
 
   onFilter() {             
@@ -89,6 +87,7 @@ FilterOptions.propTypes = {
   addSearchValueToFilterValues: PropTypes.func,
   applyFilterButtonLabel: PropTypes.string,
   cancelButtonLabel: PropTypes.string,
+  clearAllFields: PropTypes.func,
   clearFilterOptionsButtonLabel: PropTypes.string,
   doFilterBySearchField: PropTypes.func.isRequired,
   filterButtonLabel: PropTypes.string,
