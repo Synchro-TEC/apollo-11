@@ -7,25 +7,37 @@ import _assign from 'lodash/assign';
 
 class FilterOptions extends React.Component {
 
-  constructor(props) {
-    super(props);
-    this.state = { isOpen: false };    
+  constructor() {
+    super();
+    this.state = { 
+      optionsAreOpen: false 
+    };    
   }
 
   onClearAll() {    
-    this.setState({ isOpen: false }, this.props.clearAllFields());    
+    this.setState(
+      {optionsAreOpen: false}, 
+      this.props.clearAllFields()
+    );
   }
 
   onFilter() {             
-    this.setState({ isOpen: false }, this.props.doFilterBySearchField());    
+    this.setState(
+      {optionsAreOpen: false}, 
+      this.props.doFilterBySearchField()
+    );    
   }
 
-  toggleVisibility() {
-    this.setState({ isOpen: !this.state.isOpen });
+  toggleVisibilityOfOptions() {
+    this.setState({
+      optionsAreOpen: !this.state.optionsAreOpen
+    });
   }
 
   close() {
-    this.setState({ isOpen: false });
+    this.setState({
+      optionsAreOpen: false
+    });
   }
 
   render() {
@@ -39,19 +51,21 @@ class FilterOptions extends React.Component {
 
     let filterSpanStyle = _assign(
       {display: this.props.hasFilterOptions ? 'block': 'none'},
-      {color: this.state.isOpen ? '#2196f3': '#455a64'}
+      {color: this.state.optionsAreOpen ? '#2196f3': '#455a64'}
     );
 
     return (
       <div>
         <span
           className='label-action at-last'
-          onClick={() => this.toggleVisibility()}
+          onClick={() => this.toggleVisibilityOfOptions()}
           style={filterSpanStyle}>
           {filterButtonLabel}
           <i className='fa fa-sliders fa-fw'/>
         </span>
-        <section className='action-container' style={{display: this.state.isOpen ? 'block': 'none'}}>
+        <section 
+          className='action-container' 
+          style={{display: this.state.optionsAreOpen ? 'block': 'none'}}>
           <div className='sv-triangle on-right'/>
           <section className='action-container--content'>
             {this.props.children}

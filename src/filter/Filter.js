@@ -5,37 +5,39 @@ import _isUndefined from 'lodash/isUndefined';
 
 class Filter extends React.Component {
 
-  constructor(props) {
-    super(props);
-    this.state = {clearFieldIsVisible: false};   
+  constructor() {
+    super();
+    this.state = {
+      clearFieldIsVisible: false
+    };   
     this.doFilterBySearchField = this.doFilterBySearchField.bind(this);
     this.clearAllFields = this.clearAllFields.bind(this);
   }  
 
-  toggleClearField(e) {
+  toggleClearField() {
     this.setState({ 
-      clearFieldIsVisible: e.target.value !== ''
+      clearFieldIsVisible: this.refs.search.value !== ''
     });
   }
 
   doFilterBySearchField() {              
     if(this.props.onFilter) {
-      this.props.onFilter(this.refs.searchValue.value);
+      this.props.onFilter(this.refs.search.value);
     }
   }
 
   clearAllFields() {    
     if(this.props.onClearAll) {
-      this.props.onClearAll(this.refs.searchValue.value);
+      this.props.onClearAll(this.refs.search.value);
     }
   }
 
   clearSearchField() {          
     if(this.props.onFilter) {      
-      this.refs.searchValue.value = '';
+      this.refs.search.value = '';
       this.setState(
         {clearFieldIsVisible: false}, 
-        this.props.onFilter(this.refs.searchValue.value)
+        this.props.onFilter(this.refs.search.value)
       );
     }    
   }
@@ -54,7 +56,6 @@ class Filter extends React.Component {
       clearFilterOptionsButtonLabel,
       filterButtonLabel,
       placeholder,
-      name,
       children
     } = this.props;
 
@@ -77,11 +78,10 @@ class Filter extends React.Component {
             <i className='fa fa-search fa-fw'/>
           </span>
           <input
-            className='on-center'
-            name={name}
-            onKeyUp={(e) => {this.toggleClearField(e); this.doFilterBySearchField();}}
+            className='on-center'            
+            onKeyUp={() => {this.toggleClearField(); this.doFilterBySearchField();}}
             placeholder={placeholder}            
-            ref='searchValue'
+            ref='search'
             type='search'
           />
           {clearFieldIcon}
@@ -113,8 +113,7 @@ Filter.propTypes = {
   applyFilterButtonLabel: PropTypes.string,
   cancelButtonLabel: PropTypes.string,
   clearFilterOptionsButtonLabel: PropTypes.string,
-  filterButtonLabel: PropTypes.string,
-  name: PropTypes.string,
+  filterButtonLabel: PropTypes.string,  
   onClearAll: PropTypes.func,
   onFilter: PropTypes.func,
   placeholder: PropTypes.string,
