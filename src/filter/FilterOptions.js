@@ -9,8 +9,7 @@ class FilterOptions extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = { isOpen: false };   
-    this.onFilter = this.onFilter.bind(this);
+    this.state = { isOpen: false };    
   }
 
   onClearAll() {    

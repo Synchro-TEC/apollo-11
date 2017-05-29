@@ -13,7 +13,9 @@ class Filter extends React.Component {
   }  
 
   toggleClearField(e) {
-    this.setState({ clearFieldIsVisible: e.target.value !== ''});
+    this.setState({ 
+      clearFieldIsVisible: e.target.value !== ''
+    });
   }
 
   doFilterBySearchField() {              
@@ -53,8 +55,7 @@ class Filter extends React.Component {
       filterButtonLabel,
       placeholder,
       name,
-      children,      
-      onFilter,
+      children
     } = this.props;
 
     let clearFieldIcon = '';
@@ -91,8 +92,7 @@ class Filter extends React.Component {
             clearFilterOptionsButtonLabel={clearFilterOptionsButtonLabel}  
             doFilterBySearchField={this.doFilterBySearchField}          
             filterButtonLabel={filterButtonLabel}
-            hasFilterOptions={!_isUndefined(children)}             
-            onFilter={onFilter}>
+            hasFilterOptions={!_isUndefined(children)}>
             {this.props.children}
           </FilterOptions>
         </div>
