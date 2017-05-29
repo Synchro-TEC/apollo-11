@@ -91,9 +91,7 @@ FilterOptions.propTypes = {
   clearFilterOptionsButtonLabel: PropTypes.string,
   doFilterBySearchField: PropTypes.func.isRequired,
   filterButtonLabel: PropTypes.string,
-  hasFilterOptions: PropTypes.bool,
-  onClearAll: PropTypes.func,
-  onFilter: PropTypes.func,
+  hasFilterOptions: PropTypes.bool,  
 };
 
 FilterOptions.displayName = 'FilterOptions';

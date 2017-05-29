@@ -53,8 +53,7 @@ class Filter extends React.Component {
       filterButtonLabel,
       placeholder,
       name,
-      children,
-      onClearAll,
+      children,      
       onFilter,
     } = this.props;
 
@@ -92,10 +91,8 @@ class Filter extends React.Component {
             clearFilterOptionsButtonLabel={clearFilterOptionsButtonLabel}  
             doFilterBySearchField={this.doFilterBySearchField}          
             filterButtonLabel={filterButtonLabel}
-            hasFilterOptions={!_isUndefined(children)}
-            onClearAll={onClearAll} 
-            onFilter={onFilter}
-            >
+            hasFilterOptions={!_isUndefined(children)}             
+            onFilter={onFilter}>
             {this.props.children}
           </FilterOptions>
         </div>
@@ -124,5 +121,4 @@ Filter.propTypes = {
 };
 
 Filter.displayName = 'Filter';
-
 export default Filter;
