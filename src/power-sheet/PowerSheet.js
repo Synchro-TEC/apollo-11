@@ -48,6 +48,8 @@ class PowerSheet extends React.Component {
 
     this._getCurrentDistinctValues = this._getCurrentDistinctValues.bind(this);
     this._getCurrentSelectedDistinctValues = this._getCurrentSelectedDistinctValues.bind(this);
+    this._getFormatterOnFilter = this._getFormatterOnFilter.bind(this);
+    this._keysThatHasFilter = this._keysThatHasFilter.bind(this);
 
     this.sort = null;
     this.sortDesc = false;
@@ -129,48 +131,25 @@ class PowerSheet extends React.Component {
     }
   }
 
-
-  /**
-   * Extrai as informações das colunas.
-   *
-   * @param props
-   * @return {*}
-   * @private
-   */
   _extractColumns(props) {
     return React.Children.map(props.children, (child) => {
       return {
         title: child.props.columnTitle,
         key: child.props.dataKey,
         formatter: child.props.formatter,
+        formatterOnFilter: child.props.formatterOnFilter,
         searchable: child.props.searchable,
         groupBy: child.props.groupBy
       };
     });
   }
 
-  /**
-   * Extrai a prop widh das colunas.
-   *
-   * @param props
-   * @return {*}
-   * @private
-   */
   _extractColumnsWidth(props) {
     let widths = [];
     React.Children.forEach(props.children, (child) => widths.push(child.props.width));
     return widths;
   }
 
-  /**
-   * Seta qual é a coluna ativa (que terá as opções de filtro e sort aberto)
-   *
-   * @param dataKey
-   * @param dataType
-   * @param columnTitle
-   * @param e
-   * @private
-   */
   _selectColumn(dataKey, dataType, columnTitle, e) {
     let activeColumn = dataKey === this.state.activeColumn ? null : dataKey;
     let activeColumnType = activeColumn ? dataType : 'text';
@@ -265,12 +244,6 @@ class PowerSheet extends React.Component {
     }
   }
 
-  /**
-   * Manipula o retorno do filtro nos valores distinct.
-   *
-   * @param filterProps
-   * @private
-   */
   _handlerDistinctFilters(filterProps) {
 
     const { value } = filterProps;
@@ -311,7 +284,6 @@ class PowerSheet extends React.Component {
     }
 
     this._generateCondition(newState, dataKey, conditionValue);
-    debugger;
 
     this.setState(update(this.state, {filtersByConditions: {$set: newState}}));
 
@@ -342,7 +314,7 @@ class PowerSheet extends React.Component {
       this._generateCondition(newState, dataKey);
       setValue();
     }
-    debugger;
+
     this.setState(update(this.state, {filtersByConditions: {$set: newState}}));
   }
 
@@ -421,7 +393,12 @@ class PowerSheet extends React.Component {
 
     }
 
-    const newState = update(this.state, {currentData: {$set: itens}});
+    const newState = update(this.state, {
+      currentData: {$set: itens},
+      activeColumn: {$set: null},
+      activeColumnType: {$set: 'text'}
+    });
+
     this.setState(newState);
 
   }
@@ -443,7 +420,10 @@ class PowerSheet extends React.Component {
       if(this.columnsWidths[i]) {
         style.flex = `0 0 ${this.columnsWidths[i]}px`;
       }
-      return (<div className='pw-table-tbody-cell' key={v4()} style={style}><div>{_get(row, col.key)}</div></div>);
+
+      const valueToPrint = col.formatter ? col.formatter(row) : _get(row, col.key);
+
+      return (<div className='pw-table-tbody-cell' key={v4()} style={style}><div>{valueToPrint}</div></div>);
     });
 
     return (
@@ -470,34 +450,36 @@ class PowerSheet extends React.Component {
 
   _getSearchable() {
     let isSearchable = false;
-
     if(this.state.activeColumn) {
       isSearchable = _find(this.columns, { key: this.state.activeColumn }).searchable;
     }
-
     return isSearchable;
   }
 
+  _getFormatterOnFilter() {
+    let formatter;
+
+    if(this.state.activeColumn) {
+      formatter = _find(this.columns, { key: this.state.activeColumn }).formatterOnFilter;
+    }
+    debugger;
+    return formatter;
+  }
+
+  _keysThatHasFilter() {
+    const {selectedDistinctFilters, filtersByConditions} = this.state;
+    return [...new Set(Object.keys(selectedDistinctFilters).concat(Object.keys(filtersByConditions)))];
+  }
+
   render() {
-    // let display = this.state.activeColumn ? 'block' : 'none';
     let headers = this.props.children.map((chield) => {
       let newProps = {key: v4()};
       if(chield.props.dataKey){
-        // newProps.onSearch = this._onFilter;
-        // newProps.onSort = this._onSort;
-        newProps.filters = this.state.filters;
-        // newProps.filtersByConditions = this.state.filtersByConditions;
+        newProps.selectedDistinctFilters = this._getCurrentSelectedDistinctValues();
+        newProps.filtersByConditions = this._getCurrentFilterByConditionValues();
         newProps.sorts = this.sorts;
         newProps.onSelect = this._selectColumn;
-        // newProps.onFilterDistinct = this._filterDistinct;
-        // newProps.onAddToFilterDistinct = this._handlerDistinctFilters;
-
-        // newProps.distinctsLimited = this.state.distinctsLimited;
-        // newProps.distinctFiltersValue = this.state.distinctFiltersValue;
-
-        // newProps.activeColumn = this.state.activeColumn;
-        // newProps.distinctFilters = this.state.distinctFilters;
-        // newProps.onApplyFilter = this._onApplyFilter;
+        newProps.filterKeys = this._keysThatHasFilter();
       }
       let props = {...chield.props, ...newProps};
 
@@ -518,50 +500,47 @@ class PowerSheet extends React.Component {
           { this.state.message }
         </div>
         {this.originalData.length > 0 &&
-          <div className='pw-table-header'>
-            <div className='pw-table-header-row'>
-              {headers}
-            </div>
+        <div className='pw-table-header'>
+          <div className='pw-table-header-row'>
+            {headers}
           </div>
+        </div>
         }
         {this.originalData.length > 0 &&
-          <div className='pw-table-tbody' style={{maxHeight: `${this.props.containerHeight}px`}}>
-            <WindowedList
+        <div className='pw-table-tbody' style={{maxHeight: `${this.props.containerHeight}px`}}>
+          <WindowedList
             itemRenderer={this._renderItem}
             length={this.state.currentData.length}
             pageSize={(this.props.pageSize > this.state.currentData.length) ? this.state.currentData.length : this.props.pageSize}
             type='uniform'
-            />
-          </div>
+          />
+        </div>
         }
 
         <ColumnActions
+          activeColumn={this.state.activeColumn}
           columnTitle={this.state.activeColumnTitle}
-          onSort={this._onSort}
-          onCancel={this._onCancel}
-          onSelectValueOnFilter={this._handlerDistinctFilters}
-          sorts={this.sorts}
           dataType={this.state.activeColumnType}
+          distinctValues={this._getCurrentDistinctValues()}
+          filters={this.state.filters}
+          filtersByConditions={this._getCurrentFilterByConditionValues()}
+          formatterOnFilter={this._getFormatterOnFilter()}
+          handlerConditionFilter={this._handlerConditionFilter}
+          handlerValueInConditionFilter={this._handlerValueInConditionFilter}
           isVisible={this.state.activeColumn !== null}
+          onApplyFilters={this._onApplyFilter}
+          onCancel={this._onCancel}
+          onFilterDistinct={this._filterDistinct}
+          onSelect={this._selectColumn}
+          onSelectValueOnFilter={this._handlerDistinctFilters}
+          onSort={this._onSort}
+          searchable={this._getSearchable()}
+          selectedDistinctValues={this._getCurrentSelectedDistinctValues()}
+          sorts={this.sorts}
           style={{
             top: `${this.state.columnPosition.y + 10}px`,
             left: `${this.state.columnPosition.x + 10}px`,
           }}
-          handlerValueInConditionFilter={this._handlerValueInConditionFilter}
-          handlerConditionFilter={this._handlerConditionFilter}
-          distinctValues={this._getCurrentDistinctValues()}
-          selectedDistinctValues={this._getCurrentSelectedDistinctValues()}
-          searchable={this._getSearchable()}
-          onFilter={this._onFilter}
-          filters={this.state.filters}
-          filtersByConditions={this._getCurrentFilterByConditionValues()}
-          onSelect={this._selectColumn}
-          onFilterDistinct={this._filterDistinct}
-
-
-          activeColumn={this.state.activeColumn}
-
-          onApplyFilters={this._onApplyFilter}
         />
 
       </div>

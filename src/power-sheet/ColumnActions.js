@@ -141,9 +141,7 @@ class ColumnActions extends React.Component {
   }
 
   _setValueInFilter(e){
-    debugger;
     this.props.handlerValueInConditionFilter(e.target.name, e.target.value);
-    // this.setState(update(this.state, {filter: {$set: this.filterValues}}));
   }
 
   _hasInFilter(value) {
@@ -151,14 +149,10 @@ class ColumnActions extends React.Component {
   }
 
   _onChangeCondition(condition) {
-    debugger;
     this.props.handlerConditionFilter(condition);
-    // this.filterValues = {value: {}};
-    // this.setState({condition, filter: {value: {}}});
   }
 
   renderSelectedsDistinctValues() {
-
     let items = this.props.selectedDistinctValues.map((item, i) => {
       let rendered = this.props.formatterOnFilter ? this.props.formatterOnFilter(item) : item;
       return (
@@ -174,7 +168,6 @@ class ColumnActions extends React.Component {
   }
 
   renderConditionsByDataType() {
-    // debugger;
     let options = this.conditions[this.props.dataType].map((opt, i) => {
       return (<option key={`${this.props.dataType}-${opt.value}-${i}`} value={JSON.stringify(opt)}>{opt.label}</option>);
     });
@@ -195,7 +188,6 @@ class ColumnActions extends React.Component {
   }
 
   renderConditionValue() {
-    debugger;
     let valueFild = (
       <input
         name='only'
@@ -352,9 +344,6 @@ class ColumnActions extends React.Component {
 
 ColumnActions.displayName = 'ColumnActions';
 
-ColumnActions.defaultProps = {
-  distinctsLimited: {},
-};
 
 ColumnActions.propTypes = {
   columnTitle: PropTypes.string,
@@ -363,7 +352,6 @@ ColumnActions.propTypes = {
   distinctFilters: PropTypes.object,
   distinctFiltersValue: PropTypes.any,
   distinctValues: PropTypes.array,
-  distinctsLimited: PropTypes.any,
   filtersByConditions: PropTypes.object,
   formatterOnFilter: PropTypes.func,
   handlerConditionFilter: PropTypes.func,
@@ -371,7 +359,6 @@ ColumnActions.propTypes = {
   isVisible: PropTypes.bool,
   onApplyFilters: PropTypes.func,
   onCancel: PropTypes.func, //OK
-  onFilter: PropTypes.func,
   onFilterDistinct: PropTypes.func, //OK
   onSearch: PropTypes.func, //OK
   onSelect: PropTypes.func,
