@@ -89,6 +89,7 @@ const applyFilter = () => {
   let perConditionsFilter = {};
   let $andConditions = [];
 
+  debugger;
   Object.keys(filtersByConditions).forEach(key => {
     let conditions = {};
     let condition = filtersByConditions[key].condition;

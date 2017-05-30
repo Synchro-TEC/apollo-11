@@ -7,7 +7,7 @@ import axios from 'axios';
 import _get from 'lodash/get';
 import _sortBy from 'lodash/sortBy';
 import _find from 'lodash/find';
-import {v4} from 'uuid'
+import {v4} from 'uuid';
 import sift from 'sift';
 
 import { bytesToSize } from './utils.js';
@@ -41,6 +41,9 @@ class PowerSheet extends React.Component {
     this._handlerDistinctFilters = this._handlerDistinctFilters.bind(this);
 
     this._filterDistinct = this._filterDistinct.bind(this);
+
+    this._handlerConditionFilter = this._handlerConditionFilter.bind(this);
+    this._handlerValueInConditionFilter = this._handlerValueInConditionFilter.bind(this);
 
 
     this._getCurrentDistinctValues = this._getCurrentDistinctValues.bind(this);
@@ -100,9 +103,6 @@ class PowerSheet extends React.Component {
         const newState = update(this.state, {message: {$set: error}});
         this.setState(newState);
       });
-  }
-
-  componentWillUnmount() {
   }
 
   componentDidUpdate(){
@@ -174,7 +174,18 @@ class PowerSheet extends React.Component {
   _selectColumn(dataKey, dataType, columnTitle, e) {
     let activeColumn = dataKey === this.state.activeColumn ? null : dataKey;
     let activeColumnType = activeColumn ? dataType : 'text';
-    const newPosition = {x: e.nativeEvent.x, y: e.nativeEvent.y};
+
+    const screenWidth = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+    const colunmActionWidth = 250;
+    const mouseGutter = 20;
+    let xPosition = e.nativeEvent.x;
+
+
+    if((e.nativeEvent.x + colunmActionWidth) >= screenWidth) {
+      xPosition = e.nativeEvent.x - colunmActionWidth - mouseGutter;
+    }
+
+    const newPosition = {x: xPosition, y: e.nativeEvent.y};
 
     const newState = update(this.state, {
       activeColumn: {$set: activeColumn},
@@ -204,7 +215,8 @@ class PowerSheet extends React.Component {
 
   _filterDistinct(filterProps) {
 
-    const {dataKey, value} = filterProps;
+    const {value} = filterProps;
+    const dataKey = this.state.activeColumn;
 
     if (value) {
       const contains = (val) => {
@@ -238,10 +250,18 @@ class PowerSheet extends React.Component {
       }
 
       this.setState(update(this.state, {
-        // distinctFilters: {$set: newState},
         distinctValues: {$set: newDistinctState},
         distinctFiltersValue: {$set: newDistinctFiltersValueState},
       }));
+
+    } else {
+      const distincts = this._fillDistincts();
+
+      const newState = update(this.state, {
+        distinctValues: {$set: distincts}
+      });
+
+      this.setState(newState);
     }
   }
 
@@ -252,7 +272,7 @@ class PowerSheet extends React.Component {
    * @private
    */
   _handlerDistinctFilters(filterProps) {
-    debugger;
+
     const { value } = filterProps;
     const dataKey = this.state.activeColumn;
 
@@ -267,11 +287,63 @@ class PowerSheet extends React.Component {
         newState[dataKey].splice(index, 1);
       }
     } else {
-      debugger;
       newState[dataKey] = [value];
     }
 
+    if(!newState[dataKey].length) {
+      delete newState[dataKey];
+    }
+
     this.setState(update(this.state, {selectedDistinctFilters: {$set: newState}}));
+  }
+
+  _handlerConditionFilter(condition) {
+    const dataKey = this.state.activeColumn;
+
+    let oldState = JSON.stringify(this.state.filtersByConditions);
+    let newState = JSON.parse(oldState);
+
+    let conditionValue;
+    if(condition) {
+      conditionValue = condition.value;
+    } else {
+      conditionValue = (this.state.activeColumnType === 'text' ? '$in' : '$gt');
+    }
+
+    this._generateCondition(newState, dataKey, conditionValue);
+    debugger;
+
+    this.setState(update(this.state, {filtersByConditions: {$set: newState}}));
+
+  }
+
+  _generateCondition(newState, dataKey, condition = (this.state.activeColumnType === 'text' ? '$in' : '$gt')) {
+    if (newState.hasOwnProperty(dataKey)) {
+      newState[dataKey].condition = condition;
+    } else {
+      newState[dataKey] = {condition: condition, value: {}};
+    }
+  }
+
+  _handlerValueInConditionFilter(name, value) {
+
+    const dataKey = this.state.activeColumn;
+
+    let oldState = JSON.stringify(this.state.filtersByConditions);
+    let newState = JSON.parse(oldState);
+
+    let setValue = function () {
+      newState[dataKey].value[name] = value;
+    };
+
+    if(newState.hasOwnProperty(dataKey)) {
+      setValue();
+    } else {
+      this._generateCondition(newState, dataKey);
+      setValue();
+    }
+    debugger;
+    this.setState(update(this.state, {filtersByConditions: {$set: newState}}));
   }
 
   _onSort(direction) {
@@ -283,11 +355,61 @@ class PowerSheet extends React.Component {
     this._onApplyFilter();
   }
 
-  _onApplyFilter(perValue, perConditions, dataInfo) {
+  _onApplyFilter() {
 
-    debugger;
     let perValueFilter = {};
+    let filtersByConditions = this.state.filtersByConditions;
+
+    Object.keys(this.state.selectedDistinctFilters).forEach(key => {
+      if(key) {
+        perValueFilter[key] = {$in: this.state.selectedDistinctFilters[key]};
+      }
+    });
+
     let itens = sift(perValueFilter, this.originalData);
+
+    let perConditionsFilter = {};
+    let $andConditions = [];
+
+    Object.keys(filtersByConditions).forEach(key => {
+      let conditions = {};
+      let condition = filtersByConditions[key].condition;
+
+      if(condition !== '$bet') {
+
+        let value = filtersByConditions[key].value.only;
+
+        if (condition === '$in' || condition === '$nin') {
+          if(condition === '$in') {
+            value = new RegExp(`${value.toString()}`, 'gi');
+          } else {
+            value = new RegExp(`[^${value.toString()}]`, 'gi');
+          }
+          condition = '$regex';
+        } else {
+          value = parseInt(value, 10);
+        }
+        conditions[condition] = value;
+        perConditionsFilter[key] = conditions;
+      } else {
+
+        let {start, end} = filtersByConditions[key].value;
+        let startCondition = {};
+        let endCondition = {};
+
+        startCondition[key] = {$gte: parseInt(start, 10)};
+        endCondition[key] = {$lte: parseInt(end, 10)};
+
+        if(start.length > 0 && end.length > 0) {
+          $andConditions.push(startCondition, endCondition);
+        }
+
+        perConditionsFilter = { $and: $andConditions};
+      }
+    });
+
+    itens = sift(perConditionsFilter, itens);
+
 
     if(this.sorts) {
       let key = Object.keys(this.sorts)[0];
@@ -319,9 +441,9 @@ class PowerSheet extends React.Component {
     let cols = this.columns.map((col, i) => {
       let style = {};
       if(this.columnsWidths[i]) {
-        style.flex = `0 0 ${this.columnsWidths[i]}px`
+        style.flex = `0 0 ${this.columnsWidths[i]}px`;
       }
-      return  <div className='pw-table-tbody-cell' key={v4()} style={style}><div>{_get(row, col.key)}</div></div>
+      return (<div className='pw-table-tbody-cell' key={v4()} style={style}><div>{_get(row, col.key)}</div></div>);
     });
 
     return (
@@ -339,6 +461,11 @@ class PowerSheet extends React.Component {
   _getCurrentSelectedDistinctValues() {
     const {activeColumn, selectedDistinctFilters} = this.state;
     return (activeColumn &&  selectedDistinctFilters[activeColumn]) ? selectedDistinctFilters[activeColumn] : [];
+  }
+
+  _getCurrentFilterByConditionValues() {
+    const {activeColumn, filtersByConditions} = this.state;
+    return (activeColumn &&  filtersByConditions[activeColumn]) ? filtersByConditions[activeColumn] : {condition: '', value: {}};
   }
 
   _getSearchable() {
@@ -401,8 +528,8 @@ class PowerSheet extends React.Component {
           <div className='pw-table-tbody' style={{maxHeight: `${this.props.containerHeight}px`}}>
             <WindowedList
             itemRenderer={this._renderItem}
-            length={this.originalData.length}
-            pageSize={this.props.pageSize}
+            length={this.state.currentData.length}
+            pageSize={(this.props.pageSize > this.state.currentData.length) ? this.state.currentData.length : this.props.pageSize}
             type='uniform'
             />
           </div>
@@ -420,16 +547,17 @@ class PowerSheet extends React.Component {
             top: `${this.state.columnPosition.y + 10}px`,
             left: `${this.state.columnPosition.x + 10}px`,
           }}
+          handlerValueInConditionFilter={this._handlerValueInConditionFilter}
+          handlerConditionFilter={this._handlerConditionFilter}
           distinctValues={this._getCurrentDistinctValues()}
           selectedDistinctValues={this._getCurrentSelectedDistinctValues()}
           searchable={this._getSearchable()}
           onFilter={this._onFilter}
           filters={this.state.filters}
-          filtersByConditions={this.state.filtersByConditions}
+          filtersByConditions={this._getCurrentFilterByConditionValues()}
           onSelect={this._selectColumn}
           onFilterDistinct={this._filterDistinct}
-          // onAddToFilterDistinct={this._handlerDistinctFilters}
-          // distinctsLimited={this.state.distinctsLimited}
+
 
           activeColumn={this.state.activeColumn}
 
