@@ -7,6 +7,7 @@ import axios from 'axios';
 import _get from 'lodash/get';
 import _sortBy from 'lodash/sortBy';
 import _find from 'lodash/find';
+import _groupBy from 'lodash/groupBy';
 import {v4} from 'uuid';
 import sift from 'sift';
 
@@ -15,16 +16,32 @@ import ColumnActions from './ColumnActions';
 
 import style from './styles.css';
 
+const groupByMulti = (list, values, context) => {
+
+  if (!values.length) {
+    return list;
+  }
+
+  let byFirst = _groupBy(list, values[0], context);
+  let rest = values.slice(1);
+
+  for (let prop in byFirst) {
+    byFirst[prop] = groupByMulti(byFirst[prop], rest, context);
+  }
+
+  return byFirst;
+};
+
 class PowerSheet extends React.Component {
   constructor(props){
     super(props);
 
     this.originalData = [];
+    this.groupedColumns = [];
     this._distinctsLimited = {};
     this._distincts = {};
     this.columns = this._extractColumns(props);
     this.columnsWidths = this._extractColumnsWidth(props);
-
 
     this._renderItem = this._renderItem.bind(this);
 
@@ -50,6 +67,7 @@ class PowerSheet extends React.Component {
     this._getCurrentSelectedDistinctValues = this._getCurrentSelectedDistinctValues.bind(this);
     this._getFormatterOnFilter = this._getFormatterOnFilter.bind(this);
     this._keysThatHasFilter = this._keysThatHasFilter.bind(this);
+    this._whereToGet = this._whereToGet.bind(this);
 
     this.sort = null;
     this.sortDesc = false;
@@ -92,6 +110,9 @@ class PowerSheet extends React.Component {
       .then((response) => {
         this.originalData = response.data;
         const distincts = this._fillDistincts();
+        if(this.groupedColumns.length) {
+          this.groupedData = groupByMulti(response.data, this.groupedColumns);
+        }
         const newState = update(this.state, {
           message: {$set: ''},
           currentData: {$set: response.data},
@@ -133,6 +154,11 @@ class PowerSheet extends React.Component {
 
   _extractColumns(props) {
     return React.Children.map(props.children, (child) => {
+
+      if(child.props.groupBy) {
+        this.groupedColumns.push(child.props.dataKey);
+      }
+
       return {
         title: child.props.columnTitle,
         key: child.props.dataKey,
@@ -414,6 +440,7 @@ class PowerSheet extends React.Component {
 
   _renderItem(index, key) {
     let row = this.state.currentData[index];
+    console.log(this._whereToGet(index));
 
     let cols = this.columns.map((col, i) => {
       let style = {};
@@ -431,6 +458,23 @@ class PowerSheet extends React.Component {
         {cols}
       </div>
     );
+  }
+
+  // _renderGroupedItem() {
+  //
+  // }
+
+  _whereToGet(index) {
+    const keys = Object.keys(this.groupedData);
+
+    keys.reduce((prev, curr, currIndex) => {
+      if(this.groupedData[prev].length >= index) {
+        debugger;
+        return keys[currIndex - 1];
+      } else {
+        debugger;
+      }
+    });
   }
 
   _getCurrentDistinctValues() {
@@ -462,7 +506,6 @@ class PowerSheet extends React.Component {
     if(this.state.activeColumn) {
       formatter = _find(this.columns, { key: this.state.activeColumn }).formatterOnFilter;
     }
-    debugger;
     return formatter;
   }
 
