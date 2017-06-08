@@ -24,6 +24,13 @@
     overflow: auto;
     border-bottom: 1px solid #c9d0d5;
     border-right: 1px solid #c9d0d5;
+    box-sizing: border-box;
+}
+
+.pw-table-grouped-tbody {
+    overflow: auto;
+    border-bottom: 1px solid #c9d0d5;
+    box-sizing: border-box;
 }
 
 .pw-table-header-row,
@@ -86,6 +93,23 @@
     border-left: 1px solid #c9d0d5;
 }
 
+.pw-table-grouped {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.pw-table-grouped-tbody-cell {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    border-bottom: 1px solid #c9d0d5;
+    border-right: 1px solid #c9d0d5;
+    padding: 8px 5px;
+}
+
+.pw-table-grouped-tbody-cell:first-child {
+    border-left: 1px solid #c9d0d5;
+}
 
 
 

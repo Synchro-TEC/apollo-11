@@ -58,9 +58,11 @@
     "classnames": "^2.2.5",
     "data-collection": "^1.1.6",
     "date-fns": "^1.28.4",
+    "flat": "^2.0.1",
     "immutability-helper": "^2.2.0",
     "lodash": "^4.17.4",
     "prop-types": "^15.5.8",
+    "react-list": "^0.8.6",
     "react-windowed-list": "^1.3.0",
     "sift": "^3.3.5",
     "uuid": "^3.0.1"
