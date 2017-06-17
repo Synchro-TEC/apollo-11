@@ -1,5 +1,10 @@
 .pw-table {
     font-size: .9em;
+    box-sizing: border-box;
+}
+
+.pw-table * {
+    box-sizing: border-box;
 }
 
 .pw-table-info {
@@ -97,6 +102,24 @@
     width: 100%;
     border-collapse: collapse;
 }
+
+.pw-table-grouped-header-cell {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    border-right: 1px solid #c9d0d5;
+    vertical-align: middle;
+    padding: 8px 5px;
+    text-align: left;
+    font-weight: 500;
+    text-transform: uppercase;
+    color: #607d8b;
+}
+
+.pw-table-grouped-header-cell:first-child {
+    border-left: 1px solid #c9d0d5;
+}
+
 
 .pw-table-grouped-tbody-cell {
     white-space: nowrap;

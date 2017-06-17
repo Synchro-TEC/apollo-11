@@ -2,9 +2,10 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import Proptypes from 'prop-types';
 import update from 'immutability-helper';
-// import WindowedList from 'react-windowed-list';
 import ReactList from 'react-list';
 import axios from 'axios';
+import { v4 } from 'uuid';
+import sift from 'sift';
 import _get from 'lodash/get';
 import _sortBy from 'lodash/sortBy';
 import _find from 'lodash/find';
@@ -13,22 +14,17 @@ import _intersectionWith from 'lodash/intersectionWith';
 import _xor from 'lodash/xor';
 import _sumBy from 'lodash/sumBy';
 import _filter from 'lodash/filter';
+import _groupBy from 'lodash/groupBy';
 import _map from 'lodash/map';
 
 import GroupedTableBody from './GroupedTableBody';
-
-import _groupBy from 'lodash/groupBy';
-import {v4} from 'uuid';
-import sift from 'sift';
-
 import { bytesToSize } from './utils.js';
 import ColumnActions from './ColumnActions';
 
-import style from './styles.css';
+import './styles.css';
 
 class PowerSheet extends React.Component {
-
-  constructor(props){
+  constructor(props) {
     super(props);
 
     this.originalData = [];
@@ -38,50 +34,38 @@ class PowerSheet extends React.Component {
     this._distincts = {};
     this.columns = this._extractColumns(props);
     this.columnsWidths = this._extractColumnsWidth(props);
+    this.cachedRenderedGroup = [];
+    this.cachedRenderedGroupHeighs = [];
 
+    
     this._renderItem = this._renderItem.bind(this);
     this._renderGroupedItem = this._renderGroupedItem.bind(this);
-
     this._fixScrollBarDiff = this._fixScrollBarDiff.bind(this);
-    this._getColWidths = this._getColWidths.bind(this);
-
     this._fillDistincts = this._fillDistincts.bind(this);
     this._selectColumn = this._selectColumn.bind(this);
-
-
     this._onSort = this._onSort.bind(this);
-    this._onFilter = this._onFilter.bind(this);
     this._onApplyFilter = this._onApplyFilter.bind(this);
     this._onCancel = this._onCancel.bind(this);
     this._handlerDistinctFilters = this._handlerDistinctFilters.bind(this);
-
     this._filterDistinct = this._filterDistinct.bind(this);
-
     this._handlerConditionFilter = this._handlerConditionFilter.bind(this);
     this._handlerValueInConditionFilter = this._handlerValueInConditionFilter.bind(this);
-
-
     this._getCurrentDistinctValues = this._getCurrentDistinctValues.bind(this);
     this._getCurrentSelectedDistinctValues = this._getCurrentSelectedDistinctValues.bind(this);
     this._getFormatterOnFilter = this._getFormatterOnFilter.bind(this);
     this._keysThatHasFilter = this._keysThatHasFilter.bind(this);
-
     this._getItemHeight = this._getItemHeight.bind(this);
-    this.sumRowSpan = this.sumRowSpan.bind(this);
+    this._sumRowSpan = this._sumRowSpan.bind(this);
+    this._groupByMulti = this._groupByMulti.bind(this);
 
-    this.groupByMulti = this.groupByMulti.bind(this);
-
-
-    this.sort = null;
     this.sortDesc = false;
     this.sorts = {};
-    this.renderedCache = [];
 
     this.state = {
       activeColumn: null,
       activeColumnType: 'text',
       activeColumnTitle: '',
-      columnPosition: {x: '0px', y: '0px'},
+      columnPosition: { x: '0px', y: '0px' },
       collection: [],
       currentData: [],
       message: 'Iniciando o carregamento dos dados',
@@ -93,48 +77,59 @@ class PowerSheet extends React.Component {
       loading: true,
       sorts: {},
     };
-
   }
 
   componentDidMount() {
     let requestConfig = {
       method: this.props.fetch.method,
-      onDownloadProgress: (e) => {
-        const newState = update(this.state, {message: {$set: `${bytesToSize(e.loaded)} carregados...`}});
+      onDownloadProgress: e => {
+        const newState = update(this.state, { message: { $set: `${bytesToSize(e.loaded)} carregados...` } });
         this.setState(newState);
-      }
+      },
     };
 
-    if(this.props.fetch.params) {
-      this.props.fetch.method === 'get' ? requestConfig.params = this.props.fetch.params : requestConfig.data = this.props.fetch.params;
+    if (this.props.fetch.params) {
+      this.props.fetch.method === 'get'
+        ? (requestConfig.params = this.props.fetch.params)
+        : (requestConfig.data = this.props.fetch.params);
     }
 
     axios
       .get(this.props.fetch.url, requestConfig)
-      .then((response) => {
+      .then(response => {
         this.originalData = response.data;
         const distincts = this._fillDistincts();
-        let currentData = this.groupedColumns.length ?
-          this.groupByMulti(response.data, _map(_filter(this.columns, { 'groupBy': true }), 'key')) : response.data;
+        let currentData = this.groupedColumns.length
+          ? this._groupByMulti(response.data, _map(_filter(this.columns, { groupBy: true }), 'key'))
+          : response.data;
 
         const newState = update(this.state, {
-          message: {$set: ''},
-          currentData: {$set: currentData},
-          distinctValues: {$set: distincts}
+          message: { $set: '' },
+          currentData: { $set: currentData },
+          distinctValues: { $set: distincts },
         });
+
+        if (this.groupedColumns.length) {
+          this.cachedRenderedGroup = [];
+          for (let i = 0; i < currentData.length; i++) {
+            let row = currentData[i];
+            this._sumRowSpan(row);
+            this.cachedRenderedGroupHeighs.push(row.rowSpan);
+          }
+        }
 
         this.setState(newState, this._fixScrollBarDiff);
       })
-      .catch((error) => {
+      .catch(error => {
         console.error(error);
-        const newState = update(this.state, {message: {$set: error}});
+        const newState = update(this.state, { message: { $set: error } });
         this.setState(newState);
       });
 
     window.addEventListener('resize', this._fixScrollBarDiff(true));
   }
 
-  componentDidUpdate(){
+  componentDidUpdate() {
     this._fixScrollBarDiff();
   }
 
@@ -142,8 +137,7 @@ class PowerSheet extends React.Component {
     window.removeEventListener('resize', this._fixScrollBarDiff);
   }
 
-  groupByMulti(list, values) {
-
+  _groupByMulti(list, values) {
     if (!values.length) {
       return list;
     }
@@ -155,7 +149,7 @@ class PowerSheet extends React.Component {
       result.push({
         name: values[0],
         value: prop,
-        nested: this.groupByMulti(grouped[prop], values.slice(1))
+        nested: this._groupByMulti(grouped[prop], values.slice(1)),
       });
     }
 
@@ -169,11 +163,11 @@ class PowerSheet extends React.Component {
     let tableRow = container.querySelector('.pw-table-tbody .pw-table-tbody-row');
     let tableWidth = null;
 
-    if(tableRow){
+    if (tableRow) {
       tableWidth = tableRow.offsetWidth;
     }
 
-    if(tableWidth !== null && scrollAreaWidth !== tableWidth) {
+    if (tableWidth !== null && scrollAreaWidth !== tableWidth) {
       let headerContainer = container.querySelector('.pw-table-header');
       let styles = window.getComputedStyle(tableContainer);
       let border = styles.borderRight.split(' ')[0];
@@ -183,35 +177,22 @@ class PowerSheet extends React.Component {
 
     const headerContainer = container.querySelector('.pw-table-header-row');
 
-    if(headerContainer) {
+    if (headerContainer) {
       [].slice.call(headerContainer.querySelectorAll('.pw-table-header-cell')).forEach((cell, i) => {
-        if(!this.columns[i].width) {
-          this.columns[i].width = i === 0 ? (cell.offsetWidth - 2) : (cell.offsetWidth - 1);
+        if (!this.columns[i].width) {
+          this.columns[i].width = i === 0 ? cell.offsetWidth - 17 : cell.offsetWidth - 16;
         }
       });
     }
 
-    if(shouldUpdate) {
+    if (shouldUpdate) {
       this.forceUpdate();
     }
   }
 
-  _getColWidths() {
-    const container = ReactDOM.findDOMNode(this);
-    const headerContainer = container.querySelector('.pw-table-header-row');
-
-    if(headerContainer) {
-      [].slice.call(headerContainer.querySelectorAll('.pw-table-header-cell')).forEach((cell, i) => {
-        this.columns[i].width = cell.offsetWidth;
-        debugger;
-      });
-    }
-  }
-
   _extractColumns(props) {
-    let cols = React.Children.map(props.children, (child) => {
-
-      if(child.props.groupBy) {
+    let cols = React.Children.map(props.children, child => {
+      if (child.props.groupBy) {
         this.groupedColumns.push(child.props.dataKey);
       }
 
@@ -226,15 +207,15 @@ class PowerSheet extends React.Component {
       };
     });
 
-    let nonGroupedColumns = _filter(cols, { 'groupBy': false });
-    let groupedCols = _filter(cols, { 'groupBy': true });
+    let nonGroupedColumns = _filter(cols, { groupBy: false });
+    let groupedCols = _filter(cols, { groupBy: true });
 
     return groupedCols.concat(nonGroupedColumns);
   }
 
   _extractColumnsWidth(props) {
     let widths = [];
-    React.Children.forEach(props.children, (child) => widths.push(child.props.width));
+    React.Children.forEach(props.children, child => widths.push(child.props.width));
     return widths;
   }
 
@@ -247,18 +228,17 @@ class PowerSheet extends React.Component {
     const mouseGutter = 20;
     let xPosition = e.nativeEvent.x;
 
-
-    if((e.nativeEvent.x + colunmActionWidth) >= screenWidth) {
+    if (e.nativeEvent.x + colunmActionWidth >= screenWidth) {
       xPosition = e.nativeEvent.x - colunmActionWidth - mouseGutter;
     }
 
-    const newPosition = {x: xPosition, y: e.nativeEvent.y};
+    const newPosition = { x: xPosition, y: e.nativeEvent.y };
 
     const newState = update(this.state, {
-      activeColumn: {$set: activeColumn},
-      activeColumnType: {$set: activeColumnType},
-      activeColumnTitle: {$set: columnTitle},
-      columnPosition: {$set: newPosition}
+      activeColumn: { $set: activeColumn },
+      activeColumnType: { $set: activeColumnType },
+      activeColumnTitle: { $set: columnTitle },
+      columnPosition: { $set: newPosition },
     });
 
     this.setState(newState);
@@ -268,24 +248,21 @@ class PowerSheet extends React.Component {
     for (let i = 0; i < this.columns.length; i++) {
       let col = this.columns[i];
       if (col && col.searchable) {
-        this._distinctsLimited[col.key] = [...new Set(this.originalData.slice(0, 100).map(item => _get(item, col.key)))];
+        this._distinctsLimited[col.key] = [
+          ...new Set(this.originalData.slice(0, 100).map(item => _get(item, col.key))),
+        ];
         this._distincts[col.key] = [...new Set(this.originalData.map(item => _get(item, col.key)))];
       }
     }
     return this._distinctsLimited;
   }
 
-  _onFilter() {
-    debugger;
-  } //TODO: REMOVER?
-
   _filterDistinct(filterProps) {
-
-    const {value} = filterProps;
+    const { value } = filterProps;
     const dataKey = this.state.activeColumn;
 
     if (value) {
-      const contains = (val) => {
+      const contains = val => {
         return val.toString().toLowerCase().indexOf(value.toLowerCase()) > -1;
       };
 
@@ -296,7 +273,6 @@ class PowerSheet extends React.Component {
       let newDistinctFiltersValueState = JSON.parse(oldDistinctFiltersValueState);
       newDistinctFiltersValueState[dataKey] = value;
 
-
       let oldDistinctState = JSON.stringify(this.state.distinctValues);
       let newDistinctState = JSON.parse(oldDistinctState);
       newDistinctState[dataKey] = distincts;
@@ -304,8 +280,8 @@ class PowerSheet extends React.Component {
       let oldState = JSON.stringify(this.state.selectedDistinctFilters);
       let newState = JSON.parse(oldState);
 
-      if(newState.hasOwnProperty(dataKey)) {
-        if(!newState[dataKey].includes(value)) {
+      if (newState.hasOwnProperty(dataKey)) {
+        if (!newState[dataKey].includes(value)) {
           newState[dataKey].push(value);
         } else {
           let index = newState[dataKey].indexOf(value);
@@ -315,16 +291,17 @@ class PowerSheet extends React.Component {
         newState[dataKey] = [value];
       }
 
-      this.setState(update(this.state, {
-        distinctValues: {$set: newDistinctState},
-        distinctFiltersValue: {$set: newDistinctFiltersValueState},
-      }));
-
+      this.setState(
+        update(this.state, {
+          distinctValues: { $set: newDistinctState },
+          distinctFiltersValue: { $set: newDistinctFiltersValueState },
+        })
+      );
     } else {
       const distincts = this._fillDistincts();
 
       const newState = update(this.state, {
-        distinctValues: {$set: distincts}
+        distinctValues: { $set: distincts },
       });
 
       this.setState(newState);
@@ -332,15 +309,14 @@ class PowerSheet extends React.Component {
   }
 
   _handlerDistinctFilters(filterProps) {
-
     const { value } = filterProps;
     const dataKey = this.state.activeColumn;
 
     let oldState = JSON.stringify(this.state.selectedDistinctFilters);
     let newState = JSON.parse(oldState);
 
-    if(newState.hasOwnProperty(dataKey)) {
-      if(!newState[dataKey].includes(value)) {
+    if (newState.hasOwnProperty(dataKey)) {
+      if (!newState[dataKey].includes(value)) {
         newState[dataKey].push(value);
       } else {
         let index = newState[dataKey].indexOf(value);
@@ -350,11 +326,11 @@ class PowerSheet extends React.Component {
       newState[dataKey] = [value];
     }
 
-    if(!newState[dataKey].length) {
+    if (!newState[dataKey].length) {
       delete newState[dataKey];
     }
 
-    this.setState(update(this.state, {selectedDistinctFilters: {$set: newState}}));
+    this.setState(update(this.state, { selectedDistinctFilters: { $set: newState } }));
   }
 
   _handlerConditionFilter(condition) {
@@ -364,50 +340,47 @@ class PowerSheet extends React.Component {
     let newState = JSON.parse(oldState);
 
     let conditionValue;
-    if(condition) {
+    if (condition) {
       conditionValue = condition.value;
     } else {
-      conditionValue = (this.state.activeColumnType === 'text' ? '$in' : '$gt');
+      conditionValue = this.state.activeColumnType === 'text' ? '$in' : '$gt';
     }
 
     this._generateCondition(newState, dataKey, conditionValue);
 
-    this.setState(update(this.state, {filtersByConditions: {$set: newState}}));
-
+    this.setState(update(this.state, { filtersByConditions: { $set: newState } }));
   }
 
-  _generateCondition(newState, dataKey, condition = (this.state.activeColumnType === 'text' ? '$in' : '$gt')) {
+  _generateCondition(newState, dataKey, condition = this.state.activeColumnType === 'text' ? '$in' : '$gt') {
     if (newState.hasOwnProperty(dataKey)) {
       newState[dataKey].condition = condition;
     } else {
-      newState[dataKey] = {condition: condition, value: {}};
+      newState[dataKey] = { condition: condition, value: {} };
     }
   }
 
   _handlerValueInConditionFilter(name, value) {
-
     const dataKey = this.state.activeColumn;
 
     let oldState = JSON.stringify(this.state.filtersByConditions);
     let newState = JSON.parse(oldState);
 
-    let setValue = function () {
+    let setValue = function() {
       newState[dataKey].value[name] = value;
     };
 
-    if(newState.hasOwnProperty(dataKey)) {
+    if (newState.hasOwnProperty(dataKey)) {
       setValue();
     } else {
       this._generateCondition(newState, dataKey);
       setValue();
     }
 
-    this.setState(update(this.state, {filtersByConditions: {$set: newState}}));
+    this.setState(update(this.state, { filtersByConditions: { $set: newState } }));
   }
 
   _onSort(direction) {
     this.sortDesc = direction !== 'ASC';
-    this.sort = this.state.activeColumn;
     this.sorts = {};
     this.sorts[this.state.activeColumn] = this.sortDesc;
 
@@ -415,13 +388,12 @@ class PowerSheet extends React.Component {
   }
 
   _onApplyFilter() {
-
     let perValueFilter = {};
     let filtersByConditions = this.state.filtersByConditions;
 
     Object.keys(this.state.selectedDistinctFilters).forEach(key => {
-      if(key) {
-        perValueFilter[key] = {$in: this.state.selectedDistinctFilters[key]};
+      if (key) {
+        perValueFilter[key] = { $in: this.state.selectedDistinctFilters[key] };
       }
     });
 
@@ -434,12 +406,11 @@ class PowerSheet extends React.Component {
       let conditions = {};
       let condition = filtersByConditions[key].condition;
 
-      if(condition !== '$bet') {
-
+      if (condition !== '$bet') {
         let value = filtersByConditions[key].value.only;
 
         if (condition === '$in' || condition === '$nin') {
-          if(condition === '$in') {
+          if (condition === '$in') {
             value = new RegExp(`${value.toString()}`, 'gi');
           } else {
             value = new RegExp(`[^${value.toString()}]`, 'gi');
@@ -451,140 +422,146 @@ class PowerSheet extends React.Component {
         conditions[condition] = value;
         perConditionsFilter[key] = conditions;
       } else {
-
-        let {start, end} = filtersByConditions[key].value;
+        let { start, end } = filtersByConditions[key].value;
         let startCondition = {};
         let endCondition = {};
 
-        startCondition[key] = {$gte: parseInt(start, 10)};
-        endCondition[key] = {$lte: parseInt(end, 10)};
+        startCondition[key] = { $gte: parseInt(start, 10) };
+        endCondition[key] = { $lte: parseInt(end, 10) };
 
-        if(start.length > 0 && end.length > 0) {
+        if (start.length > 0 && end.length > 0) {
           $andConditions.push(startCondition, endCondition);
         }
 
-        perConditionsFilter = { $and: $andConditions};
+        perConditionsFilter = { $and: $andConditions };
       }
     });
 
     itens = sift(perConditionsFilter, itens);
 
-
-    if(this.sorts) {
+    if (this.sorts) {
       let key = Object.keys(this.sorts)[0];
       itens = _sortBy(itens, key);
 
-      if(this.sorts[key]) {
+      if (this.sorts[key]) {
         itens.reverse();
       }
-
     }
 
-    let currentData = this.groupedColumns.length ?
-      this.groupByMulti(itens, _map(_filter(this.columns, { 'groupBy': true }), 'key')) : itens;
+    let currentData = this.groupedColumns.length
+      ? this._groupByMulti(itens, _map(_filter(this.columns, { groupBy: true }), 'key'))
+      : itens;
 
     const newState = update(this.state, {
-      currentData: {$set: currentData},
-      activeColumn: {$set: null},
-      activeColumnType: {$set: 'text'}
+      currentData: { $set: currentData },
+      activeColumn: { $set: null },
+      activeColumnType: { $set: 'text' },
     });
 
-    this.setState(newState);
+    if (this.groupedColumns.length) {
+      this.cachedRenderedGroup = [];
+      for (let i = 0; i < currentData.length; i++) {
+        let row = currentData[i];
+        this._sumRowSpan(row);
+        this.cachedRenderedGroupHeighs.push(row.rowSpan);
+      }
+    }
 
+    this.setState(newState);
   }
 
-  _onCancel () {
+  _onCancel() {
     const newState = update(this.state, {
-      activeColumn: {$set: null},
-      activeColumnType: {$set: 'text'},
+      activeColumn: { $set: null },
+      activeColumnType: { $set: 'text' },
     });
     this.setState(newState);
   }
 
   _renderItem(index, key) {
+    console.log('_renderItem');
     let row = this.state.currentData[index];
 
     let cols = this.columns.map((col, i) => {
       let style = {};
-      if(this.columnsWidths[i]) {
+      if (this.columnsWidths[i]) {
         style.flex = `0 0 ${this.columnsWidths[i]}px`;
       }
 
       const valueToPrint = col.formatter ? col.formatter(row) : _get(row, col.key);
 
-      return (<div className='pw-table-tbody-cell' key={v4()} style={style}><div>{valueToPrint}</div></div>);
+      return <div className="pw-table-tbody-cell" key={v4()} style={style}><div>{valueToPrint}</div></div>;
     });
 
     return (
-      <div className='pw-table-tbody-row' key={key}>
+      <div className="pw-table-tbody-row" key={key}>
         {cols}
       </div>
     );
   }
 
-  sumRowSpan(row) {
+  _sumRowSpan(row) {
     if (_has(row, 'nested')) {
       row.rowSpan = 0;
 
-      row.nested.map((nestedRow) => {
-        nestedRow.parent = row;
-        this.sumRowSpan(nestedRow);
-      });
+      for (let i = 0; i < row.nested.length; i++) {
+        row.nested[i].parent = row;
+        this._sumRowSpan(row.nested[i]);
+      }
 
-      row.rowSpan = _sumBy(row.nested, (r) => { return r.rowSpan; });
+      row.rowSpan = _sumBy(row.nested, r => {
+        return r.rowSpan;
+      });
     } else {
       row.rowSpan = 1;
     }
   }
 
   _getItemHeight(index) {
-    let row = this.state.currentData[index];
-    this.sumRowSpan(row);
-    return row.rowSpan * 37;
+    return this.cachedRenderedGroupHeighs[index];
   }
 
   _renderGroupedItem(index, key) {
-
     let dataRow = this.state.currentData[index];
-    // let rowInCache = _find(this.renderedCache, {index: index});
-    //
-    // let row;
-    //
-    // if(rowInCache) {
-    //   row = rowInCache.renderedComponent;
-    // } else {
-    let row = (<GroupedTableBody columns={this.columns} data={dataRow} />);
-      // this.renderedCache.push({index: index, renderedComponent: row });
-    // }
+    let row;
+
+    if (this.cachedRenderedGroup[index]) {
+      console.log('cached!');
+      row = this.cachedRenderedGroup[index];
+    } else {
+      row = <GroupedTableBody columns={this.columns} data={dataRow} />;
+      this.cachedRenderedGroup.splice(index, 0, row);
+    }
 
     return (
-      <div className='pw-table-tbody-row' key={key}>
-        <table className='pw-table-grouped'>
+      <div className="pw-table-tbody-row" key={key}>
+        <table className="pw-table-grouped" style={{ tableLayout: 'fixed' }}>
           {row}
         </table>
       </div>
     );
-
   }
 
   _getCurrentDistinctValues() {
-    const {activeColumn, distinctValues} = this.state;
-    return (activeColumn &&  distinctValues[activeColumn]) ? distinctValues[activeColumn] : [];
+    const { activeColumn, distinctValues } = this.state;
+    return activeColumn && distinctValues[activeColumn] ? distinctValues[activeColumn] : [];
   }
 
   _getCurrentSelectedDistinctValues() {
-    const {activeColumn, selectedDistinctFilters} = this.state;
-    return (activeColumn &&  selectedDistinctFilters[activeColumn]) ? selectedDistinctFilters[activeColumn] : [];
+    const { activeColumn, selectedDistinctFilters } = this.state;
+    return activeColumn && selectedDistinctFilters[activeColumn] ? selectedDistinctFilters[activeColumn] : [];
   }
 
   _getCurrentFilterByConditionValues() {
-    const {activeColumn, filtersByConditions} = this.state;
-    return (activeColumn &&  filtersByConditions[activeColumn]) ? filtersByConditions[activeColumn] : {condition: '', value: {}};
+    const { activeColumn, filtersByConditions } = this.state;
+    return activeColumn && filtersByConditions[activeColumn]
+      ? filtersByConditions[activeColumn]
+      : { condition: '', value: {} };
   }
 
   _getSearchable() {
     let isSearchable = false;
-    if(this.state.activeColumn) {
+    if (this.state.activeColumn) {
       isSearchable = _find(this.columns, { key: this.state.activeColumn }).searchable;
     }
     return isSearchable;
@@ -593,73 +570,97 @@ class PowerSheet extends React.Component {
   _getFormatterOnFilter() {
     let formatter;
 
-    if(this.state.activeColumn) {
+    if (this.state.activeColumn) {
       formatter = _find(this.columns, { key: this.state.activeColumn }).formatterOnFilter;
     }
     return formatter;
   }
 
   _keysThatHasFilter() {
-    const {selectedDistinctFilters, filtersByConditions} = this.state;
+    const { selectedDistinctFilters, filtersByConditions } = this.state;
     return [...new Set(Object.keys(selectedDistinctFilters).concat(Object.keys(filtersByConditions)))];
   }
 
   render() {
-    let headers = this.props.children.map((chield) => {
-      let newProps = {key: v4()};
-      if(chield.props.dataKey){
-        newProps.selectedDistinctFilters = this._getCurrentSelectedDistinctValues();
-        newProps.filtersByConditions = this._getCurrentFilterByConditionValues();
-        newProps.sorts = this.sorts;
-        newProps.onSelect = this._selectColumn;
-        newProps.filterKeys = this._keysThatHasFilter();
-      }
-      let props = {...chield.props, ...newProps};
+    let headers = [];
+    let toRender = '';
+    let scrollProps = {};
 
-      return React.cloneElement(chield, props);
-    });
+    if (this.state.currentData.length) {
+      scrollProps.itemRenderer = this._renderItem;
+      scrollProps.length = this.state.currentData.length;
+      scrollProps.type = 'uniform';
+      scrollProps.pageSize = this.props.pageSize;
 
-    if(this.groupedColumns.length) {
-      let hs = _intersectionWith(headers, this.groupedColumns, (header, key) => {
-        return _has(header.props, 'dataKey') && key === header.props.dataKey;
+      headers = this.props.children.map(chield => {
+        let newProps = { key: v4(), isGrouped: !!this.groupedColumns.length };
+        if (chield.props.dataKey) {
+          newProps.selectedDistinctFilters = this._getCurrentSelectedDistinctValues();
+          newProps.filtersByConditions = this._getCurrentFilterByConditionValues();
+          newProps.sorts = this.sorts;
+          newProps.onSelect = this._selectColumn;
+          newProps.filterKeys = this._keysThatHasFilter();
+        }
+        let props = { ...chield.props, ...newProps };
+
+        return React.cloneElement(chield, props);
       });
-      let diff = _xor(headers, hs);
-      headers = hs.concat(diff);
+
+      if (this.groupedColumns.length) {
+        scrollProps.itemRenderer = this._renderGroupedItem;
+        // scrollProps.itemSizeEstimator = this._getItemHeight;
+        scrollProps.itemSizeGetter = this._getItemHeight;
+
+        scrollProps.type = 'variable';
+        if (this.props.pageSize > this.groupedColumns.length) {
+          scrollProps.pageSize = this.groupedColumns.length;
+        }
+
+        let hs = _intersectionWith(headers, this.groupedColumns, (header, key) => {
+          return _has(header.props, 'dataKey') && key === header.props.dataKey;
+        });
+        let diff = _xor(headers, hs);
+        headers = hs.concat(diff);
+
+        toRender = (
+          <table className="pw-table-grouped" style={{ tableLayout: 'fixed' }}>
+            <thead>
+              <tr>
+                {headers}
+              </tr>
+            </thead>
+          </table>
+        );
+      } else {
+        toRender = headers;
+      }
     }
 
     let infoClasses = 'pw-table-info';
-    if(this.originalData.length === 0) {
+    if (this.originalData.length === 0) {
       infoClasses += ' active';
     }
     return (
-      <div className='pw-table'>
+      <div className="pw-table">
         <div className={infoClasses}>
-          {this.originalData.length ?
-            ` ${this.originalData.length.toLocaleString()} registros` :
-            <i className='fa fa-circle-o-notch fa-spin fa-lg fa-fw' style={{marginRight: '10px'}} />
-          }
-          { this.state.message }
+          {this.originalData.length
+            ? ` ${this.originalData.length.toLocaleString()} registros`
+            : <i className="fa fa-circle-o-notch fa-spin fa-lg fa-fw" style={{ marginRight: '10px' }} />}
+          {this.state.message}
         </div>
         {this.originalData.length > 0 &&
-        <div className='pw-table-header'>
-          <div className='pw-table-header-row'>
-            {headers}
-          </div>
-        </div>
-        }
+          <div className="pw-table-header">
+            <div className="pw-table-header-row">
+              {toRender}
+            </div>
+          </div>}
         {this.state.currentData.length > 0 &&
-        <div
-          className={this.groupedColumns.length > 0 ? 'pw-table-grouped-tbody' : 'pw-table-tbody'}
-          style={{maxHeight: `${this.props.containerHeight}px`}}
-        >
-          <ReactList
-            itemRenderer={this.groupedColumns.length > 0 ? this._renderGroupedItem : this._renderItem}
-            itemSizeGetter={this._getItemHeight}
-            length={this.state.currentData.length}
-            type={this.groupedColumns.length > 0 ? 'variable': 'uniform'}
-          />
-        </div>
-        }
+          <div
+            className={this.groupedColumns.length > 0 ? 'pw-table-grouped-tbody' : 'pw-table-tbody'}
+            style={{ maxHeight: `${this.props.containerHeight}px` }}
+          >
+            <ReactList {...scrollProps} />
+          </div>}
 
         <ColumnActions
           activeColumn={this.state.activeColumn}
@@ -686,11 +687,9 @@ class PowerSheet extends React.Component {
             left: `${this.state.columnPosition.x + 10}px`,
           }}
         />
-
       </div>
     );
   }
-
 }
 
 PowerSheet.displayName = 'PowerSheet';
