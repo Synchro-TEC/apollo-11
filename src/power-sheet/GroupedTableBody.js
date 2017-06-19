@@ -1,27 +1,18 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-// import _map from 'lodash/map';
 import _groupBy from 'lodash/groupBy';
 import _get from 'lodash/get';
 import _has from 'lodash/has';
 import _union from 'lodash/union';
 import _filter from 'lodash/filter';
-import _isEqual from 'lodash/isEqual';
 import v4 from 'uuid/v4';
 import _cloneDeep from 'lodash/cloneDeep';
 
 class GroupedTableBody extends React.Component {
+  
   constructor(props) {
     super(props);
-
-
   }
-
-  // shouldComponentUpdate(nextProps) {
-  //   let isEqual = !_isEqual(nextProps.data, this.props.data);
-  //   console.log(isEqual);
-  //   return isEqual;
-  // }
 
   renderGroupedColumns(groupedCols, row) {
     let tds = [];

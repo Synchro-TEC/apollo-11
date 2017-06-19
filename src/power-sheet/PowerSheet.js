@@ -37,7 +37,6 @@ class PowerSheet extends React.Component {
     this.cachedRenderedGroup = [];
     this.cachedRenderedGroupHeighs = [];
 
-    
     this._renderItem = this._renderItem.bind(this);
     this._renderGroupedItem = this._renderGroupedItem.bind(this);
     this._fixScrollBarDiff = this._fixScrollBarDiff.bind(this);
@@ -57,7 +56,10 @@ class PowerSheet extends React.Component {
     this._getItemHeight = this._getItemHeight.bind(this);
     this._sumRowSpan = this._sumRowSpan.bind(this);
     this._groupByMulti = this._groupByMulti.bind(this);
-
+    this._prepareLocalData = this._prepareLocalData.bind(this);
+    this._prepareRemoteData = this._prepareRemoteData.bind(this);
+    this._prepareData = this._prepareData.bind(this);
+    this._makeHeightsCache = this._makeHeightsCache.bind(this);
     this.sortDesc = false;
     this.sorts = {};
 
@@ -80,6 +82,26 @@ class PowerSheet extends React.Component {
   }
 
   componentDidMount() {
+    this.props.fetch.hasOwnProperty('data') ? this._prepareLocalData() : this._prepareRemoteData();
+    window.addEventListener('resize', this._fixScrollBarDiff(true));
+  }
+
+  componentDidUpdate() {
+    this._fixScrollBarDiff();
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('resize', this._fixScrollBarDiff);
+  }
+  
+  _prepareLocalData() {
+    this.originalData = this.props.fetch.data;
+    const preparedDataState = this._prepareData(this.props.fetch.data);
+    this.setState(preparedDataState, this._fixScrollBarDiff);
+  }
+
+  _prepareRemoteData() {
+    
     let requestConfig = {
       method: this.props.fetch.method,
       onDownloadProgress: e => {
@@ -98,43 +120,41 @@ class PowerSheet extends React.Component {
       .get(this.props.fetch.url, requestConfig)
       .then(response => {
         this.originalData = response.data;
-        const distincts = this._fillDistincts();
-        let currentData = this.groupedColumns.length
-          ? this._groupByMulti(response.data, _map(_filter(this.columns, { groupBy: true }), 'key'))
-          : response.data;
-
-        const newState = update(this.state, {
-          message: { $set: '' },
-          currentData: { $set: currentData },
-          distinctValues: { $set: distincts },
-        });
-
-        if (this.groupedColumns.length) {
-          this.cachedRenderedGroup = [];
-          for (let i = 0; i < currentData.length; i++) {
-            let row = currentData[i];
-            this._sumRowSpan(row);
-            this.cachedRenderedGroupHeighs.push(row.rowSpan);
-          }
-        }
-
-        this.setState(newState, this._fixScrollBarDiff);
+        const preparedDataState = this._prepareData(response.data);
+        this.setState(preparedDataState, this._fixScrollBarDiff);
       })
       .catch(error => {
         console.error(error);
         const newState = update(this.state, { message: { $set: error } });
         this.setState(newState);
       });
-
-    window.addEventListener('resize', this._fixScrollBarDiff(true));
   }
 
-  componentDidUpdate() {
-    this._fixScrollBarDiff();
+  _prepareData(data) {
+
+    const distincts = this._fillDistincts();
+    const currentData = this.groupedColumns.length
+          ? this._groupByMulti(data, _map(_filter(this.columns, { groupBy: true }), 'key'))
+          : data;
+
+    if (this.groupedColumns.length) {
+      this._makeHeightsCache(currentData);
+    }
+
+    return update(this.state, {
+      message: { $set: '' },
+      currentData: { $set: currentData },
+      distinctValues: { $set: distincts },
+    });
   }
 
-  componentWillUnmount() {
-    window.removeEventListener('resize', this._fixScrollBarDiff);
+  _makeHeightsCache(currentData) {
+    this.cachedRenderedGroup = [];
+    for (let i = 0; i < currentData.length; i++) {
+      let row = currentData[i];
+      this._sumRowSpan(row);
+      this.cachedRenderedGroupHeighs.push(row.rowSpan * this.props.rowHeight);
+    }
   }
 
   _groupByMulti(list, values) {
@@ -178,9 +198,11 @@ class PowerSheet extends React.Component {
     const headerContainer = container.querySelector('.pw-table-header-row');
 
     if (headerContainer) {
+      const fisrtMargin = 15;
+      const lastMargin = 15;
       [].slice.call(headerContainer.querySelectorAll('.pw-table-header-cell')).forEach((cell, i) => {
         if (!this.columns[i].width) {
-          this.columns[i].width = i === 0 ? cell.offsetWidth - 17 : cell.offsetWidth - 16;
+          this.columns[i].width = i === 0 ? cell.offsetWidth - fisrtMargin : cell.offsetWidth - lastMargin;
         }
       });
     }
@@ -459,12 +481,7 @@ class PowerSheet extends React.Component {
     });
 
     if (this.groupedColumns.length) {
-      this.cachedRenderedGroup = [];
-      for (let i = 0; i < currentData.length; i++) {
-        let row = currentData[i];
-        this._sumRowSpan(row);
-        this.cachedRenderedGroupHeighs.push(row.rowSpan);
-      }
+      this._makeHeightsCache(currentData);
     }
 
     this.setState(newState);
@@ -479,17 +496,15 @@ class PowerSheet extends React.Component {
   }
 
   _renderItem(index, key) {
-    console.log('_renderItem');
+    
     let row = this.state.currentData[index];
-
+    
     let cols = this.columns.map((col, i) => {
       let style = {};
       if (this.columnsWidths[i]) {
         style.flex = `0 0 ${this.columnsWidths[i]}px`;
       }
-
       const valueToPrint = col.formatter ? col.formatter(row) : _get(row, col.key);
-
       return <div className="pw-table-tbody-cell" key={v4()} style={style}><div>{valueToPrint}</div></div>;
     });
 
@@ -696,12 +711,18 @@ PowerSheet.displayName = 'PowerSheet';
 
 PowerSheet.propTypes = {
   containerHeight: Proptypes.number.isRequired,
-  fetch: Proptypes.shape({
-    url: Proptypes.string.isRequired,
-    method: Proptypes.oneOf(['get', 'post']).isRequired,
-    params: Proptypes.object,
-  }).isRequired,
+  fetch: Proptypes.oneOfType([
+    Proptypes.shape({
+      url: Proptypes.string.isRequired,
+      method: Proptypes.oneOf(['get', 'post']).isRequired,
+      params: Proptypes.object,
+    }).isRequired,
+    Proptypes.shape({
+      data: Proptypes.array.isRequired,
+    }).isRequired,
+  ]),
   pageSize: Proptypes.number.isRequired,
+  rowHeight: Proptypes.number.isRequired,
 };
 
 export default PowerSheet;
