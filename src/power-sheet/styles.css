@@ -120,6 +120,11 @@
     border-left: 1px solid #c9d0d5;
 }
 
+.pw-table-grouped-header-cell:last-child {
+    border-right: none;
+}
+
+
 
 .pw-table-grouped-tbody-cell {
     white-space: nowrap;

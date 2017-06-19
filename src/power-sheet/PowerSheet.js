@@ -60,6 +60,7 @@ class PowerSheet extends React.Component {
     this._prepareRemoteData = this._prepareRemoteData.bind(this);
     this._prepareData = this._prepareData.bind(this);
     this._makeHeightsCache = this._makeHeightsCache.bind(this);
+    this._clearCachedRenderedGroup = this._clearCachedRenderedGroup.bind(this);
     this.sortDesc = false;
     this.sorts = {};
 
@@ -93,15 +94,27 @@ class PowerSheet extends React.Component {
   componentWillUnmount() {
     window.removeEventListener('resize', this._fixScrollBarDiff);
   }
-  
+
+  /**
+   * Prepara os dados recebido pelo fetch {data}
+   *
+   *
+   * @memberof PowerSheet
+   */
   _prepareLocalData() {
     this.originalData = this.props.fetch.data;
     const preparedDataState = this._prepareData(this.props.fetch.data);
     this.setState(preparedDataState, this._fixScrollBarDiff);
   }
 
+  /**
+   * Prepara os dados recebidos pelo fetch remoto {url, data, params}
+   *
+   *
+   * @memberof PowerSheet
+   */
   _prepareRemoteData() {
-    
+
     let requestConfig = {
       method: this.props.fetch.method,
       onDownloadProgress: e => {
@@ -130,6 +143,13 @@ class PowerSheet extends React.Component {
       });
   }
 
+  /**
+   * Prepara os dados recebidos de forma única, tanto recebidos pelo fetch local ou pelo fetch remoto
+   *
+   * @param {any} data
+   *
+   * @memberof PowerSheet
+   */
   _prepareData(data) {
 
     const distincts = this._fillDistincts();
@@ -138,6 +158,7 @@ class PowerSheet extends React.Component {
           : data;
 
     if (this.groupedColumns.length) {
+      this._clearCachedRenderedGroup();
       this._makeHeightsCache(currentData);
     }
 
@@ -148,8 +169,15 @@ class PowerSheet extends React.Component {
     });
   }
 
+  /**
+   * Faz o cache das alturas das linhas baseado nos rowsapn da linha agrupada
+   *
+   * @param {any} currentData
+   *
+   * @memberof PowerSheet
+   */
   _makeHeightsCache(currentData) {
-    this.cachedRenderedGroup = [];
+    this.cachedRenderedGroupHeighs = [];
     for (let i = 0; i < currentData.length; i++) {
       let row = currentData[i];
       this._sumRowSpan(row);
@@ -157,6 +185,25 @@ class PowerSheet extends React.Component {
     }
   }
 
+  /**
+   * Limpa o cache dos componentes que já foram montados
+   *
+   *
+   * @memberof PowerSheet
+   */
+  _clearCachedRenderedGroup() {
+    this.cachedRenderedGroup = [];
+  }
+
+  /**
+   * Agrupa os dados através valores groupBy recebidos
+   *
+   * @param {any} list
+   * @param {any} values
+   * @returns
+   *
+   * @memberof PowerSheet
+   */
   _groupByMulti(list, values) {
     if (!values.length) {
       return list;
@@ -176,18 +223,28 @@ class PowerSheet extends React.Component {
     return result;
   }
 
+  /**
+   * Ajusta os espaçamentos das colunas quando a barra de rolagem está visivel e deixa homogenio o comportamento
+   * no MAC. LINUX e Windows
+   *
+   * @param {boolean} [shouldUpdate=false]
+   *
+   * @memberof PowerSheet
+   */
   _fixScrollBarDiff(shouldUpdate = false) {
     const container = ReactDOM.findDOMNode(this);
     let scrollAreaWidth = container.offsetWidth;
-    let tableContainer = container.querySelector('.pw-table-tbody');
-    let tableRow = container.querySelector('.pw-table-tbody .pw-table-tbody-row');
+    let innerContainer = this.groupedColumns.length ? '.pw-table-grouped-tbody' : '.pw-table-tbody';
+    let tableContainer = container.querySelector(innerContainer);
+    let tableRow = container.querySelector(`${innerContainer} .pw-table-tbody-row`);
+
     let tableWidth = null;
 
     if (tableRow) {
       tableWidth = tableRow.offsetWidth;
     }
 
-    if (tableWidth !== null && scrollAreaWidth !== tableWidth) {
+    if (tableWidth !== null) {
       let headerContainer = container.querySelector('.pw-table-header');
       let styles = window.getComputedStyle(tableContainer);
       let border = styles.borderRight.split(' ')[0];
@@ -212,6 +269,14 @@ class PowerSheet extends React.Component {
     }
   }
 
+  /**
+   * Extrai os dados das colunas (SheetColumns) que são children do PowerTable
+   *
+   * @param {any} props
+   * @returns
+   *
+   * @memberof PowerSheet
+   */
   _extractColumns(props) {
     let cols = React.Children.map(props.children, child => {
       if (child.props.groupBy) {
@@ -235,12 +300,30 @@ class PowerSheet extends React.Component {
     return groupedCols.concat(nonGroupedColumns);
   }
 
+  /**
+   * Extrai os widths que são recebidos pelas colunas
+   *
+   * @param {any} props
+   * @returns
+   *
+   * @memberof PowerSheet
+   */
   _extractColumnsWidth(props) {
     let widths = [];
     React.Children.forEach(props.children, child => widths.push(child.props.width));
     return widths;
   }
 
+  /**
+   * Define a coluna que está selecionada
+   *
+   * @param {any} dataKey
+   * @param {any} dataType
+   * @param {any} columnTitle
+   * @param {any} e
+   *
+   * @memberof PowerSheet
+   */
   _selectColumn(dataKey, dataType, columnTitle, e) {
     let activeColumn = dataKey === this.state.activeColumn ? null : dataKey;
     let activeColumnType = activeColumn ? dataType : 'text';
@@ -266,6 +349,13 @@ class PowerSheet extends React.Component {
     this.setState(newState);
   }
 
+  /**
+   * Preenche os distincs de cada coluna
+   *
+   * @returns
+   *
+   * @memberof PowerSheet
+   */
   _fillDistincts() {
     for (let i = 0; i < this.columns.length; i++) {
       let col = this.columns[i];
@@ -279,6 +369,14 @@ class PowerSheet extends React.Component {
     return this._distinctsLimited;
   }
 
+  /**
+   * Filtra os dados que estão nos distincts, pois por motivos de desenmpenho são enviados apenas 100 valores por vez
+   * para cada coluna.
+   *
+   * @param {any} filterProps
+   *
+   * @memberof PowerSheet
+   */
   _filterDistinct(filterProps) {
     const { value } = filterProps;
     const dataKey = this.state.activeColumn;
@@ -330,6 +428,13 @@ class PowerSheet extends React.Component {
     }
   }
 
+  /**
+   * Manipula e define o comportamento dos filtros nos valores distincts
+   *
+   * @param {any} filterProps
+   *
+   * @memberof PowerSheet
+   */
   _handlerDistinctFilters(filterProps) {
     const { value } = filterProps;
     const dataKey = this.state.activeColumn;
@@ -355,6 +460,13 @@ class PowerSheet extends React.Component {
     this.setState(update(this.state, { selectedDistinctFilters: { $set: newState } }));
   }
 
+  /**
+   * Manipula e define o comportamento dos filtros por condição
+   *
+   * @param {any} condition
+   *
+   * @memberof PowerSheet
+   */
   _handlerConditionFilter(condition) {
     const dataKey = this.state.activeColumn;
 
@@ -373,6 +485,15 @@ class PowerSheet extends React.Component {
     this.setState(update(this.state, { filtersByConditions: { $set: newState } }));
   }
 
+  /**
+   * Gera as condições baseadas no tipo de dado da coluna
+   *
+   * @param {any} newState
+   * @param {any} dataKey
+   * @param {string} [condition=this.state.activeColumnType === 'text' ? '$in' : '$gt']
+   *
+   * @memberof PowerSheet
+   */
   _generateCondition(newState, dataKey, condition = this.state.activeColumnType === 'text' ? '$in' : '$gt') {
     if (newState.hasOwnProperty(dataKey)) {
       newState[dataKey].condition = condition;
@@ -381,6 +502,14 @@ class PowerSheet extends React.Component {
     }
   }
 
+  /**
+   * Manipula e define o comportamento dos VALORES dos filtros por condição
+   *
+   * @param {any} name
+   * @param {any} value
+   *
+   * @memberof PowerSheet
+   */
   _handlerValueInConditionFilter(name, value) {
     const dataKey = this.state.activeColumn;
 
@@ -401,6 +530,13 @@ class PowerSheet extends React.Component {
     this.setState(update(this.state, { filtersByConditions: { $set: newState } }));
   }
 
+  /**
+   * Aplica o sort das colunas
+   *
+   * @param {any} direction
+   *
+   * @memberof PowerSheet
+   */
   _onSort(direction) {
     this.sortDesc = direction !== 'ASC';
     this.sorts = {};
@@ -409,6 +545,12 @@ class PowerSheet extends React.Component {
     this._onApplyFilter();
   }
 
+  /**
+   * Aplica todos os filtros, por valores distincts ou condição
+   *
+   *
+   * @memberof PowerSheet
+   */
   _onApplyFilter() {
     let perValueFilter = {};
     let filtersByConditions = this.state.filtersByConditions;
@@ -481,12 +623,18 @@ class PowerSheet extends React.Component {
     });
 
     if (this.groupedColumns.length) {
+      this._clearCachedRenderedGroup();
       this._makeHeightsCache(currentData);
     }
 
-    this.setState(newState);
+    this.setState(newState, this._fixScrollBarDiff);
   }
 
+  /**
+   * Método chamado para cancelar / fechar um box de ação
+   *
+   * @memberof PowerSheet
+   */
   _onCancel() {
     const newState = update(this.state, {
       activeColumn: { $set: null },
@@ -495,10 +643,19 @@ class PowerSheet extends React.Component {
     this.setState(newState);
   }
 
+  /**
+   * Renderiza os itens quando não há nenhum agrupamento
+   *
+   * @param {any} index
+   * @param {any} key
+   * @returns
+   *
+   * @memberof PowerSheet
+   */
   _renderItem(index, key) {
-    
+
     let row = this.state.currentData[index];
-    
+
     let cols = this.columns.map((col, i) => {
       let style = {};
       if (this.columnsWidths[i]) {
@@ -515,6 +672,13 @@ class PowerSheet extends React.Component {
     );
   }
 
+  /**
+   * Calcula os rowspans das linhas agrupadas
+   *
+   * @param {any} row
+   *
+   * @memberof PowerSheet
+   */
   _sumRowSpan(row) {
     if (_has(row, 'nested')) {
       row.rowSpan = 0;
@@ -532,10 +696,27 @@ class PowerSheet extends React.Component {
     }
   }
 
+  /**
+   * Recura o altura de uma linha agrupada
+   *
+   * @param {int} index
+   * @returns
+   *
+   * @memberof PowerSheet
+   */
   _getItemHeight(index) {
     return this.cachedRenderedGroupHeighs[index];
   }
 
+  /**
+   * Renderiza os itens quando há coluans agrupadas
+   *
+   * @param {any} index
+   * @param {any} key
+   * @returns
+   *
+   * @memberof PowerSheet
+   */
   _renderGroupedItem(index, key) {
     let dataRow = this.state.currentData[index];
     let row;
@@ -557,16 +738,37 @@ class PowerSheet extends React.Component {
     );
   }
 
+  /**
+   * Recupera os valores distincts da coluna ativa
+   *
+   * @returns
+   *
+   * @memberof PowerSheet
+   */
   _getCurrentDistinctValues() {
     const { activeColumn, distinctValues } = this.state;
     return activeColumn && distinctValues[activeColumn] ? distinctValues[activeColumn] : [];
   }
 
+  /**
+   * Recupera os valores distincts selecionados da coluna ativa
+   *
+   * @returns
+   *
+   * @memberof PowerSheet
+   */
   _getCurrentSelectedDistinctValues() {
     const { activeColumn, selectedDistinctFilters } = this.state;
     return activeColumn && selectedDistinctFilters[activeColumn] ? selectedDistinctFilters[activeColumn] : [];
   }
 
+  /**
+   * Recupera os valores por condição da coluna ativa
+   *
+   * @returns
+   *
+   * @memberof PowerSheet
+   */
   _getCurrentFilterByConditionValues() {
     const { activeColumn, filtersByConditions } = this.state;
     return activeColumn && filtersByConditions[activeColumn]
@@ -574,6 +776,13 @@ class PowerSheet extends React.Component {
       : { condition: '', value: {} };
   }
 
+  /**
+   * Verifica se um campo é "Pesquisável" ou não
+   *
+   * @returns
+   *
+   * @memberof PowerSheet
+   */
   _getSearchable() {
     let isSearchable = false;
     if (this.state.activeColumn) {
@@ -582,6 +791,13 @@ class PowerSheet extends React.Component {
     return isSearchable;
   }
 
+  /**
+   * Recupera os formatters da coluna ativa
+   *
+   * @returns
+   *
+   * @memberof PowerSheet
+   */
   _getFormatterOnFilter() {
     let formatter;
 
@@ -591,6 +807,13 @@ class PowerSheet extends React.Component {
     return formatter;
   }
 
+  /**
+   * Recupera as keys das colunas que tem filtro
+   *
+   * @returns
+   *
+   * @memberof PowerSheet
+   */
   _keysThatHasFilter() {
     const { selectedDistinctFilters, filtersByConditions } = this.state;
     return [...new Set(Object.keys(selectedDistinctFilters).concat(Object.keys(filtersByConditions)))];
