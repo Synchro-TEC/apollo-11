@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { v4 } from 'uuid';
-import { conditions } from './constants.js';
+import { conditions } from './conditions';
 
 class ColumnActions extends React.Component {
   constructor(props) {
@@ -13,24 +13,6 @@ class ColumnActions extends React.Component {
     this._onChangeCondition = this._onChangeCondition.bind(this);
 
     this.sort = this.sort.bind(this);
-
-    // this.conditions = {
-    //   numeric: [
-    //     { label: 'Maior que', value: '$gt' },
-    //     { label: 'Maior igual que', value: '$gte' },
-    //     { label: 'Menor que', value: '$lt' },
-    //     { label: 'Menor igual que', value: '$lte' },
-    //     { label: 'Entre', value: '$bet' },
-    //   ],
-    //   text: [{ label: 'Contém', value: '$in' }, { label: 'Não Contém', value: '$nin' }],
-    //   date: [
-    //     { label: 'Maior que', value: '$gt' },
-    //     { label: 'Maior igual que', value: '$gte' },
-    //     { label: 'Menor que', value: '$lt' },
-    //     { label: 'Menor igual que', value: '$lte' },
-    //     { label: 'Entre', value: '$bet' },
-    //   ],
-    // };
 
     this.styles = {
       box: {
@@ -94,8 +76,7 @@ class ColumnActions extends React.Component {
         color: '#607d8b',
       },
     };
-
-    // condition: this.conditions[this.props.dataType][0]
+    
     this.state = { filter: { value: {} } };
     this.filterValues = { value: {} };
   }

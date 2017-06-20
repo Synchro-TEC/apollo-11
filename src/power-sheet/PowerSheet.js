@@ -20,7 +20,7 @@ import _map from 'lodash/map';
 import GroupedTableBody from './GroupedTableBody';
 import { bytesToSize } from './utils.js';
 import ColumnActions from './ColumnActions';
-import { conditions } from './constants.js';
+import { conditions } from './conditions.js';
 
 import './styles.css';
 
