@@ -20,6 +20,7 @@ import _map from 'lodash/map';
 import GroupedTableBody from './GroupedTableBody';
 import { bytesToSize } from './utils.js';
 import ColumnActions from './ColumnActions';
+import { conditions } from './constants.js';
 
 import './styles.css';
 
@@ -73,6 +74,7 @@ class PowerSheet extends React.Component {
       currentData: [],
       message: 'Iniciando o carregamento dos dados',
       count: 0,
+      condition: {},
       filters: {},
       filtersByConditions: {},
       selectedDistinctFilters: {},
@@ -344,6 +346,7 @@ class PowerSheet extends React.Component {
       activeColumnType: { $set: activeColumnType },
       activeColumnTitle: { $set: columnTitle },
       columnPosition: { $set: newPosition },
+      condition: { $set: conditions[dataType][0] }       
     });
 
     this.setState(newState);
@@ -467,7 +470,7 @@ class PowerSheet extends React.Component {
    *
    * @memberof PowerSheet
    */
-  _handlerConditionFilter(condition) {
+  _handlerConditionFilter(condition) {    
     const dataKey = this.state.activeColumn;
 
     let oldState = JSON.stringify(this.state.filtersByConditions);
@@ -482,7 +485,12 @@ class PowerSheet extends React.Component {
 
     this._generateCondition(newState, dataKey, conditionValue);
 
-    this.setState(update(this.state, { filtersByConditions: { $set: newState } }));
+    this.setState(
+      update(this.state, {
+        filtersByConditions: { $set: newState },
+        condition: { $set: condition },
+      })
+    );
   }
 
   /**
@@ -819,7 +827,7 @@ class PowerSheet extends React.Component {
     return [...new Set(Object.keys(selectedDistinctFilters).concat(Object.keys(filtersByConditions)))];
   }
 
-  render() {
+  render() {    
     let headers = [];
     let toRender = '';
     let scrollProps = {};
@@ -903,6 +911,7 @@ class PowerSheet extends React.Component {
         <ColumnActions
           activeColumn={this.state.activeColumn}
           columnTitle={this.state.activeColumnTitle}
+          condition={this.state.condition}
           dataType={this.state.activeColumnType}
           distinctValues={this._getCurrentDistinctValues()}
           filters={this.state.filters}

@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { v4 } from 'uuid';
+import { conditions } from './constants.js';
 
 class ColumnActions extends React.Component {
   constructor(props) {
@@ -13,23 +14,23 @@ class ColumnActions extends React.Component {
 
     this.sort = this.sort.bind(this);
 
-    this.conditions = {
-      numeric: [
-        { label: 'Maior que', value: '$gt' },
-        { label: 'Maior igual que', value: '$gte' },
-        { label: 'Menor que', value: '$lt' },
-        { label: 'Menor igual que', value: '$lte' },
-        { label: 'Entre', value: '$bet' },
-      ],
-      text: [{ label: 'Contém', value: '$in' }, { label: 'Não Contém', value: '$nin' }],
-      date: [
-        { label: 'Maior que', value: '$gt' },
-        { label: 'Maior igual que', value: '$gte' },
-        { label: 'Menor que', value: '$lt' },
-        { label: 'Menor igual que', value: '$lte' },
-        { label: 'Entre', value: '$bet' },
-      ],
-    };
+    // this.conditions = {
+    //   numeric: [
+    //     { label: 'Maior que', value: '$gt' },
+    //     { label: 'Maior igual que', value: '$gte' },
+    //     { label: 'Menor que', value: '$lt' },
+    //     { label: 'Menor igual que', value: '$lte' },
+    //     { label: 'Entre', value: '$bet' },
+    //   ],
+    //   text: [{ label: 'Contém', value: '$in' }, { label: 'Não Contém', value: '$nin' }],
+    //   date: [
+    //     { label: 'Maior que', value: '$gt' },
+    //     { label: 'Maior igual que', value: '$gte' },
+    //     { label: 'Menor que', value: '$lt' },
+    //     { label: 'Menor igual que', value: '$lte' },
+    //     { label: 'Entre', value: '$bet' },
+    //   ],
+    // };
 
     this.styles = {
       box: {
@@ -94,7 +95,8 @@ class ColumnActions extends React.Component {
       },
     };
 
-    this.state = { condition: this.conditions[this.props.dataType][0], filter: { value: {} } };
+    // condition: this.conditions[this.props.dataType][0]
+    this.state = { filter: { value: {} } };
     this.filterValues = { value: {} };
   }
 
@@ -163,7 +165,7 @@ class ColumnActions extends React.Component {
   }
 
   renderConditionsByDataType() {
-    let options = this.conditions[this.props.dataType].map((opt, i) => {
+    let options = conditions[this.props.dataType].map((opt, i) => {
       return <option key={`${this.props.dataType}-${opt.value}-${i}`} value={JSON.stringify(opt)}>{opt.label}</option>;
     });
 
@@ -191,9 +193,9 @@ class ColumnActions extends React.Component {
         type="text"
         value={this.props.filtersByConditions.value['only'] || ''}
       />
-    );
+    );    
 
-    if (this.props.dataType === 'numeric' && this.state.condition.value === '$bet') {
+    if (this.props.dataType === 'numeric' && this.props.condition.value === '$bet') {
       valueFild = (
         <div className="sv-row--with-gutter">
           <div className="sv-column">
@@ -268,7 +270,7 @@ class ColumnActions extends React.Component {
           ? <button
               className="sv-button primary small sv-horizontal-marged-15"
               onClick={() =>
-                this.props.onApplyFilters({ condition: this.state.condition.value, filter: this.state.filter.value })}
+                this.props.onApplyFilters({ condition: this.props.condition.value, filter: this.state.filter.value })}
               type="button"
             >
               Aplicar
@@ -340,6 +342,7 @@ ColumnActions.displayName = 'ColumnActions';
 
 ColumnActions.propTypes = {
   columnTitle: PropTypes.string,
+  condition: PropTypes.object,
   dataKey: PropTypes.string,
   dataType: PropTypes.oneOf(['numeric', 'text', 'date']).isRequired,
   distinctFilters: PropTypes.object,
