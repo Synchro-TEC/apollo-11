@@ -334,9 +334,14 @@ class PowerSheet extends React.Component {
     const colunmActionWidth = 250;
     const mouseGutter = 20;
     let xPosition = e.nativeEvent.x;
+    let filtersByConditionsDefault = {};
 
     if (e.nativeEvent.x + colunmActionWidth >= screenWidth) {
       xPosition = e.nativeEvent.x - colunmActionWidth - mouseGutter;
+    }
+    
+    if (!this.state.filtersByConditions.hasOwnProperty(dataKey)) {      
+      filtersByConditionsDefault[dataKey] = { condition: conditions[dataType][0].value, value: {} };
     }
 
     const newPosition = { x: xPosition, y: e.nativeEvent.y };
@@ -346,7 +351,8 @@ class PowerSheet extends React.Component {
       activeColumnType: { $set: activeColumnType },
       activeColumnTitle: { $set: columnTitle },
       columnPosition: { $set: newPosition },
-      condition: { $set: conditions[dataType][0] }       
+      condition: { $set: conditions[dataType][0] },
+      filtersByConditions: { $set: filtersByConditionsDefault }            
     });
 
     this.setState(newState);
@@ -477,6 +483,7 @@ class PowerSheet extends React.Component {
     let newState = JSON.parse(oldState);
 
     let conditionValue;
+    debugger;
     if (condition) {
       conditionValue = condition.value;
     } else {
@@ -560,6 +567,7 @@ class PowerSheet extends React.Component {
    * @memberof PowerSheet
    */
   _onApplyFilter() {
+    debugger;
     let perValueFilter = {};
     let filtersByConditions = this.state.filtersByConditions;
 
@@ -577,22 +585,23 @@ class PowerSheet extends React.Component {
     Object.keys(filtersByConditions).forEach(key => {
       let conditions = {};
       let condition = filtersByConditions[key].condition;
-
+      
       if (condition !== '$bet') {
         let value = filtersByConditions[key].value.only;
-
-        if (condition === '$in' || condition === '$nin') {
-          if (condition === '$in') {
-            value = new RegExp(`${value.toString()}`, 'gi');
+        if(value) {
+          if (condition === '$in' || condition === '$nin') {
+            if (condition === '$in') {
+              value = new RegExp(`${value.toString()}`, 'gi');
+            } else {
+              value = new RegExp(`[^${value.toString()}]`, 'gi');
+            }
+            condition = '$regex';
           } else {
-            value = new RegExp(`[^${value.toString()}]`, 'gi');
+            value = parseInt(value, 10);
           }
-          condition = '$regex';
-        } else {
-          value = parseInt(value, 10);
+          conditions[condition] = value;
+          perConditionsFilter[key] = conditions;
         }
-        conditions[condition] = value;
-        perConditionsFilter[key] = conditions;
       } else {
         let { start, end } = filtersByConditions[key].value;
         let startCondition = {};
