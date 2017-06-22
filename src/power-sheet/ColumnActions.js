@@ -174,28 +174,40 @@ class ColumnActions extends React.Component {
         type="text"
         value={this.props.filtersByConditions.value['only'] || ''}
       />
-    );    
+    );
 
     if (this.props.dataType === 'numeric' && this.props.condition.value === '$bet') {
       valueFild = (
         <div className="sv-row--with-gutter">
-          <div className="sv-column">
+          <div className="sv-column">            
             <input
+              className={!this.props.gteValueIsValid ? 'is--invalid': ''}             
               name="start"
               onChange={e => this._setValueInFilter(e)}
               placeholder="Valor inicial"
               type="number"
               value={this.props.filtersByConditions.value['start'] || ''}
             />
+            {
+              !this.props.gteValueIsValid ? (
+                <span className="sv-color--red-500"> Campo Obrigatório </span>  
+              ): ''
+            }
           </div>
           <div className="sv-column">
             <input
+              className={!this.props.lteValueIsValid ? 'is--invalid': ''}             
               name="end"
               onChange={e => this._setValueInFilter(e)}
               placeholder="Valor final"
               type="number"
               value={this.props.filtersByConditions.value['end'] || ''}
             />
+            {
+              !this.props.lteValueIsValid ? (
+                <span className="sv-color--red-500"> Campo Obrigatório </span>  
+              ): ''
+            }
           </div>
         </div>
       );
@@ -268,7 +280,7 @@ class ColumnActions extends React.Component {
     );
   }
 
-  render() {
+  render() {    
     if (this.props.isVisible) {
       this.styles.box.display = 'block';
     } else {
@@ -331,9 +343,11 @@ ColumnActions.propTypes = {
   distinctValues: PropTypes.array,
   filtersByConditions: PropTypes.object,
   formatterOnFilter: PropTypes.func,
+  gteValueIsValid: PropTypes.bool,
   handlerConditionFilter: PropTypes.func,
   handlerValueInConditionFilter: PropTypes.func,
   isVisible: PropTypes.bool,
+  lteValueIsValid: PropTypes.bool,
   onApplyFilters: PropTypes.func,
   onCancel: PropTypes.func, //OK
   onFilterDistinct: PropTypes.func, //OK
