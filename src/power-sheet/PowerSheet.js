@@ -530,7 +530,7 @@ class PowerSheet extends React.Component {
    * @memberof PowerSheet
    */
   _handlerValueInConditionFilter(name, value) {
-    const dataKey = this.state.activeColumn;
+    const dataKey = this.state.activeColumn;    
 
     let oldState = JSON.stringify(this.state.filtersByConditions);
     let newState = JSON.parse(oldState);
@@ -549,8 +549,12 @@ class PowerSheet extends React.Component {
     this.setState(
       update(this.state, {
         filtersByConditions: { $set: newState },
-        gteValueIsValid: { $set: value !== ''},
-        lteValueIsValid: { $set: value !== ''} 
+        gteValueIsValid: { 
+          $set: name === 'start' ? value !== '' : this.state.gteValueIsValid
+        },
+        lteValueIsValid: { 
+          $set: name === 'end' ? value !== '' : this.state.lteValueIsValid
+        }        
       })
     );
   }
