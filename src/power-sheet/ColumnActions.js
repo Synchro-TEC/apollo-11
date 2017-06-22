@@ -181,7 +181,7 @@ class ColumnActions extends React.Component {
         <div className="sv-row--with-gutter">
           <div className="sv-column">            
             <input
-              className={!this.props.gteValueIsValid ? 'is--invalid': ''}             
+              className={!this.props.isGteValueValid ? 'is--invalid': ''}             
               name="start"
               onChange={e => this._setValueInFilter(e)}
               placeholder="Valor inicial"
@@ -189,14 +189,14 @@ class ColumnActions extends React.Component {
               value={this.props.filtersByConditions.value['start'] || ''}
             />
             {
-              !this.props.gteValueIsValid ? (
-                <span className="sv-color--red-500"> Campo Obrigatório </span>  
+              !this.props.isGteValueValid ? (
+                <span className="sv-color--red-500"> Campo obrigatório </span>  
               ): ''
             }
           </div>
           <div className="sv-column">
             <input
-              className={!this.props.lteValueIsValid ? 'is--invalid': ''}             
+              className={!this.props.isLteValueValid ? 'is--invalid': ''}             
               name="end"
               onChange={e => this._setValueInFilter(e)}
               placeholder="Valor final"
@@ -204,8 +204,8 @@ class ColumnActions extends React.Component {
               value={this.props.filtersByConditions.value['end'] || ''}
             />
             {
-              !this.props.lteValueIsValid ? (
-                <span className="sv-color--red-500"> Campo Obrigatório </span>  
+              !this.props.isLteValueValid ? (
+                <span className="sv-color--red-500"> Campo obrigatório </span>  
               ): ''
             }
           </div>
@@ -343,11 +343,11 @@ ColumnActions.propTypes = {
   distinctValues: PropTypes.array,
   filtersByConditions: PropTypes.object,
   formatterOnFilter: PropTypes.func,
-  gteValueIsValid: PropTypes.bool,
   handlerConditionFilter: PropTypes.func,
   handlerValueInConditionFilter: PropTypes.func,
+  isGteValueValid: PropTypes.bool,
   isVisible: PropTypes.bool,
-  lteValueIsValid: PropTypes.bool,
+  isLteValueValid: PropTypes.bool,
   onApplyFilters: PropTypes.func,
   onCancel: PropTypes.func, //OK
   onFilterDistinct: PropTypes.func, //OK

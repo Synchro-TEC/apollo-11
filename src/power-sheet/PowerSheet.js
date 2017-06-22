@@ -77,8 +77,8 @@ class PowerSheet extends React.Component {
       condition: {},      
       filters: {},
       filtersByConditions: {},
-      gteValueIsValid: true,
-      lteValueIsValid: true,
+      isGteValueValid: true,
+      isLteValueValid: true,
       selectedDistinctFilters: {},
       distinctFiltersValue: {},
       loading: true,
@@ -355,8 +355,8 @@ class PowerSheet extends React.Component {
       columnPosition: { $set: newPosition },
       condition: { $set: conditions[dataType][0] },
       filtersByConditions: { $set: filtersByConditionsDefault },
-      gteValueIsValid: { $set: true }, 
-      lteValueIsValid: { $set: true}          
+      isGteValueValid: { $set: true }, 
+      isLteValueValid: { $set: true}          
     });
 
     this.setState(newState);
@@ -549,11 +549,11 @@ class PowerSheet extends React.Component {
     this.setState(
       update(this.state, {
         filtersByConditions: { $set: newState },
-        gteValueIsValid: { 
-          $set: name === 'start' ? value !== '' : this.state.gteValueIsValid
+        isGteValueValid: { 
+          $set: name === 'start' ? value !== '' : this.state.isGteValueValid
         },
-        lteValueIsValid: { 
-          $set: name === 'end' ? value !== '' : this.state.lteValueIsValid
+        isLteValueValid: { 
+          $set: name === 'end' ? value !== '' : this.state.isLteValueValid
         }        
       })
     );
@@ -594,8 +594,8 @@ class PowerSheet extends React.Component {
 
     let perConditionsFilter = {};
     let $andConditions = [];    
-    let gteValueIsValid = true;
-    let lteValueIsValid = true;
+    let isGteValueValid = true;
+    let isLteValueValid = true;
 
     Object.keys(filtersByConditions).forEach(key => {
       let conditions = {};
@@ -619,8 +619,8 @@ class PowerSheet extends React.Component {
         }
       } else {        
         let { start, end } = filtersByConditions[key].value;        
-        gteValueIsValid = start ? true : false;
-        lteValueIsValid = end ? true : false;
+        isGteValueValid = start ? true : false;
+        isLteValueValid = end ? true : false;
         let startCondition = {};
         let endCondition = {};
 
@@ -663,12 +663,12 @@ class PowerSheet extends React.Component {
       this._makeHeightsCache(currentData);
     }
     
-    if(gteValueIsValid && lteValueIsValid) {
+    if(isGteValueValid && isLteValueValid) {
       this.setState(newState, this._fixScrollBarDiff);
     } else {
       const newState = update(this.state, {
-        gteValueIsValid: { $set: gteValueIsValid },
-        lteValueIsValid: { $set: lteValueIsValid}
+        isGteValueValid: { $set: isGteValueValid },
+        isLteValueValid: { $set: isLteValueValid }
       });
       this.setState(newState);
     }   
@@ -953,11 +953,11 @@ class PowerSheet extends React.Component {
           filters={this.state.filters}
           filtersByConditions={this._getCurrentFilterByConditionValues()}
           formatterOnFilter={this._getFormatterOnFilter()}
-          gteValueIsValid={this.state.gteValueIsValid}
           handlerConditionFilter={this._handlerConditionFilter}
           handlerValueInConditionFilter={this._handlerValueInConditionFilter}
+          isGteValueValid={this.state.isGteValueValid}
           isVisible={this.state.activeColumn !== null}
-          lteValueIsValid={this.state.lteValueIsValid}
+          isLteValueValid={this.state.isLteValueValid}
           onApplyFilters={this._onApplyFilter}
           onCancel={this._onCancel}          
           onFilterDistinct={this._filterDistinct}
