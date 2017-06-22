@@ -329,7 +329,7 @@ class PowerSheet extends React.Component {
    * @memberof PowerSheet
    */
   _selectColumn(dataKey, dataType, columnTitle, e) {
-    debugger;
+    
     let activeColumn = dataKey === this.state.activeColumn ? null : dataKey;
     let activeColumnType = activeColumn ? dataType : 'text';
 
@@ -395,8 +395,7 @@ class PowerSheet extends React.Component {
   _filterDistinct(filterProps) {
     const { value } = filterProps;
     const dataKey = this.state.activeColumn;
-
-    debugger;
+    
     if (value) {
       const contains = val => {
         return val.toString().toLowerCase().indexOf(value.toLowerCase()) > -1;
