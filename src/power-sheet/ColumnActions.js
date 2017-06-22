@@ -217,7 +217,7 @@ class ColumnActions extends React.Component {
   }
 
   renderFilter() {
-    let distinctsValues = this.props.distinctValues.map((uniq, i) => {
+    let distinctsValues = this.props.distinctValues.map((uniq, i) => {      
       let rendered = this.props.formatterOnFilter ? this.props.formatterOnFilter(uniq) : uniq;
       let cssClass = !this._hasInFilter(uniq) ? 'fa fa-square-o fa-fw' : 'fa fa-check-square-o fa-fw';
       return (

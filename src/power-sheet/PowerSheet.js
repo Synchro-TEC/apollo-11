@@ -329,6 +329,7 @@ class PowerSheet extends React.Component {
    * @memberof PowerSheet
    */
   _selectColumn(dataKey, dataType, columnTitle, e) {
+    debugger;
     let activeColumn = dataKey === this.state.activeColumn ? null : dataKey;
     let activeColumnType = activeColumn ? dataType : 'text';
 
@@ -346,7 +347,7 @@ class PowerSheet extends React.Component {
       filtersByConditionsDefault[dataKey] = { condition: conditions[dataType][0].value, value: {} };
     }
 
-    const newPosition = { x: xPosition, y: e.nativeEvent.y };
+    const newPosition = { x: xPosition, y: e.nativeEvent.y };    
 
     const newState = update(this.state, {
       activeColumn: { $set: activeColumn },
@@ -354,9 +355,10 @@ class PowerSheet extends React.Component {
       activeColumnTitle: { $set: columnTitle },
       columnPosition: { $set: newPosition },
       condition: { $set: conditions[dataType][0] },
+      distinctValues: { $set: this._fillDistincts() },        
       filtersByConditions: { $set: filtersByConditionsDefault },
       isGteValueValid: { $set: true }, 
-      isLteValueValid: { $set: true}          
+      isLteValueValid: { $set: true}  
     });
 
     this.setState(newState);
@@ -394,6 +396,7 @@ class PowerSheet extends React.Component {
     const { value } = filterProps;
     const dataKey = this.state.activeColumn;
 
+    debugger;
     if (value) {
       const contains = val => {
         return val.toString().toLowerCase().indexOf(value.toLowerCase()) > -1;
@@ -956,8 +959,8 @@ class PowerSheet extends React.Component {
           handlerConditionFilter={this._handlerConditionFilter}
           handlerValueInConditionFilter={this._handlerValueInConditionFilter}
           isGteValueValid={this.state.isGteValueValid}
-          isVisible={this.state.activeColumn !== null}
           isLteValueValid={this.state.isLteValueValid}
+          isVisible={this.state.activeColumn !== null}
           onApplyFilters={this._onApplyFilter}
           onCancel={this._onCancel}          
           onFilterDistinct={this._filterDistinct}
