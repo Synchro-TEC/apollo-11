@@ -1,4 +1,4 @@
-import './helpers/polyfills';
+// import './helpers/polyfills';
 
 import Hermes from './hermes/Hermes';
 import LaunchWindow from './launch-window/launch-window';
