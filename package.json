@@ -54,7 +54,6 @@
   },
   "dependencies": {
     "axios": "^0.16.1",
-    "babel-polyfill": "^6.23.0",
     "classnames": "^2.2.5",
     "data-collection": "^1.1.6",
     "date-fns": "^1.28.4",

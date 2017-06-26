@@ -2,7 +2,7 @@
 
 import sift from 'sift';
 import DataFetcher from './datafetcher.js';
-import '../helpers/polyfills';
+// import '../helpers/polyfills';
 
 
 const DEFAULT_PER_PAGE = 20;
