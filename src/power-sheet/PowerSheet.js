@@ -62,7 +62,7 @@ class PowerSheet extends React.Component {
     this._prepareData = this._prepareData.bind(this);
     this._makeHeightsCache = this._makeHeightsCache.bind(this);
     this._clearCachedRenderedGroup = this._clearCachedRenderedGroup.bind(this);
-    this.sortDesc = false;    
+    this.sortDesc = false;
     this.sorts = {};
 
     this.state = {
@@ -74,7 +74,7 @@ class PowerSheet extends React.Component {
       currentData: [],
       message: 'Iniciando o carregamento dos dados',
       count: 0,
-      condition: {},      
+      condition: {},
       filters: {},
       filtersByConditions: {},
       isGteValueValid: true,
@@ -119,28 +119,29 @@ class PowerSheet extends React.Component {
    */
   _prepareRemoteData() {
 
-    let requestConfig = {
+    let config = {
       method: this.props.fetch.method,
+      url: this.props.fetch.url,
       onDownloadProgress: e => {
         const newState = update(this.state, { message: { $set: `${bytesToSize(e.loaded)} carregados...` } });
         this.setState(newState);
-      },
-    };
+      }
+    }
 
     if (this.props.fetch.params) {
       this.props.fetch.method === 'get'
-        ? (requestConfig.params = this.props.fetch.params)
-        : (requestConfig.data = this.props.fetch.params);
+        ? (config.params = this.props.fetch.params)
+        : (config.data = this.props.fetch.params);
     }
 
-    axios
-      .get(this.props.fetch.url, requestConfig)
-      .then(response => {
-        this.originalData = response.data;
-        const preparedDataState = this._prepareData(response.data);
+    axios(config)
+      .then((response) => {
+        const data = this.props.hasOwnProperty('rootProp') ? response.data[this.props.rootProp] : response.data;
+        this.originalData = data;
+        const preparedDataState = this._prepareData(data);
         this.setState(preparedDataState, this._fixScrollBarDiff);
       })
-      .catch(error => {
+      .catch((error) => {
         console.error(error);
         const newState = update(this.state, { message: { $set: error } });
         this.setState(newState);
@@ -155,7 +156,6 @@ class PowerSheet extends React.Component {
    * @memberof PowerSheet
    */
   _prepareData(data) {
-
     const distincts = this._fillDistincts();
     const currentData = this.groupedColumns.length
           ? this._groupByMulti(data, _map(_filter(this.columns, { groupBy: true }), 'key'))
@@ -236,6 +236,7 @@ class PowerSheet extends React.Component {
    * @memberof PowerSheet
    */
   _fixScrollBarDiff(shouldUpdate = false) {
+
     const container = ReactDOM.findDOMNode(this);
     let scrollAreaWidth = container.offsetWidth;
     let innerContainer = this.groupedColumns.length ? '.pw-table-grouped-tbody' : '.pw-table-tbody';
@@ -329,7 +330,7 @@ class PowerSheet extends React.Component {
    * @memberof PowerSheet
    */
   _selectColumn(dataKey, dataType, columnTitle, e) {
-    
+
     let activeColumn = dataKey === this.state.activeColumn ? null : dataKey;
     let activeColumnType = activeColumn ? dataType : 'text';
 
@@ -342,12 +343,12 @@ class PowerSheet extends React.Component {
     if (e.nativeEvent.x + colunmActionWidth >= screenWidth) {
       xPosition = e.nativeEvent.x - colunmActionWidth - mouseGutter;
     }
-    
-    if (!this.state.filtersByConditions.hasOwnProperty(dataKey)) {      
+
+    if (!this.state.filtersByConditions.hasOwnProperty(dataKey)) {
       filtersByConditionsDefault[dataKey] = { condition: conditions[dataType][0].value, value: {} };
     }
 
-    const newPosition = { x: xPosition, y: e.nativeEvent.y };    
+    const newPosition = { x: xPosition, y: e.nativeEvent.y };
 
     const newState = update(this.state, {
       activeColumn: { $set: activeColumn },
@@ -355,10 +356,10 @@ class PowerSheet extends React.Component {
       activeColumnTitle: { $set: columnTitle },
       columnPosition: { $set: newPosition },
       condition: { $set: conditions[dataType][0] },
-      distinctValues: { $set: this._fillDistincts() },        
+      distinctValues: { $set: this._fillDistincts() },
       filtersByConditions: { $set: filtersByConditionsDefault },
-      isGteValueValid: { $set: true }, 
-      isLteValueValid: { $set: true}  
+      isGteValueValid: { $set: true },
+      isLteValueValid: { $set: true}
     });
 
     this.setState(newState);
@@ -372,6 +373,7 @@ class PowerSheet extends React.Component {
    * @memberof PowerSheet
    */
   _fillDistincts() {
+
     for (let i = 0; i < this.columns.length; i++) {
       let col = this.columns[i];
       if (col && col.searchable) {
@@ -395,7 +397,7 @@ class PowerSheet extends React.Component {
   _filterDistinct(filterProps) {
     const { value } = filterProps;
     const dataKey = this.state.activeColumn;
-    
+
     if (value) {
       const contains = val => {
         return val.toString().toLowerCase().indexOf(value.toLowerCase()) > -1;
@@ -482,7 +484,7 @@ class PowerSheet extends React.Component {
    *
    * @memberof PowerSheet
    */
-  _handlerConditionFilter(condition) {    
+  _handlerConditionFilter(condition) {
     const dataKey = this.state.activeColumn;
 
     let oldState = JSON.stringify(this.state.filtersByConditions);
@@ -532,7 +534,7 @@ class PowerSheet extends React.Component {
    * @memberof PowerSheet
    */
   _handlerValueInConditionFilter(name, value) {
-    const dataKey = this.state.activeColumn;    
+    const dataKey = this.state.activeColumn;
 
     let oldState = JSON.stringify(this.state.filtersByConditions);
     let newState = JSON.parse(oldState);
@@ -551,12 +553,12 @@ class PowerSheet extends React.Component {
     this.setState(
       update(this.state, {
         filtersByConditions: { $set: newState },
-        isGteValueValid: { 
+        isGteValueValid: {
           $set: name === 'start' ? value !== '' : this.state.isGteValueValid
         },
-        isLteValueValid: { 
+        isLteValueValid: {
           $set: name === 'end' ? value !== '' : this.state.isLteValueValid
-        }        
+        }
       })
     );
   }
@@ -595,14 +597,14 @@ class PowerSheet extends React.Component {
     let itens = sift(perValueFilter, this.originalData);
 
     let perConditionsFilter = {};
-    let $andConditions = [];    
+    let $andConditions = [];
     let isGteValueValid = true;
     let isLteValueValid = true;
 
     Object.keys(filtersByConditions).forEach(key => {
       let conditions = {};
-      let condition = filtersByConditions[key].condition;      
-      
+      let condition = filtersByConditions[key].condition;
+
       if (condition !== '$bet') {
         let value = filtersByConditions[key].value.only;
         if(value) {
@@ -619,15 +621,15 @@ class PowerSheet extends React.Component {
           conditions[condition] = value;
           perConditionsFilter[key] = conditions;
         }
-      } else {        
-        let { start, end } = filtersByConditions[key].value;        
+      } else {
+        let { start, end } = filtersByConditions[key].value;
         isGteValueValid = start ? true : false;
         isLteValueValid = end ? true : false;
         let startCondition = {};
         let endCondition = {};
 
         startCondition[key] = { $gte: parseInt(start, 10) };
-        endCondition[key] = { $lte: parseInt(end, 10) }; 
+        endCondition[key] = { $lte: parseInt(end, 10) };
 
         if(start && end) {
           if (start.length > 0 && end.length > 0) {
@@ -657,14 +659,14 @@ class PowerSheet extends React.Component {
     const newState = update(this.state, {
       currentData: { $set: currentData },
       activeColumn: { $set: null },
-      activeColumnType: { $set: 'text' },      
+      activeColumnType: { $set: 'text' },
     });
 
     if (this.groupedColumns.length) {
       this._clearCachedRenderedGroup();
       this._makeHeightsCache(currentData);
     }
-    
+
     if(isGteValueValid && isLteValueValid) {
       this.setState(newState, this._fixScrollBarDiff);
     } else {
@@ -673,7 +675,7 @@ class PowerSheet extends React.Component {
         isLteValueValid: { $set: isLteValueValid }
       });
       this.setState(newState);
-    }   
+    }
   }
 
   /**
@@ -865,7 +867,7 @@ class PowerSheet extends React.Component {
     return [...new Set(Object.keys(selectedDistinctFilters).concat(Object.keys(filtersByConditions)))];
   }
 
-  render() {    
+  render() {
     let headers = [];
     let toRender = '';
     let scrollProps = {};
@@ -924,6 +926,7 @@ class PowerSheet extends React.Component {
     if (this.originalData.length === 0) {
       infoClasses += ' active';
     }
+
     return (
       <div className="pw-table">
         <div className={infoClasses}>
@@ -961,7 +964,7 @@ class PowerSheet extends React.Component {
           isLteValueValid={this.state.isLteValueValid}
           isVisible={this.state.activeColumn !== null}
           onApplyFilters={this._onApplyFilter}
-          onCancel={this._onCancel}          
+          onCancel={this._onCancel}
           onFilterDistinct={this._filterDistinct}
           onSelect={this._selectColumn}
           onSelectValueOnFilter={this._handlerDistinctFilters}
@@ -988,6 +991,7 @@ PowerSheet.propTypes = {
       url: Proptypes.string.isRequired,
       method: Proptypes.oneOf(['get', 'post']).isRequired,
       params: Proptypes.object,
+      rootProp: Proptypes.string,
     }).isRequired,
     Proptypes.shape({
       data: Proptypes.array.isRequired,
