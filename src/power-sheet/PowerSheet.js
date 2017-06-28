@@ -378,7 +378,7 @@ class PowerSheet extends React.Component {
       let col = this.columns[i];
       if (col && col.searchable) {
         this._distinctsLimited[col.key] = [
-          ...new Set(this.originalData.slice(0, 100).map(item => _get(item, col.key))),
+          ...new Set(this.originalData.slice(0, this.originalData.length).map(item => _get(item, col.key))),
         ];
         this._distincts[col.key] = [...new Set(this.originalData.map(item => _get(item, col.key)))];
       }
