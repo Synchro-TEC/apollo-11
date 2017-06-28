@@ -867,30 +867,34 @@ class PowerSheet extends React.Component {
     return [...new Set(Object.keys(selectedDistinctFilters).concat(Object.keys(filtersByConditions)))];
   }
 
-  render() {
+  render() {    
+
     let headers = [];
-    let toRender = '';
+    let headerToRender = '';
+    let dataToRender = '';
     let scrollProps = {};
+
+    headers = this.props.children.map(chield => {
+      let newProps = { key: v4(), isGrouped: !!this.groupedColumns.length };
+      if (chield.props.dataKey) {
+        newProps.selectedDistinctFilters = this._getCurrentSelectedDistinctValues();
+        newProps.filtersByConditions = this._getCurrentFilterByConditionValues();
+        newProps.sorts = this.sorts;
+        newProps.onSelect = this._selectColumn;
+        newProps.filterKeys = this._keysThatHasFilter();
+      }
+      let props = { ...chield.props, ...newProps };
+
+      return React.cloneElement(chield, props);
+    });
+
+    headerToRender = headers;
 
     if (this.state.currentData.length) {
       scrollProps.itemRenderer = this._renderItem;
       scrollProps.length = this.state.currentData.length;
       scrollProps.type = 'uniform';
-      scrollProps.pageSize = this.props.pageSize;
-
-      headers = this.props.children.map(chield => {
-        let newProps = { key: v4(), isGrouped: !!this.groupedColumns.length };
-        if (chield.props.dataKey) {
-          newProps.selectedDistinctFilters = this._getCurrentSelectedDistinctValues();
-          newProps.filtersByConditions = this._getCurrentFilterByConditionValues();
-          newProps.sorts = this.sorts;
-          newProps.onSelect = this._selectColumn;
-          newProps.filterKeys = this._keysThatHasFilter();
-        }
-        let props = { ...chield.props, ...newProps };
-
-        return React.cloneElement(chield, props);
-      });
+      scrollProps.pageSize = this.props.pageSize;      
 
       if (this.groupedColumns.length) {
         scrollProps.itemRenderer = this._renderGroupedItem;
@@ -908,7 +912,7 @@ class PowerSheet extends React.Component {
         let diff = _xor(headers, hs);
         headers = hs.concat(diff);
 
-        toRender = (
+        headerToRender = (
           <table className="pw-table-grouped" style={{ tableLayout: 'fixed' }}>
             <thead>
               <tr>
@@ -917,14 +921,28 @@ class PowerSheet extends React.Component {
             </thead>
           </table>
         );
-      } else {
-        toRender = headers;
       }
     }
 
     let infoClasses = 'pw-table-info';
     if (this.originalData.length === 0) {
       infoClasses += ' active';
+    }
+    
+    if(this.state.currentData.length > 0 ) {
+      dataToRender = (
+        <div
+          className={this.groupedColumns.length > 0 ? 'pw-table-grouped-tbody' : 'pw-table-tbody'}
+          style={{ maxHeight: `${this.props.containerHeight}px` }}>
+          <ReactList {...scrollProps} />
+        </div>
+      );
+    } else {
+      dataToRender = (
+        <div className="pw-table-row--results-not-found">          
+          <span> Não foram encontrados resultados </span>       
+        </div>
+      );        
     }
 
     return (
@@ -935,20 +953,12 @@ class PowerSheet extends React.Component {
             : <i className="fa fa-circle-o-notch fa-spin fa-lg fa-fw" style={{ marginRight: '10px' }} />}
           {this.state.message}
         </div>
-        {this.originalData.length > 0 &&
-          <div className="pw-table-header">
-            <div className="pw-table-header-row">
-              {toRender}
-            </div>
-          </div>}
-        {this.state.currentData.length > 0 &&
-          <div
-            className={this.groupedColumns.length > 0 ? 'pw-table-grouped-tbody' : 'pw-table-tbody'}
-            style={{ maxHeight: `${this.props.containerHeight}px` }}
-          >
-            <ReactList {...scrollProps} />
-          </div>}
-
+        <div className="pw-table-header">
+          <div className="pw-table-header-row">
+            {headerToRender}
+          </div>
+        </div>        
+        {dataToRender}
         <ColumnActions
           activeColumn={this.state.activeColumn}
           columnTitle={this.state.activeColumnTitle}

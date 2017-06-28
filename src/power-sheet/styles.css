@@ -139,6 +139,13 @@
     border-left: 1px solid #c9d0d5;
 }
 
+.pw-table-row--results-not-found {
+    border-right: 1px solid #c9d0d5;
+    border-left: 1px solid #c9d0d5;
+    border-bottom: 1px solid #c9d0d5;
+    padding: 5px;
+    text-align: center;
+}
 
 
 
