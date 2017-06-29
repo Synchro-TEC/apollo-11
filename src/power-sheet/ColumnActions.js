@@ -16,7 +16,7 @@ class ColumnActions extends React.Component {
 
     this.styles = {
       box: {
-        position: 'absolute',
+        position: 'fixed',
         width: '250px',
         padding: '0px',
         fontFamily: 'Arial, "sans serif"',
@@ -145,8 +145,9 @@ class ColumnActions extends React.Component {
     return <div>{items}</div>;
   }
 
-  renderConditionsByDataType() {
-    let options = conditions[this.props.dataType].map((opt, i) => {
+  renderConditionsByDataType() {    
+
+    let options = conditions[this.props.dataType].map((opt, i) => {      
       return <option key={`${this.props.dataType}-${opt.value}-${i}`} value={JSON.stringify(opt)}>{opt.label}</option>;
     });
 
@@ -154,7 +155,10 @@ class ColumnActions extends React.Component {
       <label>
         <span>Condição</span>
         <div className="sv-select">
-          <select onChange={e => this._onChangeCondition(JSON.parse(e.target.value))}>
+          <select 
+            onChange={e => this._onChangeCondition(JSON.parse(e.target.value))}
+            value={JSON.stringify(this.props.condition)}
+          >
             {options}
           </select>
           <label>

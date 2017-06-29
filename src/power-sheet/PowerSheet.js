@@ -9,6 +9,7 @@ import sift from 'sift';
 import _get from 'lodash/get';
 import _sortBy from 'lodash/sortBy';
 import _find from 'lodash/find';
+import _findIndex from 'lodash/findIndex';
 import _has from 'lodash/has';
 import _intersectionWith from 'lodash/intersectionWith';
 import _xor from 'lodash/xor';
@@ -338,15 +339,15 @@ class PowerSheet extends React.Component {
     const colunmActionWidth = 250;
     const mouseGutter = 20;
     let xPosition = e.nativeEvent.x;
-    let filtersByConditionsDefault = {};
+    // let filtersByConditionsDefault = {};
 
     if (e.nativeEvent.x + colunmActionWidth >= screenWidth) {
       xPosition = e.nativeEvent.x - colunmActionWidth - mouseGutter;
     }
 
-    if (!this.state.filtersByConditions.hasOwnProperty(dataKey)) {
-      filtersByConditionsDefault[dataKey] = { condition: conditions[dataType][0].value, value: {} };
-    }
+    // if (!this.state.filtersByConditions.hasOwnProperty(dataKey)) {
+    //   filtersByConditionsDefault[dataKey] = { condition: conditions[dataType][0].value, value: {} };
+    // }
 
     const newPosition = { x: xPosition, y: e.nativeEvent.y };
 
@@ -355,9 +356,9 @@ class PowerSheet extends React.Component {
       activeColumnType: { $set: activeColumnType },
       activeColumnTitle: { $set: columnTitle },
       columnPosition: { $set: newPosition },
-      condition: { $set: conditions[dataType][0] },
+      condition: { $set: Object.keys(this.state.condition).length > 0 ? this.state.condition: conditions[dataType][0] },
       distinctValues: { $set: this._fillDistincts() },
-      filtersByConditions: { $set: filtersByConditionsDefault },
+      // filtersByConditions: { $set: filtersByConditionsDefault },
       isGteValueValid: { $set: true },
       isLteValueValid: { $set: true}
     });
@@ -378,7 +379,7 @@ class PowerSheet extends React.Component {
       let col = this.columns[i];
       if (col && col.searchable) {
         this._distinctsLimited[col.key] = [
-          ...new Set(this.originalData.slice(0, this.originalData.length).map(item => _get(item, col.key))),
+          ...new Set(this.originalData.slice(0, 200).map(item => _get(item, col.key))),
         ];
         this._distincts[col.key] = [...new Set(this.originalData.map(item => _get(item, col.key)))];
       }
@@ -824,6 +825,19 @@ class PowerSheet extends React.Component {
       : { condition: '', value: {} };
   }
 
+  _getCurrentColumnCondition() {    
+    const { activeColumn, filtersByConditions, activeColumnType } = this.state;    
+
+    if(filtersByConditions.hasOwnProperty(activeColumn)) {
+      let index = _findIndex(conditions[activeColumnType], (condition) => {
+        return condition.value === filtersByConditions[activeColumn].condition;
+      });
+      return conditions[activeColumnType][index];
+    } else {
+      return conditions[activeColumnType][0];
+    }          
+  }
+
   /**
    * Verifica se um campo é "Pesquisável" ou não
    *
@@ -962,7 +976,7 @@ class PowerSheet extends React.Component {
         <ColumnActions
           activeColumn={this.state.activeColumn}
           columnTitle={this.state.activeColumnTitle}
-          condition={this.state.condition}
+          condition={this._getCurrentColumnCondition()}
           dataType={this.state.activeColumnType}
           distinctValues={this._getCurrentDistinctValues()}
           filters={this.state.filters}
