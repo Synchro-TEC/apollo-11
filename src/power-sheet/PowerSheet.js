@@ -709,7 +709,7 @@ class PowerSheet extends React.Component {
       if (this.columnsWidths[i]) {
         style.flex = `0 0 ${this.columnsWidths[i]}px`;
       }
-      const valueToPrint = col.formatter ? col.formatter(row) : _get(row, col.key);
+      const valueToPrint = col.formatter ? col.formatter(row, col.key) : _get(row, col.key);
       return <div className="pw-table-tbody-cell" key={v4()} style={style}><div>{valueToPrint}</div></div>;
     });
 
@@ -867,7 +867,7 @@ class PowerSheet extends React.Component {
     return [...new Set(Object.keys(selectedDistinctFilters).concat(Object.keys(filtersByConditions)))];
   }
 
-  render() {    
+  render() {
 
     let headers = [];
     let headerToRender = '';
@@ -894,7 +894,7 @@ class PowerSheet extends React.Component {
       scrollProps.itemRenderer = this._renderItem;
       scrollProps.length = this.state.currentData.length;
       scrollProps.type = 'uniform';
-      scrollProps.pageSize = this.props.pageSize;      
+      scrollProps.pageSize = this.props.pageSize;
 
       if (this.groupedColumns.length) {
         scrollProps.itemRenderer = this._renderGroupedItem;
@@ -928,7 +928,7 @@ class PowerSheet extends React.Component {
     if (this.originalData.length === 0) {
       infoClasses += ' active';
     }
-    
+
     if(this.state.currentData.length > 0 ) {
       dataToRender = (
         <div
@@ -939,10 +939,10 @@ class PowerSheet extends React.Component {
       );
     } else {
       dataToRender = (
-        <div className="pw-table-row--results-not-found">          
-          <span> Não foram encontrados resultados </span>       
+        <div className="pw-table-row--results-not-found">
+          <span> Não foram encontrados resultados </span>
         </div>
-      );        
+      );
     }
 
     return (
@@ -957,7 +957,7 @@ class PowerSheet extends React.Component {
           <div className="pw-table-header-row">
             {headerToRender}
           </div>
-        </div>        
+        </div>
         {dataToRender}
         <ColumnActions
           activeColumn={this.state.activeColumn}
