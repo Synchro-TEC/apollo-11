@@ -76,7 +76,7 @@ class ColumnActions extends React.Component {
         color: '#607d8b',
       },
     };
-    
+
     this.state = { filter: { value: {} } };
     this.filterValues = { value: {} };
   }
@@ -183,9 +183,9 @@ class ColumnActions extends React.Component {
     if (this.props.dataType === 'numeric' && this.props.condition.value === '$bet') {
       valueFild = (
         <div className="sv-row--with-gutter">
-          <div className="sv-column">            
+          <div className="sv-column">
             <input
-              className={!this.props.isGteValueValid ? 'is--invalid': ''}             
+              className={!this.props.isGteValueValid ? 'is--invalid': ''}
               name="start"
               onChange={e => this._setValueInFilter(e)}
               placeholder="Valor inicial"
@@ -194,13 +194,13 @@ class ColumnActions extends React.Component {
             />
             {
               !this.props.isGteValueValid ? (
-                <span className="sv-color--red-500"> Campo obrigatório </span>  
+                <span className="sv-color--red-500"> Campo obrigatório </span>
               ): ''
             }
           </div>
           <div className="sv-column">
             <input
-              className={!this.props.isLteValueValid ? 'is--invalid': ''}             
+              className={!this.props.isLteValueValid ? 'is--invalid': ''}
               name="end"
               onChange={e => this._setValueInFilter(e)}
               placeholder="Valor final"
@@ -209,7 +209,7 @@ class ColumnActions extends React.Component {
             />
             {
               !this.props.isLteValueValid ? (
-                <span className="sv-color--red-500"> Campo obrigatório </span>  
+                <span className="sv-color--red-500"> Campo obrigatório </span>
               ): ''
             }
           </div>
@@ -221,7 +221,7 @@ class ColumnActions extends React.Component {
   }
 
   renderFilter() {
-    let distinctsValues = this.props.distinctValues.map((uniq, i) => {      
+    let distinctsValues = this.props.distinctValues.map((uniq, i) => {
       let rendered = this.props.formatterOnFilter ? this.props.formatterOnFilter(uniq) : uniq;
       let cssClass = !this._hasInFilter(uniq) ? 'fa fa-square-o fa-fw' : 'fa fa-check-square-o fa-fw';
       return (
@@ -284,7 +284,7 @@ class ColumnActions extends React.Component {
     );
   }
 
-  render() {    
+  render() {
     if (this.props.isVisible) {
       this.styles.box.display = 'block';
     } else {
