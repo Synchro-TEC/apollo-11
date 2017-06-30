@@ -6,7 +6,7 @@ e esse projeto adere ao [Semantic Versioning](http://semver.org/).
 
 ## [0.4.13] - 2017-6-30
 ### Modificado 
-- Propriedades onFilter e onClearAll retornam apenas o valor do campo de busca
+- Propriedades onFilter e onClearAll do componente Filtro retornam apenas o valor do campo de busca
 
 ### Corrigido
 - Opções do filtro agora atualizam corretamente
