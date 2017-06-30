@@ -365,8 +365,7 @@ class PowerSheet extends React.Component {
    *
    * @memberof PowerSheet
    */
-  _fillDistincts() {
-
+  _fillDistincts() {    
     for (let i = 0; i < this.columns.length; i++) {
       let col = this.columns[i];
       if (col && col.searchable) {
@@ -387,13 +386,16 @@ class PowerSheet extends React.Component {
    *
    * @memberof PowerSheet
    */
-  _filterDistinct(filterProps) {
+  _filterDistinct(filterProps) {    
     const { value } = filterProps;
     const dataKey = this.state.activeColumn;
-
+    
     if (value) {
       const contains = val => {
-        return val.toString().toLowerCase().indexOf(value.toLowerCase()) > -1;
+        //TODO: este if (val) se fez necessário porque um dos dados do array distincs esta vindo como undefined
+        if (val) {
+          return val.toString().toLowerCase().indexOf(value.toLowerCase()) > -1;
+        }
       };
 
       let itens = _get(this._distincts, dataKey, []).filter(contains);
@@ -956,9 +958,11 @@ class PowerSheet extends React.Component {
     return (
       <div className="pw-table">
         <div className={infoClasses}>
-          {this.originalData.length
-            ? ` ${this.originalData.length.toLocaleString()} registros`
-            : <i className="fa fa-circle-o-notch fa-spin fa-lg fa-fw" style={{ marginRight: '10px' }} />}
+          {
+            !this.originalData.length ? (
+              <i className="fa fa-circle-o-notch fa-spin fa-lg fa-fw" style={{ marginRight: '10px' }} />
+            ) : ''
+          }
           {this.state.message}
         </div>
         <div className="pw-table-header">

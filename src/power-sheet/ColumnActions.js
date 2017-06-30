@@ -350,8 +350,8 @@ ColumnActions.propTypes = {
   handlerConditionFilter: PropTypes.func,
   handlerValueInConditionFilter: PropTypes.func,
   isGteValueValid: PropTypes.bool,
-  isVisible: PropTypes.bool,
   isLteValueValid: PropTypes.bool,
+  isVisible: PropTypes.bool,
   onApplyFilters: PropTypes.func,
   onCancel: PropTypes.func, //OK
   onFilterDistinct: PropTypes.func, //OK
