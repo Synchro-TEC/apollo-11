@@ -32,7 +32,7 @@
             "error",
             "single"
         ],
-        "jsx-quotes": ["error", "prefer-single"],
+        "jsx-quotes": ["error", "prefer-double"],
         "semi": [
             "error",
             "always"

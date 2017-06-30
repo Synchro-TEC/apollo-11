@@ -2,7 +2,7 @@
 
 import sift from 'sift';
 import DataFetcher from './datafetcher.js';
-import '../helpers/polyfills';
+// import '../helpers/polyfills';
 
 
 const DEFAULT_PER_PAGE = 20;
@@ -89,6 +89,7 @@ const applyFilter = () => {
   let perConditionsFilter = {};
   let $andConditions = [];
 
+  debugger;
   Object.keys(filtersByConditions).forEach(key => {
     let conditions = {};
     let condition = filtersByConditions[key].condition;
