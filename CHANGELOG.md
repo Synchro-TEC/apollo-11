@@ -4,6 +4,10 @@ Todas as mudanças consideráveis serão documentadas neste arquivo.
 Este formato de changelog foi baseado em [Keep a Changelog](http://keepachangelog.com/)
 e esse projeto adere ao [Semantic Versioning](http://semver.org/).
 
+## [0.4.12] - 2017-6-30
+### Adicionado 
+- Componente PowerSheet
+
 ## [0.4.11] - 2017-5-8
 ### Adicionado
 - Possibilidade de passar uma largura para cada coluna da tabela
