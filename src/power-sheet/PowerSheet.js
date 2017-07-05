@@ -335,15 +335,23 @@ class PowerSheet extends React.Component {
     let activeColumnType = activeColumn ? dataType : 'text';
 
     const screenWidth = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+    const screenHeight = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
+
     const colunmActionWidth = 250;
+    const columnActionHeight = 451;
     const mouseGutter = 20;
     let xPosition = e.nativeEvent.x;
+    let yPosition = e.nativeEvent.y;
 
     if (e.nativeEvent.x + colunmActionWidth >= screenWidth) {
       xPosition = e.nativeEvent.x - colunmActionWidth - mouseGutter;
     }
 
-    const newPosition = { x: xPosition, y: e.nativeEvent.y };
+    if(e.nativeEvent.y + columnActionHeight >= screenHeight) {
+      yPosition = e.nativeEvent.y - columnActionHeight - mouseGutter;
+    }    
+
+    const newPosition = { x: xPosition, y: yPosition };
 
     const newState = update(this.state, {
       activeColumn: { $set: activeColumn },
