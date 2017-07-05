@@ -126,6 +126,7 @@ SheetColumn.propTypes = {
   dataType: PropTypes.oneOf(['numeric', 'text', 'date']),
   filterKeys: PropTypes.array,
   filtersByConditions: PropTypes.object,
+  formatter: PropTypes.func,
   formatterOnFilter: PropTypes.func,
   isGrouped: PropTypes.bool,
   onSelect: PropTypes.func,
