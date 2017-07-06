@@ -39,7 +39,7 @@ class SheetColumn extends React.Component {
     return rendered;
   }
 
-  _renderGrouped() {
+  _renderGrouped() {    
     let style = {};
     let result;
 

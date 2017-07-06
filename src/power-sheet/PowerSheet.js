@@ -333,7 +333,12 @@ class PowerSheet extends React.Component {
     let activeColumn = dataKey === this.state.activeColumn ? null : dataKey;
     let activeColumnType = activeColumn ? dataType : 'text';
 
-    let isSearchable = _find(this.columns, { key: activeColumn }).searchable;
+    let selectedColumn = _find(this.columns, { key: activeColumn });
+    let columnIsSearchable = false;    
+
+    if(selectedColumn) {
+      columnIsSearchable = selectedColumn.searchable;
+    }
 
     const screenWidth = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
     const screenHeight = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
@@ -348,7 +353,7 @@ class PowerSheet extends React.Component {
       xPosition = e.nativeEvent.x - colunmActionWidth - mouseGutter;
     }
 
-    if(e.nativeEvent.y + columnActionHeight >= screenHeight && isSearchable) {
+    if(e.nativeEvent.y + columnActionHeight >= screenHeight && columnIsSearchable) {
       yPosition = e.nativeEvent.y - columnActionHeight - mouseGutter;
     }    
 
@@ -772,8 +777,7 @@ class PowerSheet extends React.Component {
     let dataRow = this.state.currentData[index];
     let row;
 
-    if (this.cachedRenderedGroup[index]) {
-      console.log('cached!');
+    if (this.cachedRenderedGroup[index]) {      
       row = this.cachedRenderedGroup[index];
     } else {
       row = <GroupedTableBody columns={this.columns} data={dataRow} />;
@@ -905,9 +909,7 @@ class PowerSheet extends React.Component {
       let props = { ...chield.props, ...newProps };
 
       return React.cloneElement(chield, props);
-    });
-
-    headerToRender = headers;
+    });    
 
     if (this.state.currentData.length) {
       scrollProps.itemRenderer = this._renderItem;
@@ -940,6 +942,8 @@ class PowerSheet extends React.Component {
             </thead>
           </table>
         );
+      } else {
+        headerToRender = headers;
       }
     }
 
