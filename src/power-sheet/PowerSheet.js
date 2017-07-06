@@ -329,10 +329,11 @@ class PowerSheet extends React.Component {
    *
    * @memberof PowerSheet
    */
-  _selectColumn(dataKey, dataType, columnTitle, e) {
-
+  _selectColumn(dataKey, dataType, columnTitle, e) {      
     let activeColumn = dataKey === this.state.activeColumn ? null : dataKey;
     let activeColumnType = activeColumn ? dataType : 'text';
+
+    let isSearchable = _find(this.columns, { key: activeColumn }).searchable;
 
     const screenWidth = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
     const screenHeight = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
@@ -347,7 +348,7 @@ class PowerSheet extends React.Component {
       xPosition = e.nativeEvent.x - colunmActionWidth - mouseGutter;
     }
 
-    if(e.nativeEvent.y + columnActionHeight >= screenHeight) {
+    if(e.nativeEvent.y + columnActionHeight >= screenHeight && isSearchable) {
       yPosition = e.nativeEvent.y - columnActionHeight - mouseGutter;
     }    
 
@@ -849,7 +850,7 @@ class PowerSheet extends React.Component {
    *
    * @memberof PowerSheet
    */
-  _getSearchable() {
+  _getSearchable() {    
     let isSearchable = false;
     if (this.state.activeColumn) {
       isSearchable = _find(this.columns, { key: this.state.activeColumn }).searchable;
