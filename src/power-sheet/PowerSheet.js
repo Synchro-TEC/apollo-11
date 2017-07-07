@@ -334,11 +334,7 @@ class PowerSheet extends React.Component {
     let activeColumnType = activeColumn ? dataType : 'text';
 
     let selectedColumn = _find(this.columns, { key: activeColumn });
-    let columnIsSearchable = false;    
-
-    if(selectedColumn) {
-      columnIsSearchable = selectedColumn.searchable;
-    }
+    let columnIsSearchable = (selectedColumn && selectedColumn.searchable);
 
     const screenWidth = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
     const screenHeight = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
