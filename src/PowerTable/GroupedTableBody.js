@@ -15,7 +15,6 @@ const CellStyle = {
 };
 
 class GroupedTableBody extends React.Component {
-
   constructor(props) {
     super(props);
 
@@ -23,7 +22,6 @@ class GroupedTableBody extends React.Component {
   }
 
   groupByMulti(list, values) {
-
     if (!values.length) {
       return list;
     }
@@ -35,7 +33,7 @@ class GroupedTableBody extends React.Component {
       result.push({
         name: values[0],
         value: prop,
-        nested: this.groupByMulti(grouped[prop], values.slice(1))
+        nested: this.groupByMulti(grouped[prop], values.slice(1)),
       });
     }
 
@@ -46,12 +44,14 @@ class GroupedTableBody extends React.Component {
     if (_has(row, 'nested')) {
       row.rowSpan = 0;
 
-      row.nested.map((nestedRow) => {
+      row.nested.map(nestedRow => {
         nestedRow.parent = row;
         this.sumRowSpan(nestedRow);
       });
 
-      row.rowSpan = _sumBy(row.nested, (r) => { return r.rowSpan; });
+      row.rowSpan = _sumBy(row.nested, r => {
+        return r.rowSpan;
+      });
     } else {
       row.rowSpan = 1;
     }
@@ -63,8 +63,12 @@ class GroupedTableBody extends React.Component {
     while (parent !== null) {
       if (!parent.done) {
         let col = groupedCols[parent.name][0];
-        let rendered = col.formatter ? col.formatter({[parent.name]: parent.value}) : parent.value;
-        tds.push(<td key={v4()} rowSpan={parent.rowSpan} style={CellStyle}>{rendered}</td>);
+        let rendered = col.formatter ? col.formatter({ [parent.name]: parent.value }) : parent.value;
+        tds.push(
+          <td key={v4()} rowSpan={parent.rowSpan} style={CellStyle}>
+            {rendered}
+          </td>
+        );
         parent.done = true;
       }
       parent = parent.parent;
@@ -73,15 +77,19 @@ class GroupedTableBody extends React.Component {
   }
 
   renderNonGroupedColumns(nonGroupedColumns, row) {
-    return nonGroupedColumns.map((col) => {
+    return nonGroupedColumns.map(col => {
       let rendered = col.formatter ? col.formatter(row) : row[col.key];
-      return (<td key={v4()} style={CellStyle}>{rendered}</td>);
+      return (
+        <td key={v4()} style={CellStyle}>
+          {rendered}
+        </td>
+      );
     });
   }
 
   renderRow(nonGroupedColumns, groupedCols, row) {
     if (_has(row, 'nested')) {
-      return row.nested.map((nestedRow) => {
+      return row.nested.map(nestedRow => {
         return this.renderRow(nonGroupedColumns, groupedCols, nestedRow);
       });
     } else {
@@ -89,29 +97,35 @@ class GroupedTableBody extends React.Component {
       let nonGroupedTds = this.renderNonGroupedColumns(nonGroupedColumns, row);
       let tds = _union(groupedTds, nonGroupedTds);
 
-      return (<tr key={v4()}>{tds}</tr>);
+      return (
+        <tr key={v4()}>
+          {tds}
+        </tr>
+      );
     }
   }
 
   render() {
-    let nonGroupedColumns = _filter(this.props.columns, { 'groupBy': false });
-    let groupedCols = _filter(this.props.columns, { 'groupBy': true });
+    let nonGroupedColumns = _filter(this.props.columns, { groupBy: false });
+    let groupedCols = _filter(this.props.columns, { groupBy: true });
     let data = this.groupByMulti(this.props.data, _map(groupedCols, 'key'));
 
-    data.map((row) => {
+    data.map(row => {
       this.sumRowSpan(row, null);
     });
 
-    let trs = data.map((row) => {
-      return row.nested.map((nestedRow) => {
+    let trs = data.map(row => {
+      return row.nested.map(nestedRow => {
         return this.renderRow(nonGroupedColumns, _groupBy(groupedCols, 'key'), nestedRow);
       });
     });
 
-    return (<tbody>{trs}</tbody>);
+    return (
+      <tbody>
+        {trs}
+      </tbody>
+    );
   }
-
-
 }
 
 GroupedTableBody.displayName = 'GroupedTableBody';

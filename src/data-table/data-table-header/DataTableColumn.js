@@ -4,19 +4,18 @@ import _isObject from 'lodash/isObject';
 import _isUndefined from 'lodash/isUndefined';
 
 class DataTableColumn extends React.Component {
-
   constructor(props) {
     super(props);
   }
 
   onSort() {
-    if(this.props.sortable) {
+    if (this.props.sortable) {
       this.props.setSortColumn(this.props.dataKey);
     }
   }
 
   render() {
-    let {children, direction, sortable} = this.props;
+    let { children, direction, sortable } = this.props;
     let dataColumnLabel = '';
     let directionOfSortClassName;
     let sortIcon = '';
@@ -34,20 +33,20 @@ class DataTableColumn extends React.Component {
         directionOfSortClassName = 'fa fa-sort sv-sort';
     }
 
-    if(!_isUndefined(children)) {
-      for(let i = 0; i<children.length; i++) {
-        if(!_isObject(children[i])) {
+    if (!_isUndefined(children)) {
+      for (let i = 0; i < children.length; i++) {
+        if (!_isObject(children[i])) {
           dataColumnLabel = children;
         }
       }
     }
 
-    if(sortable) {
-      sortIcon = <i className={directionOfSortClassName}/>;
+    if (sortable) {
+      sortIcon = <i className={directionOfSortClassName} />;
     }
 
     return (
-      <th onClick={(e) => this.onSort(e)}>
+      <th onClick={e => this.onSort(e)}>
         {sortIcon}
         {dataColumnLabel}
       </th>

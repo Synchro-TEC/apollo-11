@@ -3,14 +3,13 @@ import PropTypes from 'prop-types';
 import styles from './launch-window-styles';
 
 class LaunchWindow extends React.Component {
-
-  constructor(props){
+  constructor(props) {
     super(props);
     this.state = { isVisible: false };
   }
 
   componentWillUpdate(nextProps, nextState) {
-    if(nextState.isVisible && !this.state.isVisible && this.props.beforeOpen) {
+    if (nextState.isVisible && !this.state.isVisible && this.props.beforeOpen) {
       this.props.beforeOpen();
     }
 
@@ -20,29 +19,29 @@ class LaunchWindow extends React.Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    if(!prevState.isVisible && this.state.isVisible && this.props.afterOpen) {
+    if (!prevState.isVisible && this.state.isVisible && this.props.afterOpen) {
       this.props.afterOpen();
     }
 
-    if(prevState.isVisible && !this.state.isVisible && this.props.afterClose) {
+    if (prevState.isVisible && !this.state.isVisible && this.props.afterClose) {
       this.props.afterClose();
     }
   }
 
   show() {
-    this.setState({isVisible: true});
+    this.setState({ isVisible: true });
   }
 
   hide() {
-    this.setState({isVisible: false});
+    this.setState({ isVisible: false });
   }
 
   onOverlayClicked() {
-    if(this.props.hideOnOverlayClicked) {
+    if (this.props.hideOnOverlayClicked) {
       this.hide();
     }
 
-    if(this.props.onOverlayClicked) {
+    if (this.props.onOverlayClicked) {
       this.props.onOverlayClicked();
     }
   }
@@ -63,15 +62,19 @@ class LaunchWindow extends React.Component {
     }
 
     if (this.props.showOverlay) {
-      overlay = (<div onClick={() => this.onOverlayClicked()} style={overlayStyles}/>);
+      overlay = <div onClick={() => this.onOverlayClicked()} style={overlayStyles} />;
     }
 
     return (
-      <section className='launchWindow-wrapper'>
+      <section className="launchWindow-wrapper">
         {overlay}
         <div style={dialogStyles}>
-          <a onClick={() => this.hide()} role='button' style={closeButtonStyle} >&times;</a>
-          <h2>{this.props.title}</h2>
+          <a onClick={() => this.hide()} role="button" style={closeButtonStyle}>
+            &times;
+          </a>
+          <h2>
+            {this.props.title}
+          </h2>
           {this.props.children}
         </div>
       </section>
@@ -92,7 +95,7 @@ LaunchWindow.propTypes = {
   onOverlayClicked: PropTypes.func,
   overlayStyles: PropTypes.object,
   showOverlay: PropTypes.bool,
-  title: PropTypes.string
+  title: PropTypes.string,
 };
 
 LaunchWindow.defaultProps = {
@@ -101,7 +104,7 @@ LaunchWindow.defaultProps = {
   overlayStyles: styles.overlayStyles,
   dialogStyles: styles.dialogStyles,
   closeButtonStyle: styles.closeButtonStyle,
-  hideOnOverlayClicked: false
+  hideOnOverlayClicked: false,
 };
 
 export default LaunchWindow;

@@ -1,6 +1,6 @@
 import _get from 'lodash/get';
 
-const _shoudRemotelyFetch = (fetchSpec) => {
+const _shoudRemotelyFetch = fetchSpec => {
   return fetchSpec.collection === undefined || fetchSpec.collection.length === 0;
 };
 
@@ -26,18 +26,19 @@ const _doRemotelyFetch = (fetchSpec, _onProgress) => {
 };
 
 const _responseExtractor = (responseCollectionPath, response) => {
-  if(responseCollectionPath){
+  if (responseCollectionPath) {
     return _get(response, responseCollectionPath);
   } else {
     return response;
   }
 };
 
-
 module.exports.fetch = (fetchSpec, _onProgress) => {
-  if(_shoudRemotelyFetch(fetchSpec, _onProgress)){
+  if (_shoudRemotelyFetch(fetchSpec, _onProgress)) {
     return _doRemotelyFetch(fetchSpec, _onProgress);
   } else {
-    return new Promise(function (resolve){resolve(fetchSpec.collection);});
+    return new Promise(function(resolve) {
+      resolve(fetchSpec.collection);
+    });
   }
 };

@@ -5,11 +5,10 @@ import blockerDefaultStyles from './blocker-styles';
 import blockerStack from './blocker-stack';
 
 class Blocker extends React.Component {
-
   constructor(props) {
     super(props);
 
-    this.state = {active: false};
+    this.state = { active: false };
     this.onStackChange = this.onStackChange.bind(this);
   }
 
@@ -41,7 +40,7 @@ class Blocker extends React.Component {
 
   onStackChange() {
     this.setState({
-      active: blockerStack.getMaxPriority() === this.props.priority
+      active: blockerStack.getMaxPriority() === this.props.priority,
     });
   }
 
@@ -55,55 +54,62 @@ class Blocker extends React.Component {
       hideContentOnLoad,
       message,
       style,
-      show
-      } = this.props;
+      show,
+    } = this.props;
 
-    const {
-      active
-      } = this.state;
+    const { active } = this.state;
 
     const shouldShowBlocker = !!active && !!show;
 
-    const bgStyle = Object.assign({},
+    const bgStyle = Object.assign(
+      {},
       disableDefaultStyles ? {} : blockerDefaultStyles.backgroundDefaultStyle,
       backgroundStyle || {}
     );
 
-    const fgStyle = Object.assign({},
+    const fgStyle = Object.assign(
+      {},
       disableDefaultStyles ? {} : blockerDefaultStyles.foregroundDefaultStyle,
       foregroundStyle || {}
     );
 
     const msgStyle = disableDefaultStyles ? {} : blockerDefaultStyles.messageDefaultStyle;
 
-    const loaderStyle = {position: 'relative', ...style};
+    const loaderStyle = { position: 'relative', ...style };
 
-    const contentStyle = Object.assign({
-      position: 'relative',
-      opacity: hideContentOnLoad && show ? 0 : 1
-    }, shouldShowBlocker && contentBlur ? {
-      'WebkitFilter': `blur(${contentBlur}px)`,
-      'MozFilter': `blur(${contentBlur}px)`,
-      'OFilter': `blur(${contentBlur}px)`,
-      'msFilter': `blur(${contentBlur}px)`,
-      'filter': `blur(${contentBlur}px)`
-    } : {});
+    const contentStyle = Object.assign(
+      {
+        position: 'relative',
+        opacity: hideContentOnLoad && show ? 0 : 1,
+      },
+      shouldShowBlocker && contentBlur
+        ? {
+            WebkitFilter: `blur(${contentBlur}px)`,
+            MozFilter: `blur(${contentBlur}px)`,
+            OFilter: `blur(${contentBlur}px)`,
+            msFilter: `blur(${contentBlur}px)`,
+            filter: `blur(${contentBlur}px)`,
+          }
+        : {}
+    );
 
-    return shouldShowBlocker ? (
-      <div className='sv-blocker' style={loaderStyle}>
-        <div className='sv-blocker__content' style={contentStyle}>
-          {children}
-        </div>
+    return shouldShowBlocker
+      ? <div className="sv-blocker" style={loaderStyle}>
+          <div className="sv-blocker__content" style={contentStyle}>
+            {children}
+          </div>
 
-        <div className='sv-blocker__background' style={bgStyle}>
-          <div className='sv-blocker__foreground' style={fgStyle}>
-            <div className='sv-blocker__message' style={msgStyle}>
-              {message || 'loading...'}
+          <div className="sv-blocker__background" style={bgStyle}>
+            <div className="sv-blocker__foreground" style={fgStyle}>
+              <div className="sv-blocker__message" style={msgStyle}>
+                {message || 'loading...'}
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    ) : (<div style={loaderStyle}>{children}</div>);
+      : <div style={loaderStyle}>
+          {children}
+        </div>;
   }
 }
 
@@ -117,11 +123,11 @@ Blocker.propTypes = {
   message: PropTypes.node,
   priority: PropTypes.number,
   show: PropTypes.bool.isRequired,
-  style: PropTypes.object
+  style: PropTypes.object,
 };
 
-Blocker.defaultProps ={
-  priority: 0
+Blocker.defaultProps = {
+  priority: 0,
 };
 
 Blocker.displayName = 'Blocker';

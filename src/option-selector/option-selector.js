@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 const optionSelectorStyles = {
   container: {
     display: 'inline',
-    position: 'relative'
+    position: 'relative',
   },
   options: {
     padding: '10px',
@@ -13,45 +13,50 @@ const optionSelectorStyles = {
     display: 'none',
     position: 'absolute',
     listStyle: 'none',
-    zIndex: '99'
+    zIndex: '99',
   },
   li: {
     display: 'block',
     cursor: 'pointer',
     margin: '10px 0',
     lineHeight: '1.5',
-  }
+  },
 };
 
 class OptionSelector extends React.Component {
-
-  constructor(props){
+  constructor(props) {
     super(props);
 
-    this.state = {label: this.props.initialValue, isVisible: false};
+    this.state = { label: this.props.initialValue, isVisible: false };
   }
 
   onSelect(opt) {
-    this.setState({label: opt[this.props.labelKey], isVisible: false});
-    if(this.props.onSelectCallBack) {
+    this.setState({ label: opt[this.props.labelKey], isVisible: false });
+    if (this.props.onSelectCallBack) {
       this.props.onSelectCallBack(opt);
     }
   }
 
   showOptions() {
-    this.setState({label: this.state.label, isVisible: !this.state.isVisible});
+    this.setState({ label: this.state.label, isVisible: !this.state.isVisible });
   }
 
   render() {
     let options = this.props.options.map((opt, i) => {
-      return <li key={`opt-${i}`} onClick={() => this.onSelect(opt)} style={optionSelectorStyles.li}>{opt[this.props.labelKey]}</li>;
+      return (
+        <li key={`opt-${i}`} onClick={() => this.onSelect(opt)} style={optionSelectorStyles.li}>
+          {opt[this.props.labelKey]}
+        </li>
+      );
     });
-    var display = this.state.isVisible ? {display: 'block'} : {display: 'none'};
+    var display = this.state.isVisible ? { display: 'block' } : { display: 'none' };
     var optsStyles = Object.assign({}, optionSelectorStyles.options, display);
     var classes = this.props.classes || 'sv-button link link-info';
     return (
       <div style={optionSelectorStyles.container}>
-        <button className={classes} onClick={()=>this.showOptions()}>{this.state.label}</button>
+        <button className={classes} onClick={() => this.showOptions()}>
+          {this.state.label}
+        </button>
         <ul style={optsStyles}>
           {options}
         </ul>
@@ -67,11 +72,11 @@ OptionSelector.propTypes = {
   initialValue: PropTypes.string,
   labelKey: PropTypes.string,
   onSelectCallBack: PropTypes.func,
-  options: PropTypes.array.isRequired
+  options: PropTypes.array.isRequired,
 };
 
 OptionSelector.defaultProps = {
-  initialValue: '?'
+  initialValue: '?',
 };
 
 export default OptionSelector;

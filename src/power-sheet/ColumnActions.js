@@ -136,26 +136,37 @@ class ColumnActions extends React.Component {
       let rendered = this.props.formatterOnFilter ? this.props.formatterOnFilter(item) : item;
       return (
         <div className="sv-tag info" key={`item-${item}-${i}`}>
-          <span className="sv-tag__close" onClick={() => this.addValueOnFilter(item)}>×</span>
-          <span className="sv-tag__content">{rendered}</span>
+          <span className="sv-tag__close" onClick={() => this.addValueOnFilter(item)}>
+            ×
+          </span>
+          <span className="sv-tag__content">
+            {rendered}
+          </span>
         </div>
       );
     });
 
-    return <div>{items}</div>;
+    return (
+      <div>
+        {items}
+      </div>
+    );
   }
 
-  renderConditionsByDataType() {    
-
-    let options = conditions[this.props.dataType].map((opt, i) => {      
-      return <option key={`${this.props.dataType}-${opt.value}-${i}`} value={JSON.stringify(opt)}>{opt.label}</option>;
+  renderConditionsByDataType() {
+    let options = conditions[this.props.dataType].map((opt, i) => {
+      return (
+        <option key={`${this.props.dataType}-${opt.value}-${i}`} value={JSON.stringify(opt)}>
+          {opt.label}
+        </option>
+      );
     });
 
     return (
       <label>
         <span>Condição</span>
         <div className="sv-select">
-          <select 
+          <select
             onChange={e => this._onChangeCondition(JSON.parse(e.target.value))}
             value={JSON.stringify(this.props.condition)}
           >
@@ -185,33 +196,25 @@ class ColumnActions extends React.Component {
         <div className="sv-row--with-gutter">
           <div className="sv-column">
             <input
-              className={!this.props.isGteValueValid ? 'is--invalid': ''}
+              className={!this.props.isGteValueValid ? 'is--invalid' : ''}
               name="start"
               onChange={e => this._setValueInFilter(e)}
               placeholder="Valor inicial"
               type="number"
               value={this.props.filtersByConditions.value['start'] || ''}
             />
-            {
-              !this.props.isGteValueValid ? (
-                <span className="sv-color--red-500"> Campo obrigatório </span>
-              ): ''
-            }
+            {!this.props.isGteValueValid ? <span className="sv-color--red-500"> Campo obrigatório </span> : ''}
           </div>
           <div className="sv-column">
             <input
-              className={!this.props.isLteValueValid ? 'is--invalid': ''}
+              className={!this.props.isLteValueValid ? 'is--invalid' : ''}
               name="end"
               onChange={e => this._setValueInFilter(e)}
               placeholder="Valor final"
               type="number"
               value={this.props.filtersByConditions.value['end'] || ''}
             />
-            {
-              !this.props.isLteValueValid ? (
-                <span className="sv-color--red-500"> Campo obrigatório </span>
-              ): ''
-            }
+            {!this.props.isLteValueValid ? <span className="sv-color--red-500"> Campo obrigatório </span> : ''}
           </div>
         </div>
       );
@@ -304,9 +307,10 @@ class ColumnActions extends React.Component {
         onClick={e => e.stopPropagation()}
         style={{ ...this.styles.box, ...this.props.style }}
       >
-
         <div style={this.styles.containerTop}>
-          <h6 style={this.styles.h6}>{this.props.columnTitle}</h6>
+          <h6 style={this.styles.h6}>
+            {this.props.columnTitle}
+          </h6>
         </div>
         <div style={this.styles.containerOrder}>
           <button
@@ -329,7 +333,6 @@ class ColumnActions extends React.Component {
 
         {this.props.searchable ? this.renderFilter() : null}
         {this.renderButtons()}
-
       </div>
     );
   }

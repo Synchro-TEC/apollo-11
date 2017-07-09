@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-const Cell = ({col, row, width}) => {
+const Cell = ({ col, row, width }) => {
   let style = {
     whiteSpace: 'nowrap',
     overflow: 'hidden',
@@ -11,7 +11,11 @@ const Cell = ({col, row, width}) => {
 
   let rendered = col.formatter ? col.formatter(row) : row[col.key];
 
-  return (<td style={style}>{rendered}</td>);
+  return (
+    <td style={style}>
+      {rendered}
+    </td>
+  );
 };
 
 Cell.displayName = 'Cell';

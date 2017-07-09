@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import ColumnActions from './ColumnActions';
 
 class PowerColumn extends React.Component {
-
   constructor(props) {
     super(props);
 
@@ -25,9 +24,9 @@ class PowerColumn extends React.Component {
   renderFilter() {
     let result = '';
 
-    if(this.props.dataKey ) {
-      if(this.props.filters[this.props.dataKey] || this.props.filtersByConditions[this.props.dataKey]){
-        result = (<i className='fa fa-filter fa-fw' title={this.props.filters[this.props.dataKey]} />);
+    if (this.props.dataKey) {
+      if (this.props.filters[this.props.dataKey] || this.props.filtersByConditions[this.props.dataKey]) {
+        result = <i className="fa fa-filter fa-fw" title={this.props.filters[this.props.dataKey]} />;
       }
     }
 
@@ -38,13 +37,13 @@ class PowerColumn extends React.Component {
     let rendered = '';
 
     let cssClass = 'fa fa-fw';
-    if(this.props.dataKey && this.props.sorts.hasOwnProperty(this.props.dataKey)){
-      if(this.props.dataType === 'text') {
+    if (this.props.dataKey && this.props.sorts.hasOwnProperty(this.props.dataKey)) {
+      if (this.props.dataType === 'text') {
         cssClass += this.props.sorts[this.props.dataKey] ? ' fa-sort-alpha-desc' : ' fa-sort-alpha-asc';
       } else {
         cssClass += this.props.sorts[this.props.dataKey] ? ' fa-sort-numeric-desc' : ' fa-sort-numeric-asc';
       }
-      rendered = (<i className={cssClass} />);
+      rendered = <i className={cssClass} />;
     }
     return rendered;
   }
@@ -67,11 +66,11 @@ class PowerColumn extends React.Component {
   render() {
     let result;
 
-    if(this.props.dataKey) {
+    if (this.props.dataKey) {
       let style = {};
 
-      if(this.props.width) {
-        style.width = this.props.width
+      if (this.props.width) {
+        style.width = this.props.width;
       }
 
       result = (
@@ -80,9 +79,13 @@ class PowerColumn extends React.Component {
           {this.renderSort()}
           {this.renderFilter()}
 
-          <i className='fa fa-fw fa-caret-square-o-down' onClick={() => this.setColumn()} style={{cursor: 'pointer', marginLeft: '8px'}} />
+          <i
+            className="fa fa-fw fa-caret-square-o-down"
+            onClick={() => this.setColumn()}
+            style={{ cursor: 'pointer', marginLeft: '8px' }}
+          />
 
-          <ColumnActions {...this.propsToSend}  />
+          <ColumnActions {...this.propsToSend} />
         </th>
       );
     } else {
@@ -95,7 +98,6 @@ class PowerColumn extends React.Component {
 
     return result;
   }
-
 }
 
 PowerColumn.displayName = 'PowerColumn';
@@ -103,7 +105,7 @@ PowerColumn.displayName = 'PowerColumn';
 PowerColumn.defaultProps = {
   dataType: 'text',
   searchable: false,
-  groupBy: false
+  groupBy: false,
 };
 
 PowerColumn.propTypes = {

@@ -5,7 +5,6 @@ import TableBody from './TableBody';
 import GroupedTableBody from './GroupedTableBody';
 
 class ScrollArea extends React.Component {
-
   constructor(props) {
     super(props);
   }
@@ -13,19 +12,18 @@ class ScrollArea extends React.Component {
   render() {
     let columns = this.props.columns;
     let data = this.props.collection;
-    let groupedCols = _.filter(columns, { 'groupBy': true });
+    let groupedCols = _.filter(columns, { groupBy: true });
     let isGrouped = groupedCols.length > 0;
-
 
     let tableBodyOpts = {
       data: data,
       columns: columns,
-      columnsWidth: this.props.columnsWidth
+      columnsWidth: this.props.columnsWidth,
     };
 
     return (
       <div
-        className='PWT-Scroll'
+        className="PWT-Scroll"
         style={{
           display: 'block',
           overflow: 'auto',
@@ -34,11 +32,10 @@ class ScrollArea extends React.Component {
           borderBottom: '1px solid #dadada',
         }}
       >
-        <table className='sv-table with--grid with--hover' style={{ tableLayout: 'fixed', marginBottom: '0px' }}>
+        <table className="sv-table with--grid with--hover" style={{ tableLayout: 'fixed', marginBottom: '0px' }}>
           {isGrouped ? <GroupedTableBody {...tableBodyOpts} /> : <TableBody {...tableBodyOpts} />}
         </table>
       </div>
-
     );
   }
 }

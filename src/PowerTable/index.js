@@ -7,8 +7,7 @@ import Paginate from '../paginate/Paginate';
 const Worker = require('worker-loader?name=powerTableWorker.js&inline!./fetch.worker.js');
 
 class PowerTable extends React.Component {
-
-  constructor(props){
+  constructor(props) {
     super(props);
 
     this._filter = this._filter.bind(this);
@@ -20,7 +19,7 @@ class PowerTable extends React.Component {
     this._selectColumn = this._selectColumn.bind(this);
     this._sort = this._sort.bind(this);
 
-    this.worker = new Worker;
+    this.worker = new Worker();
     this.columns = this._extractColumns(props);
     this.state = {
       activeColumn: null,
@@ -33,28 +32,29 @@ class PowerTable extends React.Component {
       loading: true,
       sorts: {},
     };
-
   }
 
   componentDidMount() {
-    this.worker.addEventListener('message', (e) => {
-      this._handlerWorkerReturn(e);
-    }, false);
+    this.worker.addEventListener(
+      'message',
+      e => {
+        this._handlerWorkerReturn(e);
+      },
+      false
+    );
 
     let _message = {
       action: 'LOAD',
       fetch: this.props.fetch,
       pageSize: this.props.pageSize,
-      cols: this.columns.map((col) => {
-        if(col.key) {
-          return {key: col.key, searchable: col.searchable};
+      cols: this.columns.map(col => {
+        if (col.key) {
+          return { key: col.key, searchable: col.searchable };
         }
       }),
     };
 
-    this.worker.postMessage(
-      _message
-    );
+    this.worker.postMessage(_message);
   }
 
   componentWillUnmount() {
@@ -69,13 +69,13 @@ class PowerTable extends React.Component {
    * @private
    */
   _extractColumns(props) {
-    return React.Children.map(props.children, (child) => {
+    return React.Children.map(props.children, child => {
       return {
         title: child.props.columnTitle,
         key: child.props.dataKey,
         formatter: child.props.formatter,
         searchable: child.props.searchable,
-        groupBy: child.props.groupBy
+        groupBy: child.props.groupBy,
       };
     });
   }
@@ -89,7 +89,7 @@ class PowerTable extends React.Component {
    */
   _extractColumnsWidth(props) {
     let widths = [];
-    React.Children.forEach(props.children, (child) => widths.push(child.props.width));
+    React.Children.forEach(props.children, child => widths.push(child.props.width));
     return widths;
   }
 
@@ -99,7 +99,7 @@ class PowerTable extends React.Component {
    * @private
    */
   _filter(filterProps) {
-    this.worker.postMessage({ action: 'FILTER', filterProps});
+    this.worker.postMessage({ action: 'FILTER', filterProps });
   }
 
   /**
@@ -109,7 +109,7 @@ class PowerTable extends React.Component {
    * @private
    */
   _filterDistinct(filterProps) {
-    this.worker.postMessage({ action: 'FILTER_DISTINCT', filterProps});
+    this.worker.postMessage({ action: 'FILTER_DISTINCT', filterProps });
   }
 
   /**
@@ -119,14 +119,13 @@ class PowerTable extends React.Component {
    * @private
    */
   _handlerDistinctFilters(filterProps) {
-
-    const {value, dataKey} = filterProps;
+    const { value, dataKey } = filterProps;
 
     let oldState = JSON.stringify(this.state.distinctFilters);
     let newState = JSON.parse(oldState);
 
-    if(newState.hasOwnProperty(dataKey)) {
-      if(!newState[dataKey].includes(value)) {
+    if (newState.hasOwnProperty(dataKey)) {
+      if (!newState[dataKey].includes(value)) {
         newState[dataKey].push(value);
       } else {
         let index = newState[dataKey].indexOf(value);
@@ -136,9 +135,8 @@ class PowerTable extends React.Component {
       newState[dataKey] = [value];
     }
 
-    this.setState(update(this.state, {distinctFilters: {$set: newState}}));
+    this.setState(update(this.state, { distinctFilters: { $set: newState } }));
   }
-
 
   /**
    * Metodo que manipula o retorno dos processos realizado pelo Worker.
@@ -147,21 +145,20 @@ class PowerTable extends React.Component {
    * @private
    */
   _handlerWorkerReturn(e) {
-
-    const updateMessage = (message) => {
-      const newState = update(this.state, {message: {$set: message}});
+    const updateMessage = message => {
+      const newState = update(this.state, { message: { $set: message } });
       this.setState(newState);
     };
 
     const refreshState = () => {
       const newState = update(this.state, {
-        collection: {$set: e.data.itens},
-        message: {$set: e.data.message},
-        count: {$set: e.data.count},
-        filters: {$set: e.data.filters},
-        filtersByConditions: {$set: e.data.filtersByConditions},
-        loading: {$set: false},
-        sorts: {$set: e.data.sorts},
+        collection: { $set: e.data.itens },
+        message: { $set: e.data.message },
+        count: { $set: e.data.count },
+        filters: { $set: e.data.filters },
+        filtersByConditions: { $set: e.data.filtersByConditions },
+        loading: { $set: false },
+        sorts: { $set: e.data.sorts },
       });
       this.setState(newState);
     };
@@ -190,16 +187,16 @@ class PowerTable extends React.Component {
         refreshState.call(this);
         break;
       case 'DISTINCT':
-        this.setState(update(this.state, {distincts: {$set: e.data.itens}}));
+        this.setState(update(this.state, { distincts: { $set: e.data.itens } }));
         break;
       case 'FILTER_DISTINCT':
-        if(!e.data.dataKey) {
-          this.setState(update(this.state, {distincts: {$set: e.data.itens}}));
+        if (!e.data.dataKey) {
+          this.setState(update(this.state, { distincts: { $set: e.data.itens } }));
         } else {
           let oldState = JSON.stringify(this.state.distincts);
           let newState = JSON.parse(oldState);
           newState[e.data.dataKey] = e.data.itens;
-          this.setState(update(this.state, {distincts: {$set: newState}}));
+          this.setState(update(this.state, { distincts: { $set: newState } }));
         }
         break;
     }
@@ -214,7 +211,7 @@ class PowerTable extends React.Component {
    * @private
    */
   _onApplyFilter(perValue, perConditions, dataInfo) {
-    this.worker.postMessage({ action: 'FILTER', perValue, perConditions, dataInfo});
+    this.worker.postMessage({ action: 'FILTER', perValue, perConditions, dataInfo });
     this._selectColumn(null);
   }
 
@@ -229,7 +226,6 @@ class PowerTable extends React.Component {
     this.worker.postMessage({ action: 'PAGINATE', currentPage, offset });
   }
 
-
   /**
    * Seta qual é a coluna ativa (que terá as opções de filtro e sort aberto)
    *
@@ -238,10 +234,9 @@ class PowerTable extends React.Component {
    */
   _selectColumn(dataKey) {
     let activeColumn = dataKey === this.state.activeColumn ? null : dataKey;
-    const newState = update(this.state, {activeColumn: {$set: activeColumn}});
+    const newState = update(this.state, { activeColumn: { $set: activeColumn } });
     this.setState(newState);
   }
-
 
   /**
    * Envia ao worker a mensagem solicitando o sort.
@@ -251,13 +246,11 @@ class PowerTable extends React.Component {
    * @private
    */
   _sort(direction, dataKey) {
-    this.worker.postMessage({ action: 'SORT', direction, dataKey});
+    this.worker.postMessage({ action: 'SORT', direction, dataKey });
     this._selectColumn(null);
   }
 
-
   render() {
-
     let opts = {
       collection: this.state.collection,
       columns: this._extractColumns(this.props),
@@ -270,9 +263,8 @@ class PowerTable extends React.Component {
     };
 
     let headers = this.props.children.map((chield, i) => {
-
-      let newProps = {key: i};
-      if(chield.props.dataKey){
+      let newProps = { key: i };
+      if (chield.props.dataKey) {
         newProps.onSearch = this._filter;
         newProps.onSort = this._sort;
         newProps.filters = this.state.filters;
@@ -286,38 +278,40 @@ class PowerTable extends React.Component {
         newProps.distinctFilters = this.state.distinctFilters;
         newProps.onApplyFilter = this._onApplyFilter;
       }
-      let props = {...chield.props, ...newProps};
+      let props = { ...chield.props, ...newProps };
 
       return React.cloneElement(chield, props);
     });
 
-    let scrollableArea = this.state.collection.length ?
-      (<ScrollArea {...opts} />) : (this.state.loading ? '' : <div>Nenhum Registro Encontrado.</div>);
+    let scrollableArea = this.state.collection.length
+      ? <ScrollArea {...opts} />
+      : this.state.loading ? '' : <div>Nenhum Registro Encontrado.</div>;
 
     return (
       <div>
-        <p>{this.state.message || ' '}</p>
-        <div className='PWT-TableHeader' style={{backgroundColor: '#f3f3f3', position: 'relative'}}>
-          <table className='sv-table with--grid' style={{tableLayout: 'fixed'}}>
+        <p>
+          {this.state.message || ' '}
+        </p>
+        <div className="PWT-TableHeader" style={{ backgroundColor: '#f3f3f3', position: 'relative' }}>
+          <table className="sv-table with--grid" style={{ tableLayout: 'fixed' }}>
             <thead>
-            <tr>
-              {headers}
-            </tr>
+              <tr>
+                {headers}
+              </tr>
             </thead>
           </table>
         </div>
         {scrollableArea}
-        <div className='sv-padd-25'>
+        <div className="sv-padd-25">
           <Paginate
             onNextPage={this._paginate}
             onPreviousPage={this._paginate}
             onSelectASpecifPage={this._paginate}
             recordsByPage={this.props.pageSize}
-            ref='paginate'
+            ref="paginate"
             totalSizeOfData={this.state.count}
           />
         </div>
-
       </div>
     );
   }

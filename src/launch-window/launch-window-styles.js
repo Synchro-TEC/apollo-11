@@ -6,7 +6,7 @@ const styles = {
     width: '100%',
     height: '100%',
     zIndex: 99,
-    backgroundColor: 'rgba(0,0,0,0.3)'
+    backgroundColor: 'rgba(0,0,0,0.3)',
   },
   dialogStyles: {
     width: '50%',
@@ -20,14 +20,14 @@ const styles = {
     borderRadius: '2px',
     zIndex: 100,
     padding: '10px',
-    boxShadow: '0 0 4px rgba(0,0,0,.14),0 4px 8px rgba(0,0,0,.28)'
+    boxShadow: '0 0 4px rgba(0,0,0,.14),0 4px 8px rgba(0,0,0,.28)',
   },
   closeButtonStyle: {
     cursor: 'pointer',
     float: 'right',
     fontSize: '1.6em',
-    margin: '-15px 0px'
-  }
+    margin: '-15px 0px',
+  },
 };
 
 export default styles;

@@ -4,7 +4,6 @@ import v4 from 'uuid/v4';
 import Cell from './Cell';
 
 class TableBody extends React.Component {
-
   constructor(props) {
     super(props);
   }
@@ -12,15 +11,19 @@ class TableBody extends React.Component {
   render() {
     let trs = this.props.data.map((row, i) => {
       return (
-        <tr key={i} style={{ height: '40px'}}>
-          {this.props.columns.map((col , index) => {
-            return (<Cell col={col} key={v4()} row={row} width={this.props.columnsWidth[index]} />);
+        <tr key={i} style={{ height: '40px' }}>
+          {this.props.columns.map((col, index) => {
+            return <Cell col={col} key={v4()} row={row} width={this.props.columnsWidth[index]} />;
           })}
         </tr>
       );
     });
 
-    return (<tbody>{trs}</tbody>);
+    return (
+      <tbody>
+        {trs}
+      </tbody>
+    );
   }
 }
 
