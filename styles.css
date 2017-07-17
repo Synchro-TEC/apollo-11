@@ -16,7 +16,7 @@ body {
 }
 
 pre {
-  font-size: .8em;
+  font-size: 1.2em;
   margin: 0;
 }
 
@@ -134,8 +134,7 @@ pre {
   padding: 0;
 }
 
-.dm-sidebar ul li a {
-  font-size: .9rem;
+.dm-sidebar ul li a {  
   font-weight: 400;
   text-decoration: none;
   padding: 7px 0 7px 25px;
@@ -212,6 +211,7 @@ pre {
 }
 
 .dm-code-container {
+  font-size: 15px;  
   margin: 5px;
   border: 1px solid #e0e6ed;
   padding: 0;
