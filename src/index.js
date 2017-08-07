@@ -13,6 +13,7 @@ import PowerColumn from './PowerTable/PowerColumn';
 import PowerSheet from './power-sheet/PowerSheet';
 import SheetColumn from './power-sheet/SheetColumn';
 import InputDate from './inputDate/inputDate';
+import SvRow from './sv/grid/svRow';
 
 export {
   Hermes,
@@ -28,4 +29,5 @@ export {
   PowerSheet,
   SheetColumn,
   InputDate,
+  SvRow,
 };
