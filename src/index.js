@@ -14,6 +14,7 @@ import PowerSheet from './power-sheet/PowerSheet';
 import SheetColumn from './power-sheet/SheetColumn';
 import InputDate from './inputDate/inputDate';
 import SvRow from './sv/grid/svRow';
+import SvCol from './sv/grid/svCol';
 
 export {
   Hermes,
@@ -30,4 +31,5 @@ export {
   SheetColumn,
   InputDate,
   SvRow,
+  SvCol,
 };
