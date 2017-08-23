@@ -34,4 +34,4 @@ SvButtonOutline.propTypes = {
   ])
 };
 
-export default svButtonOutline;
+export default SvButtonOutline;
