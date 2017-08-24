@@ -7,7 +7,8 @@ class SvButtonLink extends Component {
     const cssClasses = classNames(
 			'sv-button link',
 			this.props.className,
-			this.props.fill
+			this.props.fill,
+			this.props.small ? ' small' : ''
 		);
     return (
 			<div className={cssClasses}>
@@ -20,7 +21,8 @@ class SvButtonLink extends Component {
 SvButtonLink.displayName = 'SvButtonLink';
 
 SvButtonLink.defaultProps = {
-  fill: 'link-primary'
+  fill: 'link-default',
+  small: false
 };
 
 SvButtonLink.propTypes = {
@@ -31,7 +33,8 @@ SvButtonLink.propTypes = {
     'link-danger',
     'link-warning',
     'link-default'
-  ])
+  ]),
+  small: PropTypes.bool
 };
 
 export default SvButtonLink;

@@ -7,7 +7,8 @@ class SvButtonOutline extends Component {
     const cssClasses = classNames(
 			'sv-button',
 			this.props.className,
-			this.props.fill
+			this.props.fill,
+			this.props.small ? ' small' : ''
 		);
     return (
 			<div className={cssClasses}>
@@ -20,7 +21,8 @@ class SvButtonOutline extends Component {
 SvButtonOutline.displayName = 'SvButtonOutline';
 
 SvButtonOutline.defaultProps = {
-  fill: 'out-primary'
+  fill: 'out-default',
+  small: false
 };
 
 SvButtonOutline.propTypes = {
@@ -31,7 +33,8 @@ SvButtonOutline.propTypes = {
     'out-danger',
     'out-warning',
     'out-default'
-  ])
+  ]),
+  small: PropTypes.bool
 };
 
 export default SvButtonOutline;
