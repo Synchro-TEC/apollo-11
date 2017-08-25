@@ -13,9 +13,9 @@ class SvButtonAnimated extends Component {
       this.props.small ? ' small' : ''
     );
     return (
-      <div className={cssClasses}>
+      <button className={cssClasses}>
         {this.props.children}
-      </div>
+      </button>
     );
   }
 }

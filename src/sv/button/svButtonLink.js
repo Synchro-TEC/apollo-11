@@ -6,15 +6,15 @@ class SvButtonLink extends Component {
   render() {
     const linkCss = `link-${this.props.color}`;
     const cssClasses = classNames(
-			'sv-button link',
-			this.props.className,
-			linkCss,
-			this.props.small ? ' small' : ''
-		);
+      'sv-button link',
+      this.props.className,
+      linkCss,
+      this.props.small ? ' small' : ''
+    );
     return (
-			<div className={cssClasses}>
-				{this.props.children}
-			</div>
+      <button className={cssClasses}>
+        {this.props.children}
+      </button>
     );
   }
 }
@@ -29,7 +29,7 @@ SvButtonLink.defaultProps = {
 SvButtonLink.propTypes = {
   className: PropTypes.string,
   color: PropTypes.oneOf(['primary', 'info', 'danger', 'warning', 'default'])
-		.isRequired,
+    .isRequired,
   small: PropTypes.bool
 };
 

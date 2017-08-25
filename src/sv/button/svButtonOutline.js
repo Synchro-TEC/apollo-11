@@ -6,16 +6,16 @@ class SvButtonOutline extends Component {
   render() {
     const outLineCss = `out-${this.props.color}`;
     const cssClasses = classNames(
-			'sv-button',
-			this.props.className,
-			outLineCss,
-			this.props.full ? 'full' : '',
-			this.props.small ? ' small' : ''
-		);
+      'sv-button',
+      this.props.className,
+      outLineCss,
+      this.props.full ? 'full' : '',
+      this.props.small ? ' small' : ''
+    );
     return (
-			<div className={cssClasses}>
-				{this.props.children}
-			</div>
+      <button className={cssClasses}>
+        {this.props.children}
+      </button>
     );
   }
 }
@@ -31,7 +31,7 @@ SvButtonOutline.defaultProps = {
 SvButtonOutline.propTypes = {
   className: PropTypes.string,
   color: PropTypes.oneOf(['primary', 'info', 'danger', 'warning', 'default'])
-		.isRequired,
+    .isRequired,
   full: PropTypes.bool,
   small: PropTypes.bool
 };

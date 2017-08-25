@@ -5,17 +5,17 @@ import PropTypes from 'prop-types';
 class SvButton extends Component {
   render() {
     const cssClasses = classNames(
-			'sv-button',
-			this.props.className,
-			this.props.color,
-			this.props.full ? 'full' : '',
-			this.props.small ? 'small' : ''
-		);
+      'sv-button',
+      this.props.className,
+      this.props.color,
+      this.props.full ? 'full' : '',
+      this.props.small ? 'small' : ''
+    );
 
     return (
-			<div className={cssClasses}>
-				{this.props.children}
-			</div>
+      <button className={cssClasses}>
+        {this.props.children}
+      </button>
     );
   }
 }
