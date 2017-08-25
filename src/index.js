@@ -15,6 +15,10 @@ import SheetColumn from './power-sheet/SheetColumn';
 import InputDate from './inputDate/inputDate';
 import SvRow from './sv/grid/svRow';
 import SvCol from './sv/grid/svCol';
+import SvButton from './sv/button/svButton';
+import SvButtonLink from './sv/button/svButtonLink';
+import SvButtonOutline from './sv/button/svButtonOutline';
+import SvButtonAnimated from './sv/button/svButtonAnimated';
 
 export {
   Hermes,
@@ -32,4 +36,8 @@ export {
   InputDate,
   SvRow,
   SvCol,
+  SvButton,
+  SvButtonLink,
+  SvButtonOutline,
+  SvButtonAnimated
 };
