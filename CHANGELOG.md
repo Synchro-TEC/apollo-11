@@ -4,6 +4,10 @@ Todas as mudanças consideráveis serão documentadas neste arquivo.
 Este formato de changelog foi baseado em [Keep a Changelog](http://keepachangelog.com/)
 e esse projeto adere ao [Semantic Versioning](http://semver.org/).
 
+### [0.4.14] - 2017-8-14
+### Corrigido
+- Correção da propriedade css que posiciona o ícone de limpar o campo de busca no filtro, de line-height para padding-top. Isso evita problemas de posicionamento
+
 ## [0.4.13] - 2017-6-30
 ### Modificado 
 - Propriedades onFilter e onClearAll do componente Filtro retornam apenas o valor do campo de busca

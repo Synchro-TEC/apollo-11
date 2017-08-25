@@ -9,43 +9,43 @@ class Filter extends React.Component {
     super();
     this.state = {
       clearFieldIsVisible: false
-    };   
+    };
     this.doFilterBySearchField = this.doFilterBySearchField.bind(this);
     this.clearAllFields = this.clearAllFields.bind(this);
-  }  
+  }
 
   toggleClearField() {
-    this.setState({ 
+    this.setState({
       clearFieldIsVisible: this.refs.search.value !== ''
     });
   }
 
-  doFilterBySearchField() {              
+  doFilterBySearchField() {
     if(this.props.onFilter) {
       this.props.onFilter(this.refs.search.value);
     }
   }
 
-  clearAllFields() {    
+  clearAllFields() {
     if(this.props.onClearAll) {
       this.props.onClearAll(this.refs.search.value);
     }
   }
 
-  clearSearchField() {          
-    if(this.props.onFilter) {      
+  clearSearchField() {
+    if(this.props.onFilter) {
       this.refs.search.value = '';
       this.setState(
-        {clearFieldIsVisible: false}, 
+        {clearFieldIsVisible: false},
         this.props.onFilter(this.refs.search.value)
       );
-    }    
+    }
   }
 
-  render() { 
+  render() {
 
     const timesIconStyle = {
-      'lineHeight': '34px',
+      'paddingTop': '10px',
       'marginLeft': '-25px',
       'cursor': 'pointer',
     };
@@ -78,19 +78,19 @@ class Filter extends React.Component {
             <i className='fa fa-search fa-fw'/>
           </span>
           <input
-            className='on-center'            
+            className='on-center'
             onKeyUp={() => {this.toggleClearField(); this.doFilterBySearchField();}}
-            placeholder={placeholder}            
+            placeholder={placeholder}
             ref='search'
             type='search'
           />
           {clearFieldIcon}
-          <FilterOptions            
+          <FilterOptions
             applyFilterButtonLabel={applyFilterButtonLabel}
             cancelButtonLabel={cancelButtonLabel}
             clearAllFields={this.clearAllFields}
-            clearFilterOptionsButtonLabel={clearFilterOptionsButtonLabel}  
-            doFilterBySearchField={this.doFilterBySearchField}          
+            clearFilterOptionsButtonLabel={clearFilterOptionsButtonLabel}
+            doFilterBySearchField={this.doFilterBySearchField}
             filterButtonLabel={filterButtonLabel}
             hasFilterOptions={!_isUndefined(children)}>
             {this.props.children}
@@ -113,7 +113,7 @@ Filter.propTypes = {
   applyFilterButtonLabel: PropTypes.string,
   cancelButtonLabel: PropTypes.string,
   clearFilterOptionsButtonLabel: PropTypes.string,
-  filterButtonLabel: PropTypes.string,  
+  filterButtonLabel: PropTypes.string,
   onClearAll: PropTypes.func,
   onFilter: PropTypes.func,
   placeholder: PropTypes.string,
