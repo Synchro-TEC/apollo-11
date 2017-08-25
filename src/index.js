@@ -18,6 +18,7 @@ import SvCol from './sv/grid/svCol';
 import SvButton from './sv/button/svButton';
 import SvButtonLink from './sv/button/svButtonLink';
 import SvButtonOutline from './sv/button/svButtonOutline';
+import SvButtonAnimated from './sv/button/svButtonAnimated';
 
 export {
   Hermes,
@@ -37,5 +38,6 @@ export {
   SvCol,
   SvButton,
   SvButtonLink,
-  SvButtonOutline
+  SvButtonOutline,
+  SvButtonAnimated
 };
