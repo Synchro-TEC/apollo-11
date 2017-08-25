@@ -7,8 +7,9 @@ class SvButton extends Component {
     const cssClasses = classNames(
 			'sv-button',
 			this.props.className,
-			this.props.small ? 'small' : '',
-			this.props.fill
+			this.props.color,
+			this.props.full ? 'full' : '',
+			this.props.small ? 'small' : ''
 		);
 
     return (
@@ -22,13 +23,15 @@ class SvButton extends Component {
 SvButton.displayName = 'SvButton';
 
 SvButton.defaultProps = {
-  fill: 'default',
+  color: 'default',
+  full: false,
   small: false
 };
 
 SvButton.propTypes = {
   className: PropTypes.string,
-  fill: PropTypes.oneOf(['primary', 'info', 'danger', 'warning', 'default']),
+  color: PropTypes.oneOf(['primary', 'info', 'danger', 'warning', 'default']),
+  full: PropTypes.bool,
   small: PropTypes.bool
 };
 

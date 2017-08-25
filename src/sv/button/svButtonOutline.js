@@ -4,10 +4,12 @@ import PropTypes from 'prop-types';
 
 class SvButtonOutline extends Component {
   render() {
+    const outLineCss = `out-${this.props.color}`;
     const cssClasses = classNames(
 			'sv-button',
 			this.props.className,
-			this.props.fill,
+			outLineCss,
+			this.props.full ? 'full' : '',
 			this.props.small ? ' small' : ''
 		);
     return (
@@ -21,19 +23,16 @@ class SvButtonOutline extends Component {
 SvButtonOutline.displayName = 'SvButtonOutline';
 
 SvButtonOutline.defaultProps = {
-  fill: 'out-default',
-  small: false
+  color: 'default',
+  small: false,
+  full: false
 };
 
 SvButtonOutline.propTypes = {
   className: PropTypes.string,
-  fill: PropTypes.oneOf([
-    'out-primary',
-    'out-info',
-    'out-danger',
-    'out-warning',
-    'out-default'
-  ]),
+  color: PropTypes.oneOf(['primary', 'info', 'danger', 'warning', 'default'])
+		.isRequired,
+  full: PropTypes.bool,
   small: PropTypes.bool
 };
 

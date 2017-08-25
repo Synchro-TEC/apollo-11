@@ -4,10 +4,11 @@ import PropTypes from 'prop-types';
 
 class SvButtonLink extends Component {
   render() {
+    const linkCss = `link-${this.props.color}`;
     const cssClasses = classNames(
 			'sv-button link',
 			this.props.className,
-			this.props.fill,
+			linkCss,
 			this.props.small ? ' small' : ''
 		);
     return (
@@ -21,19 +22,14 @@ class SvButtonLink extends Component {
 SvButtonLink.displayName = 'SvButtonLink';
 
 SvButtonLink.defaultProps = {
-  fill: 'link-default',
+  color: 'default',
   small: false
 };
 
 SvButtonLink.propTypes = {
   className: PropTypes.string,
-  fill: PropTypes.oneOf([
-    'link-primary',
-    'link-info',
-    'link-danger',
-    'link-warning',
-    'link-default'
-  ]),
+  color: PropTypes.oneOf(['primary', 'info', 'danger', 'warning', 'default'])
+		.isRequired,
   small: PropTypes.bool
 };
 
