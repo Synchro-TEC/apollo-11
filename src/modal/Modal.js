@@ -6,7 +6,7 @@ import { SkyLightStateless } from 'react-skylight';
  * Encapsula a lógica de montagem de modal.
  *
  * @param title - título do modal
- * @param tipo - tipo do modal. Valores aceitos: 'SMALL', 'MEDIUM', 'LARGE', 'CUSTOM'
+ * @param type - tipo do modal. Valores aceitos: 'SMALL', 'MEDIUM', 'LARGE', 'CUSTOM'
  * @param customStyle - para modais do tipo CUSTOM, este atributo contém um objeto com as propriedades de estilo a serem aplicadas
  * @param show - indica se deve ser exibido
  * @param close - função a ser executada ao clicar no botão de fechar o modal
@@ -19,7 +19,7 @@ import { SkyLightStateless } from 'react-skylight';
  */
 function Modal({
   title,
-  tipo,
+  type,
   customStyle,
   show,
   close,
@@ -56,7 +56,7 @@ function Modal({
   }
 
   let width = window.screen.availWidth;
-  switch (tipo) {
+  switch (type) {
     case 'SMALL':
       styles.dialogStyles.width = width < 1024 ? '45%' : '32%';
       styles.dialogStyles.minHeight = '285px';
@@ -120,12 +120,12 @@ Modal.propTypes = {
   handleSave: PropTypes.func,
   show: PropTypes.bool,
   showButtons: PropTypes.bool,
-  tipo: PropTypes.oneOf(['SMALL', 'MEDIUM', 'LARGE', 'CUSTOM']),
   title: PropTypes.string.isRequired,
+  type: PropTypes.oneOf(['SMALL', 'MEDIUM', 'LARGE', 'CUSTOM']),
 };
 
 Modal.defaultProps = {
-  tipo: 'SMALL',
+  type: 'SMALL',
   show: false,
   cancelButtonText: 'Cancelar',
   confirmButtonText: 'Salvar',
