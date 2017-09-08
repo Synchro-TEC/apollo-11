@@ -28,7 +28,7 @@ function Modal({
   confirmButtonText,
   showButtons,
   enableScrollbars,
-  handleSave,
+  handleSave
 }) {
   let styles = {
     dialogStyles: {
@@ -42,13 +42,14 @@ function Modal({
       borderRadius: '2px',
       zIndex: '100',
       padding: '15px',
-      boxShadow: 'rgba(0, 0, 0, 0.137255) 0px 0px 4px, rgba(0, 0, 0, 0.278431) 0px 4px 8px',
+      boxShadow:
+        'rgba(0, 0, 0, 0.137255) 0px 0px 4px, rgba(0, 0, 0, 0.278431) 0px 4px 8px',
       display: 'block',
-      backgroundColor: 'rgb(255, 255, 255)',
+      backgroundColor: 'rgb(255, 255, 255)'
     },
     title: {
-      fontSize: '2rem',
-    },
+      fontSize: '2rem'
+    }
   };
 
   if (enableScrollbars === true) {
@@ -65,11 +66,13 @@ function Modal({
     case 'MEDIUM':
       styles.dialogStyles.width = width < 1024 ? '50%' : '40%';
       styles.dialogStyles.minHeight = '350px';
-      styles.dialogStyles.marginLeft = width < 1024 ? '-33%%' : width < 1025 ? '-29%' : '-25%';
+      styles.dialogStyles.marginLeft =
+        width < 1024 ? '-33%%' : width < 1025 ? '-29%' : '-25%';
       break;
     case 'LARGE':
       styles.dialogStyles.width = '80%';
       styles.dialogStyles.minHeight = '60%';
+      styles.dialogStyles.left = '35%';
       break;
     case 'CUSTOM':
       styles.dialogStyles = Object.assign(styles.dialogStyles, customStyle);
@@ -79,10 +82,18 @@ function Modal({
   let buttons = showButtons ? (
     <div className="sv-row sv-horizontal-marged-50">
       <div className="sv-column">
-        <button className="sv-button link link-danger" onClick={close} type="button">
+        <button
+          className="sv-button link link-danger"
+          onClick={close}
+          type="button"
+        >
           <i className="fa fa-ban" /> {cancelButtonText}
         </button>
-        <button className="sv-button primary sv-pull-right" onClick={handleSave} type="button">
+        <button
+          className="sv-button primary sv-pull-right"
+          onClick={handleSave}
+          type="button"
+        >
           <i aria-hidden="true" className="fa fa-check" /> {confirmButtonText}
         </button>
       </div>
@@ -121,7 +132,7 @@ Modal.propTypes = {
   show: PropTypes.bool,
   showButtons: PropTypes.bool,
   title: PropTypes.string.isRequired,
-  type: PropTypes.oneOf(['SMALL', 'MEDIUM', 'LARGE', 'CUSTOM']),
+  type: PropTypes.oneOf(['SMALL', 'MEDIUM', 'LARGE', 'CUSTOM'])
 };
 
 Modal.defaultProps = {
@@ -130,7 +141,7 @@ Modal.defaultProps = {
   cancelButtonText: 'Cancelar',
   confirmButtonText: 'Salvar',
   showButtons: true,
-  enableScrollbars: false,
+  enableScrollbars: false
 };
 
 export default Modal;

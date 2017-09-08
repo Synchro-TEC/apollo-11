@@ -1,5 +1,5 @@
 import { createConfirmation } from 'react-confirm';
-import ConfirmDialog from './ConfirmDialg';
+import ConfirmDialog from './ConfirmDialog';
 
 const confirm = createConfirmation(ConfirmDialog);
 
