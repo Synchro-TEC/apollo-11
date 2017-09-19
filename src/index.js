@@ -19,6 +19,8 @@ import SvButton from './sv/button/svButton';
 import SvButtonLink from './sv/button/svButtonLink';
 import SvButtonOutline from './sv/button/svButtonOutline';
 import SvButtonAnimated from './sv/button/svButtonAnimated';
+import Modal from './modal/Modal';
+import Confirm from './modal/confirm';
 
 export {
   Hermes,
@@ -39,5 +41,7 @@ export {
   SvButton,
   SvButtonLink,
   SvButtonOutline,
-  SvButtonAnimated
+  SvButtonAnimated,
+  Modal,
+  Confirm
 };
