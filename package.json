@@ -1,6 +1,6 @@
 {
   "name": "syntec-apollo-11",
-  "version": "0.4.16",
+  "version": "0.4.17",
   "description": "Apollo-11 Project - Failure is not an option",
   "main": "./distribution/index.js",
   "files": [
@@ -47,6 +47,7 @@
     "eslint-plugin-react": "^7.3.0",
     "prettier": "^1.7.0",
     "prettier-eslint": "^8.1.0",
+    "publish-please": "^2.3.1",
     "react": "^15.5.4",
     "react-addons-update": "^15.5.2",
     "react-dom": "^15.5.4",
