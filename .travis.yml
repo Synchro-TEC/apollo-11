@@ -1,12 +1,13 @@
 language: node_js
 node_js:
-- "6"
-
-install:
-  - yarn
+- "lts"
+env:
+- ACTION="install"
+- ACTION="run clean"
+- ACTION="run build"
 script:
-  - yarn install
-  - yarn run build
+- npm $ACTION
+
 deploy:
   provider: npm
   email: frontend@synchro.com.br
