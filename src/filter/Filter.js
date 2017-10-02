@@ -4,11 +4,10 @@ import FilterOptions from './FilterOptions';
 import _isUndefined from 'lodash/isUndefined';
 
 class Filter extends React.Component {
-
   constructor() {
     super();
     this.state = {
-      clearFieldIsVisible: false
+      clearFieldIsVisible: false,
     };
     this.doFilterBySearchField = this.doFilterBySearchField.bind(this);
     this.clearAllFields = this.clearAllFields.bind(this);
@@ -16,38 +15,34 @@ class Filter extends React.Component {
 
   toggleClearField() {
     this.setState({
-      clearFieldIsVisible: this.refs.search.value !== ''
+      clearFieldIsVisible: this.refs.search.value !== '',
     });
   }
 
   doFilterBySearchField() {
-    if(this.props.onFilter) {
+    if (this.props.onFilter) {
       this.props.onFilter(this.refs.search.value);
     }
   }
 
   clearAllFields() {
-    if(this.props.onClearAll) {
+    if (this.props.onClearAll) {
       this.props.onClearAll(this.refs.search.value);
     }
   }
 
   clearSearchField() {
-    if(this.props.onFilter) {
+    if (this.props.onFilter) {
       this.refs.search.value = '';
-      this.setState(
-        {clearFieldIsVisible: false},
-        this.props.onFilter(this.refs.search.value)
-      );
+      this.setState({ clearFieldIsVisible: false }, this.props.onFilter(this.refs.search.value));
     }
   }
 
   render() {
-
     const timesIconStyle = {
-      'paddingTop': '10px',
-      'marginLeft': '-25px',
-      'cursor': 'pointer',
+      paddingTop: '10px',
+      marginLeft: '-25px',
+      cursor: 'pointer',
     };
 
     const {
@@ -56,33 +51,34 @@ class Filter extends React.Component {
       clearFilterOptionsButtonLabel,
       filterButtonLabel,
       placeholder,
-      children
+      children,
     } = this.props;
 
     let clearFieldIcon = '';
 
-    if(this.state.clearFieldIsVisible) {
+    if (this.state.clearFieldIsVisible) {
       clearFieldIcon = (
         <span>
-          <i className='fa fa-times'
-            onClick={() => this.clearSearchField()}
-            style={timesIconStyle}/>
+          <i className="fa fa-times" onClick={() => this.clearSearchField()} style={timesIconStyle} />
         </span>
       );
     }
 
     return (
-      <form className='sv-form'>
-        <div className='sv-input-group'>
-          <span className='label at-first'>
-            <i className='fa fa-search fa-fw'/>
+      <form className="sv-form">
+        <div className="sv-input-group">
+          <span className="label at-first">
+            <i className="fa fa-search fa-fw" />
           </span>
           <input
-            className='on-center'
-            onKeyUp={() => {this.toggleClearField(); this.doFilterBySearchField();}}
+            className="on-center"
+            onKeyUp={() => {
+              this.toggleClearField();
+              this.doFilterBySearchField();
+            }}
             placeholder={placeholder}
-            ref='search'
-            type='search'
+            ref="search"
+            type="search"
           />
           {clearFieldIcon}
           <FilterOptions
@@ -92,7 +88,8 @@ class Filter extends React.Component {
             clearFilterOptionsButtonLabel={clearFilterOptionsButtonLabel}
             doFilterBySearchField={this.doFilterBySearchField}
             filterButtonLabel={filterButtonLabel}
-            hasFilterOptions={!_isUndefined(children)}>
+            hasFilterOptions={!_isUndefined(children)}
+          >
             {this.props.children}
           </FilterOptions>
         </div>

@@ -16,19 +16,16 @@ import SvButtonLink from './sv/button/svButtonLink';
 import SvButtonOutline from './sv/button/svButtonOutline';
 import SvButtonAnimated from './sv/button/svButtonAnimated';
 import Modal from './modal/Modal';
+import ContextChange from './context/index';
 
 export {
   Hermes,
-  LaunchWindow,
   Blocker,
   OptionSelector,
   Filter,
   DataTable,
   DataTableColumn,
   Paginate,
-  PowerTable,
-  PowerColumn,
-  PowerSheet,
   SheetColumn,
   InputDate,
   SvRow,
@@ -38,4 +35,5 @@ export {
   SvButtonOutline,
   SvButtonAnimated,
   Modal,
+  ContextChange,
 };
