@@ -1,11 +1,12 @@
 import findMax from 'lodash/max';
 import { EventEmitter } from 'events';
 
-const blockerStack = {...EventEmitter.prototype,
+const blockerStack = {
+  ...EventEmitter.prototype,
   stack: [],
   addLoader(id, priority = 0) {
     if (this.getIndex(id) === -1) {
-      this.stack.push({id, priority});
+      this.stack.push({ id, priority });
       this.emitChange();
     }
   },
@@ -30,7 +31,7 @@ const blockerStack = {...EventEmitter.prototype,
   },
   removeChangeListener(callback) {
     this.removeListener('change', callback);
-  }
+  },
 };
 
 export default blockerStack;

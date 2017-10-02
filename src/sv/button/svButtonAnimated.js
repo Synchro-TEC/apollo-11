@@ -12,11 +12,7 @@ class SvButtonAnimated extends Component {
       this.props.full ? 'full' : '',
       this.props.small ? ' small' : ''
     );
-    return (
-      <button className={cssClasses}>
-        {this.props.children}
-      </button>
-    );
+    return <button className={cssClasses}>{this.props.children}</button>;
   }
 }
 
@@ -25,16 +21,15 @@ SvButtonAnimated.displayName = 'SvButtonAnimated';
 SvButtonAnimated.defaultProps = {
   color: 'default',
   small: false,
-  full: false
+  full: false,
 };
 
 SvButtonAnimated.propTypes = {
   className: PropTypes.string,
-  color: PropTypes.oneOf(['primary', 'info', 'danger', 'warning', 'default'])
-    .isRequired,
+  color: PropTypes.oneOf(['primary', 'info', 'danger', 'warning', 'default']).isRequired,
   full: PropTypes.bool,
   icon: PropTypes.string,
-  small: PropTypes.bool
+  small: PropTypes.bool,
 };
 
 export default SvButtonAnimated;

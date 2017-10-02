@@ -12,11 +12,7 @@ class SvButton extends Component {
       this.props.small ? 'small' : ''
     );
 
-    return (
-      <button className={cssClasses}>
-        {this.props.children}
-      </button>
-    );
+    return <button className={cssClasses}>{this.props.children}</button>;
   }
 }
 
@@ -25,14 +21,14 @@ SvButton.displayName = 'SvButton';
 SvButton.defaultProps = {
   color: 'default',
   full: false,
-  small: false
+  small: false,
 };
 
 SvButton.propTypes = {
   className: PropTypes.string,
   color: PropTypes.oneOf(['primary', 'info', 'danger', 'warning', 'default']),
   full: PropTypes.bool,
-  small: PropTypes.bool
+  small: PropTypes.bool,
 };
 
 export default SvButton;

@@ -2,16 +2,10 @@ import React, { Component } from 'react';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
 
-
 class SvCol extends Component {
-
   render() {
     const cssClasses = classNames('sv-column', this.props.className, this.props.fixedSize, this.props.size);
-    return (
-      <div className={cssClasses}>
-        {this.props.children}
-      </div>
-    );
+    return <div className={cssClasses}>{this.props.children}</div>;
   }
 }
 

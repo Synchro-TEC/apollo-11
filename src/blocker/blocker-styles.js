@@ -7,7 +7,7 @@ const blockerDefaultStyles = {
     width: '100%',
     height: '100%',
     backgroundColor: 'rgba(0,0,0,0.4)',
-    zIndex: 10
+    zIndex: 10,
   },
 
   foregroundDefaultStyle: {
@@ -16,14 +16,13 @@ const blockerDefaultStyles = {
     height: '100%',
     textAlign: 'center',
     zIndex: 20,
-    color: 'white'
+    color: 'white',
   },
 
   messageDefaultStyle: {
     display: 'table-cell',
-    verticalAlign: 'middle'
-  }
-
+    verticalAlign: 'middle',
+  },
 };
 
 export default blockerDefaultStyles;
