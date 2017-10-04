@@ -15,7 +15,7 @@ const SPACE = 10;
  * @param children - conteúdo a ser renderizado no modal
  * @param closeOnEsc - Fecha o modal ao clicar pressionar ESC
  * @param confirmButtonText - texto do botão de sucesso
- * @param customHeightInPixels - Altura do Modal em pixels 
+ * @param customHeightInPixels - Altura do Modal em pixels
  * @param customStyle - para modais do tipo CUSTOM, este atributo contém um objeto com as propriedades de estilo a serem aplicadas
  * @param customWidthPercent - Largura em porcentagem da janela do Modal
  * @param isVisible - indica se deve ser exibido
@@ -53,7 +53,7 @@ const Modal = ({
       marginTop: '-10%',
       marginLeft: '-25%',
       borderRadius: '2px',
-      zIndex: '100',
+      zIndex: '1000',
       padding: ' 15px 25px',
       boxShadow: 'rgba(0, 0, 0, 0.137255) 0px 0px 4px, rgba(0, 0, 0, 0.278431) 0px 4px 8px',
       display: 'block',
@@ -62,6 +62,9 @@ const Modal = ({
     title: {
       fontSize: '1.6rem',
       fontWeight: 'normal',
+    },
+    overlayStyles: {
+      zIndex: '999',
     },
   };
 
@@ -153,6 +156,7 @@ const Modal = ({
       isVisible={isVisible}
       onCloseClicked={onClose}
       onOverlayClicked={onClose}
+      overlayStyles={styles.overlayStyles}
       title={title}
       titleStyle={styles.title}
       transitionDuration={transitionDuration}
