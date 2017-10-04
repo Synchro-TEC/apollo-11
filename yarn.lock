@@ -4247,7 +4247,7 @@ react-transition-group@^1.1.2:
     prop-types "^15.5.6"
     warning "^3.0.0"
 
-react-windowed-list@^1.5.6:
+react-windowed-list@^1.5.5:
   version "1.5.6"
   resolved "https://registry.yarnpkg.com/react-windowed-list/-/react-windowed-list-1.5.6.tgz#28801886e5038bb396dc2612e86c27b0cdf2979a"
   dependencies:
