@@ -11,30 +11,31 @@ class Filter extends React.Component {
     };
     this.doFilterBySearchField = this.doFilterBySearchField.bind(this);
     this.clearAllFields = this.clearAllFields.bind(this);
+    this.searchFiled;
   }
 
   toggleClearField() {
     this.setState({
-      clearFieldIsVisible: this.refs.search.value !== '',
+      clearFieldIsVisible: this.searchFiled.value !== '',
     });
   }
 
   doFilterBySearchField() {
     if (this.props.onFilter) {
-      this.props.onFilter(this.refs.search.value);
+      this.props.onFilter(this.searchFiled.value);
     }
   }
 
   clearAllFields() {
     if (this.props.onClearAll) {
-      this.props.onClearAll(this.refs.search.value);
+      this.props.onClearAll(this.searchFiled.value);
     }
   }
 
   clearSearchField() {
     if (this.props.onFilter) {
-      this.refs.search.value = '';
-      this.setState({ clearFieldIsVisible: false }, this.props.onFilter(this.refs.search.value));
+      this.searchFiled.value = '';
+      this.setState({ clearFieldIsVisible: false }, this.props.onFilter(this.searchFiled.value));
     }
   }
 
@@ -77,7 +78,7 @@ class Filter extends React.Component {
               this.doFilterBySearchField();
             }}
             placeholder={placeholder}
-            ref="search"
+            ref={searchField => (this.searchFiled = searchField)}
             type="search"
           />
           {clearFieldIcon}
