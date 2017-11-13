@@ -4,6 +4,10 @@ Todas as mudanças consideráveis serão documentadas neste arquivo.
 Este formato de changelog foi baseado em [Keep a Changelog](http://keepachangelog.com/)
 e esse projeto adere ao [Semantic Versioning](http://semver.org/).
 
+### [0.4.20] - 2017-11-13
+### Corrigido
+- Correção do export do componente PowerSheet
+
 ### [0.4.19] - 2017-11-09
 ### Corrigido
 - Correção dos campos com ref no filtro

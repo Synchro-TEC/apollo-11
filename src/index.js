@@ -7,7 +7,6 @@ import Filter from './filter/Filter';
 import DataTable from './data-table/DataTable';
 import DataTableColumn from './data-table/data-table-header/DataTableColumn.js';
 import Paginate from './paginate/Paginate.js';
-import SheetColumn from './power-sheet/SheetColumn';
 import InputDate from './inputDate/inputDate';
 import SvRow from './sv/grid/svRow';
 import SvCol from './sv/grid/svCol';
@@ -17,6 +16,8 @@ import SvButtonOutline from './sv/button/svButtonOutline';
 import SvButtonAnimated from './sv/button/svButtonAnimated';
 import Modal from './modal/Modal';
 import ContextChange from './context/index';
+import SheetColumn from './power-sheet/SheetColumn';
+import PowerSheet from './power-sheet/PowerSheet';
 
 export {
   Hermes,
@@ -27,6 +28,7 @@ export {
   DataTableColumn,
   Paginate,
   SheetColumn,
+  PowerSheet,
   InputDate,
   SvRow,
   SvCol,
