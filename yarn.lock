@@ -1678,6 +1678,10 @@ csso@~2.3.1:
     clap "^1.0.9"
     source-map "^0.5.3"
 
+currency.js@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/currency.js/-/currency.js-1.0.1.tgz#bf81ef3f20f24aacb7afee5d6a50203888804647"
+
 cvss@^1.0.0:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/cvss/-/cvss-1.0.2.tgz#df67e92bf12a796f49e928799c8db3ba74b9fcd6"
@@ -4215,15 +4219,6 @@ react-addons-update@^15.6.2:
     object-assign "^4.1.1"
     prop-types "^15.6.0"
 
-react-dom@^15.6.2:
-  version "15.6.2"
-  resolved "https://registry.yarnpkg.com/react-dom/-/react-dom-15.6.2.tgz#41cfadf693b757faf2708443a1d1fd5a02bef730"
-  dependencies:
-    fbjs "^0.8.9"
-    loose-envify "^1.1.0"
-    object-assign "^4.1.0"
-    prop-types "^15.5.10"
-
 react-list@^0.8.8:
   version "0.8.8"
   resolved "https://registry.yarnpkg.com/react-list/-/react-list-0.8.8.tgz#de2cb768dd210fb3e4835b9277f158e9cd403078"
@@ -4259,7 +4254,7 @@ react-windowed-list@^1.5.5:
     react-dom "^15.3.0 || ^16.0.0"
     remeasure "^2.4.1"
 
-react@>=15.3.0, react@^15.6.2:
+react@>=15.3.0:
   version "15.6.2"
   resolved "https://registry.yarnpkg.com/react/-/react-15.6.2.tgz#dba0434ab439cfe82f108f0f511663908179aa72"
   dependencies:

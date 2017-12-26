@@ -22,8 +22,17 @@ import GroupedTableBody from './GroupedTableBody';
 import { bytesToSize } from './utils.js';
 import ColumnActions from './ColumnActions';
 import { conditions } from './conditions.js';
-
+import currency from 'currency.js';
 import './styles.css';
+
+function round(number, precision) {
+  const factor = Math.pow(10, precision);
+  const tempNumber = number * factor;
+  const roundedTempNumber = Math.round(tempNumber);
+  return roundedTempNumber / factor;
+}
+
+var real = value => currency(value, { separator: '.', decimal: ',' });
 
 class PowerSheet extends React.Component {
   constructor(props) {
@@ -54,6 +63,8 @@ class PowerSheet extends React.Component {
     this._getCurrentDistinctValues = this._getCurrentDistinctValues.bind(this);
     this._getCurrentSelectedDistinctValues = this._getCurrentSelectedDistinctValues.bind(this);
     this._getFormatterOnFilter = this._getFormatterOnFilter.bind(this);
+    this._getAggrs = this._getAggrs.bind(this);
+    this._renderAggrFooter = this._renderAggrFooter.bind(this);
     this._keysThatHasFilter = this._keysThatHasFilter.bind(this);
     this._getItemHeight = this._getItemHeight.bind(this);
     this._sumRowSpan = this._sumRowSpan.bind(this);
@@ -294,6 +305,7 @@ class PowerSheet extends React.Component {
         searchable: child.props.searchable,
         groupBy: child.props.groupBy,
         width: child.props.width,
+        aggr: child.props.aggr,
       };
     });
 
@@ -892,11 +904,42 @@ class PowerSheet extends React.Component {
     return [...new Set(Object.keys(selectedDistinctFilters).concat(Object.keys(filtersByConditions)))];
   }
 
+  _getAggrs() {
+    const aggrs = this.columns.filter(c => c.aggr !== undefined).map(c => {
+      return { aggr: c.aggr, key: c.key, title: c.title, moneyValue: null, value: null };
+    });
+
+    aggrs.forEach(ag => {
+      ag.moneyValue = real(_sumBy(this.state.currentData, ag.key)).format();
+      ag.value = round(_sumBy(this.state.currentData, ag.key), 2);
+    });
+    return aggrs;
+  }
+
+  _renderAggrFooter(aggrs) {
+    let cols = this.columns.map((col, i) => {
+      let style = {};
+      if (this.columnsWidths[i]) {
+        style.flex = `0 0 ${this.columnsWidths[i]}px`;
+      }
+      const aggregated = aggrs.find(a => a.key === col.key);
+      const valueToPrint = aggregated ? aggregated.moneyValue : '';
+      return (
+        <div className="pw-table-tbody-cell" key={v4()} style={style}>
+          <div>{valueToPrint}</div>
+        </div>
+      );
+    });
+    return <div className="pw-table-tbody-row">{cols}</div>;
+  }
+
   render() {
     let headers = [];
     let headerToRender = '';
     let dataToRender = '';
     let scrollProps = {};
+    const aggrs = this._getAggrs();
+    let footer = '';
 
     headers = this.props.children.map(chield => {
       let newProps = { key: v4(), isGrouped: !!this.groupedColumns.length };
@@ -917,8 +960,10 @@ class PowerSheet extends React.Component {
       scrollProps.length = this.state.currentData.length;
       scrollProps.type = 'uniform';
       scrollProps.pageSize = this.props.pageSize;
+      footer = aggrs.length > 0 ? this._renderAggrFooter(aggrs) : '';
 
       if (this.groupedColumns.length) {
+        footer = '';
         scrollProps.itemRenderer = this._renderGroupedItem;
         // scrollProps.itemSizeEstimator = this._getItemHeight;
         scrollProps.itemSizeGetter = this._getItemHeight;
@@ -982,6 +1027,7 @@ class PowerSheet extends React.Component {
           <div className="pw-table-header-row">{headerToRender}</div>
         </div>
         {dataToRender}
+        {footer}
         <ColumnActions
           activeColumn={this.state.activeColumn}
           columnTitle={this.state.activeColumnTitle}

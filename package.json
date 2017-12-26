@@ -26,10 +26,7 @@
     "url": "https://github.com/Synchro-OSS/apollo/issues"
   },
   "homepage": "https://github.com/Synchro-OSS/apollo#readme",
-  "peerDependencies": {
-    "react": "^15.6.2",
-    "react-dom": "^15.6.2"
-  },
+  "peerDependencies": {},
   "devDependencies": {
     "babel-core": "^6.26.0",
     "babel-eslint": "^8.0.1",
@@ -48,9 +45,7 @@
     "prettier": "^1.7.3",
     "prettier-eslint": "^8.2.0",
     "publish-please": "^2.3.1",
-    "react": "^15.6.2",
     "react-addons-update": "^15.6.2",
-    "react-dom": "^15.6.2",
     "rimraf": "^2.6.2",
     "style-loader": "^0.18.2",
     "watch-run": "^1.2.5",
@@ -59,6 +54,7 @@
   "dependencies": {
     "axios": "^0.16.2",
     "classnames": "^2.2.5",
+    "currency.js": "^1.0.1",
     "data-collection": "^1.1.6",
     "date-fns": "^1.28.5",
     "flat": "^4.0.0",

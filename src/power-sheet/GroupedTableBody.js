@@ -9,7 +9,6 @@ import v4 from 'uuid/v4';
 import _cloneDeep from 'lodash/cloneDeep';
 
 class GroupedTableBody extends React.Component {
-
   constructor(props) {
     super(props);
   }
@@ -23,12 +22,15 @@ class GroupedTableBody extends React.Component {
         let style = _has(col, 'width') ? { width: `${col.width}px` } : {};
         let rendered = col.formatter ? col.formatter({ [parent.name]: parent.value }, col.key) : parent.value;
         tds.push(
-          <td className="pw-table-grouped-tbody-cell" key={v4()} rowSpan={parent.rowSpan} style={style}>{rendered}</td>
+          <td className="pw-table-grouped-tbody-cell" key={v4()} rowSpan={parent.rowSpan} style={style}>
+            {rendered}
+          </td>
         );
         parent.done = true;
       }
       parent = _has(parent, 'parent') ? parent.parent : null;
     }
+    debugger;
     return tds.reverse();
   }
 
@@ -36,7 +38,12 @@ class GroupedTableBody extends React.Component {
     return nonGroupedColumns.map(col => {
       let style = _has(col, 'width') ? { width: `${col.width}px` } : {};
       let rendered = col.formatter ? col.formatter(row, col.key) : _get(row, col.key);
-      return <td className="pw-table-grouped-tbody-cell" key={v4()} style={style}>{rendered}</td>;
+      debugger;
+      return (
+        <td className="pw-table-grouped-tbody-cell" key={v4()} style={style}>
+          {rendered}
+        </td>
+      );
     });
   }
 
@@ -55,6 +62,7 @@ class GroupedTableBody extends React.Component {
   }
 
   render() {
+    debugger;
     let nonGroupedColumns = _filter(this.props.columns, { groupBy: false });
     let groupedCols = _filter(this.props.columns, { groupBy: true });
 
