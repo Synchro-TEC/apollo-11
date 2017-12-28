@@ -195,7 +195,8 @@ class PowerSheet extends React.Component {
     for (let i = 0; i < currentData.length; i++) {
       let row = currentData[i];
       this._sumRowSpan(row);
-      this.cachedRenderedGroupHeighs.push(row.rowSpan * this.props.rowHeight);
+      let aggregateDiff = this._getAggrs() ? 1.1 : 0;
+      this.cachedRenderedGroupHeighs.push((row.rowSpan + aggregateDiff) * this.props.rowHeight);
     }
   }
 
@@ -794,7 +795,7 @@ class PowerSheet extends React.Component {
     if (this.cachedRenderedGroup[index]) {
       row = this.cachedRenderedGroup[index];
     } else {
-      row = <GroupedTableBody columns={this.columns} data={dataRow} />;
+      row = <GroupedTableBody columns={this.columns} data={dataRow} aggr={this._getAggrs()} />;
       this.cachedRenderedGroup.splice(index, 0, row);
     }
 
@@ -965,7 +966,7 @@ class PowerSheet extends React.Component {
       if (this.groupedColumns.length) {
         footer = '';
         scrollProps.itemRenderer = this._renderGroupedItem;
-        // scrollProps.itemSizeEstimator = this._getItemHeight;
+        scrollProps.itemSizeEstimator = this._getItemHeight;
         scrollProps.itemSizeGetter = this._getItemHeight;
 
         scrollProps.type = 'variable';
