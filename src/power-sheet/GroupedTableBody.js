@@ -8,6 +8,7 @@ import _filter from 'lodash/filter';
 import _sumBy from 'lodash/sumBy';
 import v4 from 'uuid/v4';
 import _cloneDeep from 'lodash/cloneDeep';
+import _times from 'lodash/times';
 import currency from 'currency.js';
 import { SSL_OP_MICROSOFT_BIG_SSLV3_BUFFER } from 'constants';
 import { log } from 'util';
@@ -96,18 +97,43 @@ class GroupedTableBody extends React.Component {
       aggrs = _cloneDeep(this.props.aggr);
     }
 
+    let lastItem = null;
+
+    const extractFromParent = () => {
+      lastItem = data.nested[data.nested.length - 1];
+      aggrs.forEach(ag => {
+        ag.moneyValue = real(_sumBy(data.nested, ag.key)).format();
+        ag.value = round(_sumBy(data.nested, ag.key), 2);
+      });
+    };
+
+    const extractFromNested = nested => {
+      let toGetValuesObj;
+      if (Object.keys(nested[0]).includes('nested')) {
+        const path = _times(groupedCols.length - 2, () => 'nested[0]').join('.');
+        toGetValuesObj = _get(nested[0], path).parent.nested;
+      } else {
+        toGetValuesObj = nested;
+      }
+
+      aggrs.forEach(ag => {
+        ag.moneyValue = real(_sumBy(toGetValuesObj, ag.key)).format();
+        ag.value = round(_sumBy(toGetValuesObj, ag.key), 2);
+      });
+    };
+
     let trs = data.nested.map((nestedRow, i) => {
-      let trAggrs = '';
+      let trAggrs = null;
 
       if (hasAggr) {
         let aggrTds = [];
 
         // aggrTds.push(<td key={v4()} colSpan={groupedCols.length} />);
-
-        aggrs.forEach(ag => {
-          ag.moneyValue = real(_sumBy(nestedRow.nested, ag.key)).format();
-          ag.value = round(_sumBy(nestedRow.nested, ag.key), 2);
-        });
+        if (!Object.keys(nestedRow).includes('nested')) {
+          extractFromParent();
+        } else {
+          extractFromNested(nestedRow.nested);
+        }
 
         nonGroupedColumns.forEach(col => {
           const sumCol = aggrs.find(a => a.key === col.key);
@@ -127,10 +153,19 @@ class GroupedTableBody extends React.Component {
           }
         });
 
-        trAggrs = <tr key={v4()}>{aggrTds}</tr>;
+        if (!Object.keys(nestedRow).includes('nested') && lastItem === nestedRow) {
+          trAggrs = <tr key={v4()}>{aggrTds}</tr>;
+        } else if (Object.keys(nestedRow).includes('nested')) {
+          trAggrs = <tr key={v4()}>{aggrTds}</tr>;
+        }
       }
 
-      return [this.renderRow(nonGroupedColumns, _groupBy(groupedCols, 'key'), nestedRow), trAggrs];
+      let toReturn = [this.renderRow(nonGroupedColumns, _groupBy(groupedCols, 'key'), nestedRow)];
+
+      if (trAggrs) {
+        toReturn.push(trAggrs);
+      }
+      return toReturn;
     });
 
     return (

@@ -121,7 +121,7 @@ SheetColumn.defaultProps = {
 
 SheetColumn.propTypes = {
   activeColumn: PropTypes.string,
-  aggr: PropTypes.oneOf(['SUM', 'AVG']),
+  aggr: PropTypes.oneOf(['SUM']),
   columnTitle: PropTypes.string.isRequired,
   dataKey: PropTypes.string,
   dataType: PropTypes.oneOf(['numeric', 'text', 'date']),
