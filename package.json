@@ -1,6 +1,6 @@
 {
   "name": "syntec-apollo-11",
-  "version": "0.4.20",
+  "version": "0.4.21",
   "description": "Apollo-11 Project - Failure is not an option",
   "main": "./distribution/index.js",
   "files": [
@@ -27,8 +27,8 @@
   },
   "homepage": "https://github.com/Synchro-OSS/apollo#readme",
   "peerDependencies": {
-    "react": "^15.6.2",
-    "react-dom": "^15.6.2"
+    "react": "^15.6.2 || ^15.0.0",
+    "react-dom": "^15.6.2 || ^16.0.0"
   },
   "devDependencies": {
     "babel-core": "^6.26.0",
