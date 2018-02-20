@@ -11,6 +11,7 @@ class Filter extends React.Component {
     };
     this.doFilterBySearchField = this.doFilterBySearchField.bind(this);
     this.clearAllFields = this.clearAllFields.bind(this);
+    this.submitForm = this.submitForm.bind(this);
     this.searchFiled;
   }
 
@@ -36,6 +37,13 @@ class Filter extends React.Component {
     if (this.props.onFilter) {
       this.searchFiled.value = '';
       this.setState({ clearFieldIsVisible: false }, this.props.onFilter(this.searchFiled.value));
+    }
+  }
+
+  submitForm(e) {
+    e.preventDefault();
+    if (this.props.onFormSubmit) {
+      this.props.onFormSubmit(this.searchFiled.value);
     }
   }
 
@@ -66,7 +74,7 @@ class Filter extends React.Component {
     }
 
     return (
-      <form className="sv-form">
+      <form className="sv-form" onSubmit={e => this.submitForm(e)}>
         <div className="sv-input-group">
           <span className="label at-first">
             <i className="fa fa-search fa-fw" />
@@ -114,6 +122,7 @@ Filter.propTypes = {
   filterButtonLabel: PropTypes.string,
   onClearAll: PropTypes.func,
   onFilter: PropTypes.func,
+  onFormSubmit: PropTypes.func,
   placeholder: PropTypes.string,
 };
 
