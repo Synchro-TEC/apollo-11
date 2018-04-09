@@ -5,14 +5,15 @@ import HermesAPI from './HermesApi';
 import HermesMessageItem from './HermesMessageItem';
 import HermesStyles from './HermesStyles';
 import HermesConstantes from './HermesConstants';
-import uuid from 'uuid';
+import nanoid from 'nanoid';
+
 import classNames from 'classnames';
 
 var _hideTimeOut;
 
 class Hermes extends React.Component {
   static addMessage(msg, isDeletable = false) {
-    HermesAPI.addMessage(uuid.v1(), msg, isDeletable);
+    HermesAPI.addMessage(nanoid(), msg, isDeletable);
   }
 
   static setContext(newContext) {

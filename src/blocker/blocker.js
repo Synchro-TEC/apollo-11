@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import uuid from 'uuid';
+import nanoid from 'nanoid';
 import blockerDefaultStyles from './blocker-styles';
 import blockerStack from './blocker-stack';
 
@@ -13,7 +13,7 @@ class Blocker extends React.Component {
   }
 
   componentWillMount() {
-    this._stackId = uuid.v1();
+    this._stackId = nanoid();
   }
 
   componentDidMount() {

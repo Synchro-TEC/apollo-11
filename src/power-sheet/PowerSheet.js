@@ -4,7 +4,7 @@ import Proptypes from 'prop-types';
 import update from 'immutability-helper';
 import ReactList from 'react-list';
 import axios from 'axios';
-import { v4 } from 'uuid';
+import nanoid from 'nanoid';
 import sift from 'sift';
 import _get from 'lodash/get';
 import _sortBy from 'lodash/sortBy';
@@ -717,7 +717,7 @@ class PowerSheet extends React.Component {
       }
       const valueToPrint = col.formatter ? col.formatter(row, col.key) : _get(row, col.key);
       return (
-        <div className="pw-table-tbody-cell" key={v4()} style={style}>
+        <div className="pw-table-tbody-cell" key={nanoid()} style={style}>
           <div>{valueToPrint}</div>
         </div>
       );
@@ -899,7 +899,7 @@ class PowerSheet extends React.Component {
     let scrollProps = {};
 
     headers = this.props.children.map(chield => {
-      let newProps = { key: v4(), isGrouped: !!this.groupedColumns.length };
+      let newProps = { key: nanoid(), isGrouped: !!this.groupedColumns.length };
       if (chield.props.dataKey) {
         newProps.selectedDistinctFilters = this._getCurrentSelectedDistinctValues();
         newProps.filtersByConditions = this._getCurrentFilterByConditionValues();
