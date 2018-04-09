@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 class SheetColumn extends React.Component {
   constructor(props) {
     super(props);
-    
+
     this.renderFilter = this.renderFilter.bind(this);
     this.renderSort = this.renderSort.bind(this);
     this.setColumn = this.setColumn.bind(this);
@@ -39,7 +39,7 @@ class SheetColumn extends React.Component {
     return rendered;
   }
 
-  _renderGrouped() {    
+  _renderGrouped() {
     let style = {};
     let result;
 
