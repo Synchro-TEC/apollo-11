@@ -1,6 +1,6 @@
 {
   "name": "syntec-apollo-11",
-  "version": "0.4.23",
+  "version": "0.5.0-0",
   "description": "Apollo-11 Project - Failure is not an option",
   "main": "./distribution/index.js",
   "files": [
